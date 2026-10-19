@@ -1,0 +1,340 @@
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  AlertCircle,
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  LoaderCircle,
+  Search,
+  X,
+} from "lucide-react";
+import { api, apiPage, type PageMeta } from "./api";
+
+export const date = (value?: string) =>
+  value
+    ? new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(value))
+    : "—";
+export function useResource<T>(path: string | null) {
+  const [data, setData] = useState<T | null>(null),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState(""),
+    [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+  useEffect(() => {
+    const abort = new AbortController();
+    if (!path) {
+      setLoading(false);
+      setData(null);
+      return;
+    }
+    setLoading(true);
+    setError("");
+    api<T>(path, { signal: abort.signal })
+      .then(setData)
+      .catch((e) => {
+        if (!abort.signal.aborted) setError(e.message);
+      })
+      .finally(() => {
+        if (!abort.signal.aborted) setLoading(false);
+      });
+    return () => abort.abort();
+  }, [path, version]);
+  return { data, loading, error, reload, setData };
+}
+export function usePagedResource<T>(path: string | null) {
+  const [data, setData] = useState<T[] | null>(null),
+    [meta, setMeta] = useState<PageMeta | undefined>(),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState(""),
+    [version, setVersion] = useState(0);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+  useEffect(() => {
+    const abort = new AbortController();
+    if (!path) {
+      setLoading(false);
+      setData(null);
+      setMeta(undefined);
+      return;
+    }
+    setLoading(true);
+    setError("");
+    apiPage<T>(path, { signal: abort.signal })
+      .then((page) => {
+        setData(page.items);
+        setMeta(page.meta);
+      })
+      .catch((e) => {
+        if (!abort.signal.aborted) setError(e.message);
+      })
+      .finally(() => {
+        if (!abort.signal.aborted) setLoading(false);
+      });
+    return () => abort.abort();
+  }, [path, version]);
+  return { data, meta, loading, error, reload };
+}
+export function Pagination({
+  meta,
+  page,
+  onChange,
+}: {
+  meta?: PageMeta;
+  page: number;
+  onChange: (page: number) => void;
+}) {
+  if (
+    !meta ||
+    (meta.total_pages ?? meta.pages ?? Math.ceil(meta.total / meta.limit)) < 2
+  )
+    return null;
+  const totalPages =
+    meta.total_pages ?? meta.pages ?? Math.ceil(meta.total / meta.limit);
+  return (
+    <div className="pagination">
+      <span>
+        Trang {page} / {totalPages} · {meta.total} bản ghi
+      </span>
+      <div className="actions">
+        <Button
+          variant="secondary"
+          disabled={page <= 1}
+          onClick={() => onChange(page - 1)}
+        >
+          Trang trước
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={page >= totalPages}
+          onClick={() => onChange(page + 1)}
+        >
+          Trang sau
+        </Button>
+      </div>
+    </div>
+  );
+}
+export function PageTitle({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="page-title">
+      <div>
+        {eyebrow && <div className="eyebrow">{eyebrow}</div>}
+        <h1>{title}</h1>
+        {description && <p>{description}</p>}
+      </div>
+      {action}
+    </div>
+  );
+}
+export function Button({
+  children,
+  variant = "primary",
+  busy,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  busy?: boolean;
+}) {
+  return (
+    <button
+      {...props}
+      className={`button ${variant} ${props.className || ""}`}
+      disabled={props.disabled || busy}
+    >
+      {busy ? <LoaderCircle size={16} className="spin" /> : null}
+      {children}
+    </button>
+  );
+}
+export function Field({
+  label,
+  children,
+  hint,
+  required,
+}: {
+  label: string;
+  children: ReactNode;
+  hint?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="field">
+      <span>
+        {label}
+        {required && <em> *</em>}
+      </span>
+      {children}
+      {hint && <small>{hint}</small>}
+    </label>
+  );
+}
+export function ErrorBox({ message }: { message?: string }) {
+  return message ? (
+    <div className="error-box" role="alert">
+      <AlertCircle size={17} />
+      {message}
+    </div>
+  ) : null;
+}
+export function Success({ message }: { message?: string }) {
+  return message ? (
+    <div className="success-box" role="status">
+      <Check size={17} />
+      {message}
+    </div>
+  ) : null;
+}
+export function Loading() {
+  return (
+    <div className="loading">
+      <LoaderCircle size={24} className="spin" />
+      <span>Đang tải dữ liệu…</span>
+    </div>
+  );
+}
+export function Empty({
+  title = "Chưa có dữ liệu",
+  text,
+  action,
+}: {
+  title?: string;
+  text?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="empty">
+      <div className="empty-icon">
+        <Search size={27} />
+      </div>
+      <h3>{title}</h3>
+      <p>{text || "Dữ liệu sẽ xuất hiện tại đây khi được ghi nhận."}</p>
+      {action}
+    </div>
+  );
+}
+export function Modal({
+  title,
+  children,
+  onClose,
+  wide,
+}: {
+  title: string;
+  children: ReactNode;
+  onClose: () => void;
+  wide?: boolean;
+}) {
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", key);
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", key);
+      document.body.style.overflow = overflow;
+    };
+  }, [onClose]);
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <section
+        className={`modal ${wide ? "wide" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header>
+          <h2>{title}</h2>
+          <button className="icon-button" aria-label="Đóng" onClick={onClose}>
+            <X size={20} />
+          </button>
+        </header>
+        {children}
+      </section>
+    </div>
+  );
+}
+export function Badge({ status }: { status: string }) {
+  const labels: Record<string, string> = {
+    pending: "Chờ tiếp nhận",
+    in_progress: "Đang khám",
+    completed: "Hoàn thành",
+    active: "Đang hoạt động",
+    inactive: "Ngừng hoạt động",
+  };
+  return <span className={`badge ${status}`}>{labels[status] || status}</span>;
+}
+export function SearchBox({
+  value,
+  onChange,
+  placeholder = "Tìm theo tên hoặc số điện thoại…",
+}: {
+  value: string;
+  onChange: (s: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div className="search-box">
+      <Search size={18} />
+      <input
+        aria-label={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
+export function Back({ onClick }: { onClick: () => void }) {
+  return (
+    <button className="back" onClick={onClick}>
+      <ChevronLeft size={17} />
+      Quay lại danh sách
+    </button>
+  );
+}
+export function Card({
+  title,
+  description,
+  children,
+  action,
+  className = "",
+}: {
+  title?: string;
+  description?: string;
+  children: ReactNode;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`card ${className}`}>
+      {title && (
+        <header className="card-heading">
+          <div>
+            <h2>{title}</h2>
+            {description && <p>{description}</p>}
+          </div>
+          {action}
+        </header>
+      )}
+      {children}
+    </section>
+  );
+}
+export function RowArrow() {
+  return <ArrowRight size={17} className="muted" />;
+}

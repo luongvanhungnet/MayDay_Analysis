@@ -1,0 +1,456 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  full_name String
+  phone String @unique
+  email String? @unique
+  password_hash String
+  is_active Boolean @default(true)
+  token_version Int @default(0)
+  reset_token String?
+  reset_expires_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  patient Patient?
+  staff Staff?
+  created_records MedicalRecord[] @relation("RecordCreator")
+  assigned_records MedicalRecord[] @relation("AssignedDoctor")
+  uploaded_media MediaAttachment[]
+  prescriptions Prescription[]
+  lab_requests LabRequest[]
+  notifications Notification[]
+  fcm_tokens UserFcmToken[]
+  notification_setting UserNotificationSetting?
+  blacklisted_tokens TokenBlacklist[]
+  @@map("users")
+}
+
+model Patient {
+  user_id String @id @db.Uuid
+  year_of_birth Int?
+  gender String?
+  occupation String?
+  ethnicity String?
+  address String?
+  province String?
+  district String?
+  ward String?
+  insurance_number String?
+  insurance_expiry DateTime? @db.Date
+  emergency_contact String?
+  emergency_phone String?
+  outpatient_date DateTime? @db.Date
+  user User @relation(fields:[user_id],references:[id],onDelete:Restrict)
+  medical_records MedicalRecord[]
+  uas7_scores Uas7Score[]
+  lesion_episodes LesionEpisode[]
+  @@map("patients")
+}
+
+model Staff {
+  user_id String @id @db.Uuid
+  role_id String @db.Uuid
+  branch_id String? @db.Uuid
+  department_id String? @db.Uuid
+  room_id String? @db.Uuid
+  specialty String?
+  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
+  role Role @relation(fields:[role_id],references:[id],onDelete:Restrict)
+  branch Branch? @relation(fields:[branch_id],references:[id],onDelete:Restrict)
+  department Department? @relation(fields:[department_id],references:[id],onDelete:SetNull)
+  room Room? @relation(fields:[room_id],references:[id],onDelete:Restrict)
+  @@map("staffs")
+}
+
+model Role {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  code String @unique
+  description String?
+  parent_role_id String? @db.Uuid
+  parent Role? @relation("RoleHierarchy",fields:[parent_role_id],references:[id],onDelete:SetNull)
+  children Role[] @relation("RoleHierarchy")
+  staffs Staff[]
+  permissions RolePermission[]
+  @@map("roles")
+}
+
+model Permission {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique
+  name String
+  description String?
+  roles RolePermission[]
+  endpoints PermissionEndpoint[]
+  @@map("permissions")
+}
+
+model RolePermission {
+  role_id String @db.Uuid
+  permission_id String @db.Uuid
+  role Role @relation(fields:[role_id],references:[id],onDelete:Cascade)
+  permission Permission @relation(fields:[permission_id],references:[id],onDelete:Cascade)
+  @@id([role_id,permission_id])
+  @@map("role_permissions")
+}
+
+model ApiEndpoint {
+  id String @id @default(uuid()) @db.Uuid
+  method String
+  path String
+  description String?
+  permissions PermissionEndpoint[]
+  @@unique([method,path])
+  @@map("api_endpoints")
+}
+
+model PermissionEndpoint {
+  permission_id String @db.Uuid
+  endpoint_id String @db.Uuid
+  permission Permission @relation(fields:[permission_id],references:[id],onDelete:Cascade)
+  endpoint ApiEndpoint @relation(fields:[endpoint_id],references:[id],onDelete:Cascade)
+  @@id([permission_id,endpoint_id])
+  @@map("permissions_endpoints")
+}
+
+model Branch {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  address String?
+  phone String?
+  is_active Boolean @default(true)
+  created_at DateTime @default(now())
+  departments Department[]
+  staffs Staff[]
+  @@map("branches")
+}
+
+model Department {
+  id String @id @default(uuid()) @db.Uuid
+  branch_id String @db.Uuid
+  name String
+  description String?
+  branch Branch @relation(fields:[branch_id],references:[id],onDelete:Restrict)
+  rooms Room[]
+  staffs Staff[]
+  @@map("departments")
+}
+
+model Room {
+  id String @id @default(uuid()) @db.Uuid
+  department_id String? @db.Uuid
+  name String
+  description String?
+  department Department? @relation(fields:[department_id],references:[id],onDelete:SetNull)
+  staffs Staff[]
+  @@map("rooms")
+}
+
+model TokenBlacklist {
+  id String @id @default(uuid()) @db.Uuid
+  token_hash String @unique
+  user_id String @db.Uuid
+  expires_at DateTime
+  created_at DateTime @default(now())
+  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
+  @@index([expires_at])
+  @@map("token_blacklist")
+}
+
+model Template {
+  id String @id @default(uuid()) @db.Uuid
+  code_template String @unique @default(uuid())
+  kind String @default("clinical")
+  classification_rules Json?
+  name String
+  description String?
+  version String @default("1.0")
+  is_active Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  sections TemplateSection[]
+  medical_records MedicalRecord[]
+  @@map("templates")
+}
+
+model TemplateSection {
+  id String @id @default(uuid()) @db.Uuid
+  template_id String @db.Uuid
+  title String
+  description String?
+  order Int @default(0)
+  filled_by String @default("both")
+  template Template @relation(fields:[template_id],references:[id],onDelete:Cascade)
+  questions Question[]
+  @@map("template_sections")
+}
+
+model Question {
+  id String @id @default(uuid()) @db.Uuid
+  section_id String @db.Uuid
+  parent_question_id String? @db.Uuid
+  content String
+  type_question String @default("text")
+  is_required Boolean @default(false)
+  order Int @default(0)
+  show_if_answer Json?
+  condition_rules Json?
+  section TemplateSection @relation(fields:[section_id],references:[id],onDelete:Cascade)
+  parent Question? @relation("QuestionHierarchy",fields:[parent_question_id],references:[id],onDelete:Cascade)
+  children Question[] @relation("QuestionHierarchy")
+  options QuestionOption[]
+  answers Answer[]
+  @@map("questions")
+}
+
+model QuestionOption {
+  id String @id @default(uuid()) @db.Uuid
+  question_id String @db.Uuid
+  label String
+  value String
+  order Int @default(0)
+  question Question @relation(fields:[question_id],references:[id],onDelete:Cascade)
+  answers Answer[]
+  @@unique([question_id,value])
+  @@map("question_options")
+}
+
+model MedicalRecord {
+  id String @id @default(uuid()) @db.Uuid
+  patient_id String @db.Uuid
+  template_id String @db.Uuid
+  assigned_doctor_id String? @db.Uuid
+  created_by String? @db.Uuid
+  status String @default("pending")
+  diagnosis String?
+  notes String?
+  instructions String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  closed_at DateTime?
+  completed_at DateTime?
+  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
+  template Template @relation(fields:[template_id],references:[id],onDelete:Restrict)
+  assigned_doctor User? @relation("AssignedDoctor",fields:[assigned_doctor_id],references:[id],onDelete:SetNull)
+  creator User? @relation("RecordCreator",fields:[created_by],references:[id],onDelete:SetNull)
+  answers Answer[]
+  prescriptions Prescription[]
+  lab_requests LabRequest[]
+  lesion_episodes LesionEpisode[]
+  @@index([patient_id,created_at])
+  @@index([assigned_doctor_id,status])
+  @@map("medical_records")
+}
+
+model Answer {
+  id String @id @default(uuid()) @db.Uuid
+  medical_record_id String @db.Uuid
+  question_id String @db.Uuid
+  value Json
+  answer_text String?
+  question_option_id String? @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Cascade)
+  question Question @relation(fields:[question_id],references:[id],onDelete:Restrict)
+  question_option QuestionOption? @relation(fields:[question_option_id],references:[id],onDelete:Restrict)
+  images AnswerImage[]
+  @@unique([medical_record_id,question_id])
+  @@map("answers")
+}
+
+model MediaAttachment {
+  id String @id @default(uuid()) @db.Uuid
+  uploaded_by String @db.Uuid
+  file_name String
+  mime_type String
+  file_size Int
+  storage_key String @unique
+  url String
+  created_at DateTime @default(now())
+  uploader User @relation(fields:[uploaded_by],references:[id],onDelete:Restrict)
+  answer_images AnswerImage[]
+  lesion_photos LesionPhoto[]
+  lab_results LabResult[]
+  @@map("media_attachments")
+}
+
+model AnswerImage {
+  id String @id @default(uuid()) @db.Uuid
+  answer_id String @db.Uuid
+  media_id String @db.Uuid
+  option_value String?
+  answer Answer @relation(fields:[answer_id],references:[id],onDelete:Cascade)
+  media MediaAttachment @relation(fields:[media_id],references:[id],onDelete:Restrict)
+  @@unique([answer_id,media_id])
+  @@map("answer_images")
+}
+
+model LesionEpisode {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  patient_id String @db.Uuid
+  medical_record_id String @db.Uuid
+  started_at DateTime @default(now())
+  ended_at DateTime?
+  context_tags Json @default("[]")
+  medications String?
+  notes String?
+  created_at DateTime @default(now())
+  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
+  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
+  locations LesionLocation[]
+  @@map("lesion_episodes")
+}
+
+model LesionLocation {
+  id String @id @default(uuid()) @db.Uuid
+  episode_id String @db.Uuid
+  body_part String
+  description String?
+  episode LesionEpisode @relation(fields:[episode_id],references:[id],onDelete:Cascade)
+  photos LesionPhoto[]
+  @@map("lesion_locations")
+}
+
+model LesionPhoto {
+  id String @id @default(uuid()) @db.Uuid
+  location_id String @db.Uuid
+  media_id String @db.Uuid
+  stage String
+  itch_score Int @default(0)
+  pain_score Int @default(0)
+  burning_score Int @default(0)
+  hives_count Int @default(0)
+  local_auas Float?
+  ai_result Json?
+  captured_at DateTime @default(now())
+  location LesionLocation @relation(fields:[location_id],references:[id],onDelete:Cascade)
+  media MediaAttachment @relation(fields:[media_id],references:[id],onDelete:Restrict)
+  @@map("lesion_photos")
+}
+
+model Uas7Score {
+  id String @id @default(uuid()) @db.Uuid
+  patient_id String @db.Uuid
+  score_date DateTime @db.Date
+  iss7 Int
+  hss7 Int
+  daily_score Int
+  notes String?
+  created_at DateTime @default(now())
+  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
+  @@unique([patient_id,score_date])
+  @@map("uas7_scores")
+}
+
+model Prescription {
+  id String @id @default(uuid()) @db.Uuid
+  medical_record_id String @db.Uuid
+  doctor_id String? @db.Uuid
+  notes String?
+  created_at DateTime @default(now())
+  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
+  doctor User? @relation(fields:[doctor_id],references:[id],onDelete:SetNull)
+  items PrescriptionItem[]
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id String @id @default(uuid()) @db.Uuid
+  prescription_id String @db.Uuid
+  medicine_name String
+  dosage String
+  frequency String
+  duration String
+  quantity Int @default(1)
+  instructions String?
+  prescription Prescription @relation(fields:[prescription_id],references:[id],onDelete:Cascade)
+  @@map("prescription_items")
+}
+
+model LabRequest {
+  id String @id @default(uuid()) @db.Uuid
+  medical_record_id String @db.Uuid
+  doctor_id String? @db.Uuid
+  status String @default("pending")
+  notes String?
+  created_at DateTime @default(now())
+  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
+  doctor User? @relation(fields:[doctor_id],references:[id],onDelete:SetNull)
+  items LabRequestItem[]
+  @@map("lab_requests")
+}
+
+model LabRequestItem {
+  id String @id @default(uuid()) @db.Uuid
+  lab_request_id String @db.Uuid
+  test_name String
+  notes String?
+  lab_request LabRequest @relation(fields:[lab_request_id],references:[id],onDelete:Cascade)
+  results LabResult[]
+  @@map("lab_request_items")
+}
+
+model LabResult {
+  id String @id @default(uuid()) @db.Uuid
+  lab_request_item_id String @db.Uuid
+  result_value String
+  unit String?
+  reference_range String?
+  notes String?
+  media_id String? @db.Uuid
+  created_at DateTime @default(now())
+  item LabRequestItem @relation(fields:[lab_request_item_id],references:[id],onDelete:Cascade)
+  media MediaAttachment? @relation(fields:[media_id],references:[id],onDelete:Restrict)
+  @@map("lab_results")
+}
+
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+  user_id String @db.Uuid
+  title String
+  body String
+  type String @default("system")
+  data Json?
+  is_read Boolean @default(false)
+  sent_at DateTime?
+  delivery_status String @default("pending")
+  created_at DateTime @default(now())
+  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
+  @@index([user_id,is_read,created_at])
+  @@map("notifications")
+}
+
+model UserFcmToken {
+  id String @id @default(uuid()) @db.Uuid
+  user_id String @db.Uuid
+  token String @unique
+  device_id String?
+  platform String @default("web")
+  created_at DateTime @default(now())
+  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
+  @@map("user_fcm_tokens")
+}
+
+model UserNotificationSetting {
+  user_id String @id @db.Uuid
+  push_enabled Boolean @default(true)
+  sound_enabled Boolean @default(true)
+  uas7_reminder Boolean @default(true)
+  medication_reminder Boolean @default(true)
+  lab_results_enabled Boolean @default(true)
+  prescriptions_enabled Boolean @default(true)
+  appointment_enabled Boolean @default(true)
+  reminder_time String @default("20:00")
+  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
+  @@map("user_notification_settings")
+}

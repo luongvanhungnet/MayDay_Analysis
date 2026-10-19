@@ -1,0 +1,36 @@
+{
+  "name": "mayday",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,green \"npm run dev -w @mayday/api\" \"npm run dev -w @mayday/web\"",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test --workspaces",
+    "test:integration": "node scripts/smoke.mjs",
+    "db:generate": "npm run db:generate -w @mayday/api",
+    "db:migrate": "npm run db:migrate -w @mayday/api",
+    "db:seed": "npm run db:seed -w @mayday/api",
+    "db:studio": "npm run db:studio -w @mayday/api",
+    "infra:up": "docker compose up -d postgres redis minio",
+    "infra:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "overrides": {
+    "shell-quote": "^1.12.0",
+    "effect": "^3.20.0",
+    "deepmerge-ts": "8.0.2",
+    "js-yaml": "5.4.3",
+    "@prisma/config": { "deepmerge-ts": "8.0.2" },
+    "@nestjs/swagger": { "js-yaml": "5.4.3" }
+  }
+}

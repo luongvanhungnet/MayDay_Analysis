@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: mayday
+      POSTGRES_USER: mayday
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mayday_dev}
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mayday -d mayday"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["127.0.0.1:56379:6379"]
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  minio:
+    build:
+      context: .
+      dockerfile: infra/minio.Dockerfile
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-mayday}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-mayday_storage_dev}
+    ports: ["127.0.0.1:59000:9000", "127.0.0.1:59001:9001"]
+    volumes: ["minio_data:/data"]
+  api:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://mayday:${POSTGRES_PASSWORD:-mayday_dev}@postgres:5432/mayday?schema=public
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio: { condition: service_started }
+  web:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports: ["127.0.0.1:8080:80"]
+    depends_on: [api]
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+

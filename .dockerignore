@@ -3,5 +3,7 @@ node_modules
 **/dist
 .env
 .git
+.data
+.db-check-path
 docs/DR_MayDay.pdf
 docs/MayDay_assets

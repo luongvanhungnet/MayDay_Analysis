@@ -1,0 +1,24 @@
+{
+  "source_sha256": "9b4dac46de9565bd165f2312553e96d77bcaffa628bf40c2eeb6b74c16a8363e",
+  "names": [
+    "Body",
+    "Multiple",
+    "Single"
+  ],
+  "images": {
+    "train": 69,
+    "valid": 21,
+    "test": 10
+  },
+  "annotations": {
+    "Single": 1280,
+    "Multiple": 483,
+    "Body": 114
+  },
+  "input_formats": {
+    "box": 301,
+    "polygon": 1576
+  },
+  "exact_duplicate_images": [],
+  "warning": "Multiple marks regions, not a known number of individual wheals. Patient identities are unavailable; patient-level split leakage has not been ruled out."
+}

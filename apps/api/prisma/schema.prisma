@@ -4,453 +4,946 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @default(uuid()) @db.Uuid
-  full_name String
-  phone String @unique
-  email String? @unique
-  password_hash String
-  is_active Boolean @default(true)
-  token_version Int @default(0)
-  reset_token String?
-  reset_expires_at DateTime?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  patient Patient?
-  staff Staff?
-  created_records MedicalRecord[] @relation("RecordCreator")
-  assigned_records MedicalRecord[] @relation("AssignedDoctor")
-  uploaded_media MediaAttachment[]
-  prescriptions Prescription[]
-  lab_requests LabRequest[]
-  notifications Notification[]
-  fcm_tokens UserFcmToken[]
-  notification_setting UserNotificationSetting?
-  blacklisted_tokens TokenBlacklist[]
-  @@map("users")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model anhchuptonthuong {
+  ma_anh                                                                                    BigInt          @id(map: "pk_anhchuptonthuong") @default(autoincrement())
+  ma_tep_dinh_kem                                                                           BigInt
+  ma_dot_ton_thuong_da                                                                      BigInt?
+  ma_vi_tri_ton_thuong                                                                      BigInt?
+  thoi_diem_chup                                                                            DateTime        @db.Timestamptz(6)
+  moc_tien_trien                                                                            String?         @db.VarChar(50)
+  diem_ngua_nrs                                                                             Int?            @db.SmallInt
+  diem_dau_nrs                                                                              Int?            @db.SmallInt
+  diem_bong_rat_nrs                                                                         Int?            @db.SmallInt
+  so_luong_not_san                                                                          Int?
+  chi_so_auas_cuc_bo                                                                        Decimal?        @db.Decimal(5, 2)
+  url_anh                                                                                   String?         @db.VarChar(500)
+  thoi_diem_tao                                                                             DateTime        @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat                                                                        DateTime        @default(now()) @db.Timestamptz(6)
+  vitritonthuong_anhchuptonthuong_ma_vi_tri_ton_thuong_ma_dot_ton_thuong_daTovitritonthuong vitritonthuong? @relation("anhchuptonthuong_ma_vi_tri_ton_thuong_ma_dot_ton_thuong_daTovitritonthuong", fields: [ma_vi_tri_ton_thuong, ma_dot_ton_thuong_da], references: [ma_vi_tri_ton_thuong, ma_dot_ton_thuong_da], onDelete: Restrict, onUpdate: NoAction, map: "fk_anh_vitri_cung_dot")
+  dottonthuongda                                                                            dottonthuongda? @relation(fields: [ma_dot_ton_thuong_da], references: [ma_dot_ton_thuong_da], onDelete: Restrict, onUpdate: NoAction, map: "fk_anhtonthuong_dottonthuongda")
+  tepdinhkem                                                                                tepdinhkem      @relation(fields: [ma_tep_dinh_kem], references: [ma_tep_dinh_kem], onUpdate: NoAction, map: "fk_anhtonthuong_tepdinhkem")
+  vitritonthuong_anhchuptonthuong_ma_vi_tri_ton_thuongTovitritonthuong                      vitritonthuong? @relation("anhchuptonthuong_ma_vi_tri_ton_thuongTovitritonthuong", fields: [ma_vi_tri_ton_thuong], references: [ma_vi_tri_ton_thuong], onDelete: Restrict, onUpdate: NoAction, map: "fk_anhtonthuong_vitritonthuong")
+
+  @@index([ma_dot_ton_thuong_da], map: "idx_anhchup_dot")
+  @@index([ma_tep_dinh_kem], map: "idx_anhchup_ma_tep")
+  @@index([ma_vi_tri_ton_thuong], map: "idx_anhchup_vitri")
 }
 
-model Patient {
-  user_id String @id @db.Uuid
-  year_of_birth Int?
-  gender String?
-  occupation String?
-  ethnicity String?
-  address String?
-  province String?
-  district String?
-  ward String?
-  insurance_number String?
-  insurance_expiry DateTime? @db.Date
-  emergency_contact String?
-  emergency_phone String?
-  outpatient_date DateTime? @db.Date
-  user User @relation(fields:[user_id],references:[id],onDelete:Restrict)
-  medical_records MedicalRecord[]
-  uas7_scores Uas7Score[]
-  lesion_episodes LesionEpisode[]
-  @@map("patients")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model benhanmaydaycap {
+  ma_ho_so                                                     BigInt                   @id(map: "pk_benhanmaydaycap")
+  loai_benh_an                                                 String?                  @default("CAP")
+  nhap_vien                                                    Boolean?
+  cd_soc_phan_ve                                               Boolean?
+  cd_phan_ve                                                   Boolean?
+  cd_may_day_cap_nang                                          Boolean?
+  cd_may_day_cap_thong_thuong                                  Boolean?
+  tien_su_benh_nen_da                                          String?
+  tien_su_benh_nen_ho_hap                                      String?
+  tien_su_benh_nen_tuan_hoan                                   String?
+  tien_su_benh_tim_mach_ghi_ro                                 String?
+  tien_su_benh_tieu_hoa_man_tinh_ghi_ro                        String?
+  tien_su_benh_nen_tieu_hoa                                    String?
+  nhom_yeu_to_nghi_ngo                                         String?
+  co_nghi_ngo_dot_nay                                          Boolean?
+  ten_yeu_to_nghi_ngo                                          String?
+  loai_tien_su                                                 String?
+  da_tung_phan_ung_truoc_day                                   Boolean?
+  thoi_gian_tiep_xuc_den_khoi_phat                             Unsupported("interval")?
+  thoi_gian_keo_dai_tb                                         Unsupported("interval")?
+  dot_gan_nhat_cach                                            Unsupported("interval")?
+  tien_su_phan_ve_ghi_ro                                       String?
+  tien_su_di_ung_ghi_ro                                        String?
+  da_dieu_tri_benh_dot_nay                                     Boolean?
+  tuoi_lan_dau_bi_benh                                         Int?
+  so_lan_may_day_cap_truoc                                     Int?
+  thoi_diem_cap_nhat                                           DateTime                 @default(now()) @db.Timestamptz(6)
+  benh_phu                                                     String?
+  hosobenhan_benhanmaydaycap_ma_ho_so_loai_benh_anTohosobenhan hosobenhan?              @relation("benhanmaydaycap_ma_ho_so_loai_benh_anTohosobenhan", fields: [ma_ho_so, loai_benh_an], references: [ma_ho_so, loai_benh_an], onDelete: NoAction, onUpdate: NoAction, map: "fk_benhanmaydaycap_hoso")
+  hosobenhan_hosobenhan_ma_subtype_capTobenhanmaydaycap        hosobenhan[]             @relation("hosobenhan_ma_subtype_capTobenhanmaydaycap")
+  tinhtrangnhiemtrung                                          tinhtrangnhiemtrung?
 }
 
-model Staff {
-  user_id String @id @db.Uuid
-  role_id String @db.Uuid
-  branch_id String? @db.Uuid
-  department_id String? @db.Uuid
-  room_id String? @db.Uuid
-  specialty String?
-  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
-  role Role @relation(fields:[role_id],references:[id],onDelete:Restrict)
-  branch Branch? @relation(fields:[branch_id],references:[id],onDelete:Restrict)
-  department Department? @relation(fields:[department_id],references:[id],onDelete:SetNull)
-  room Room? @relation(fields:[room_id],references:[id],onDelete:Restrict)
-  @@map("staffs")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model benhanmaydayman {
+  ma_ho_so                                                     BigInt                 @id(map: "pk_benhanmaydayman")
+  loai_benh_an                                                 String?                @default("MAN")
+  chan_doan_chinh                                              String?
+  phan_nhom_csu                                                String?
+  chung_da_ve_noi                                              Boolean?
+  may_day_cholinergic                                          Boolean?
+  may_day_do_lanh                                              Boolean?
+  may_day_adrenergic                                           Boolean?
+  may_day_do_nuoc                                              Boolean?
+  may_day_do_anh_sang                                          Boolean?
+  may_day_cam_ung_khac                                         Boolean?
+  may_day_cam_ung_khac_ghi_ro                                  String?
+  bieu_hien_qua_trinh_benh                                     String?
+  hosobenhan_benhanmaydayman_ma_ho_so_loai_benh_anTohosobenhan hosobenhan?            @relation("benhanmaydayman_ma_ho_so_loai_benh_anTohosobenhan", fields: [ma_ho_so, loai_benh_an], references: [ma_ho_so, loai_benh_an], onDelete: NoAction, onUpdate: NoAction, map: "fk_benhanmaydayman_hoso")
+  benhsucacdotbenhtruoc                                        benhsucacdotbenhtruoc?
+  dottonthuongda                                               dottonthuongda[]
+  hosobenhan_hosobenhan_ma_subtype_manTobenhanmaydayman        hosobenhan[]           @relation("hosobenhan_ma_subtype_manTobenhanmaydayman")
+  nhatkyaashangngay                                            nhatkyaashangngay[]
+  nhatkyuashangngay                                            nhatkyuashangngay[]
 }
 
-model Role {
-  id String @id @default(uuid()) @db.Uuid
-  name String
-  code String @unique
-  description String?
-  parent_role_id String? @db.Uuid
-  parent Role? @relation("RoleHierarchy",fields:[parent_role_id],references:[id],onDelete:SetNull)
-  children Role[] @relation("RoleHierarchy")
-  staffs Staff[]
-  permissions RolePermission[]
-  @@map("roles")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model benhnhan {
+  ma_benh_nhan             BigInt              @id(map: "pk_benh_nhan")
+  ma_his                   String?             @unique(map: "uq_benh_nhan_ma_his") @db.VarChar(50)
+  nghe_nghiep              String?             @db.VarChar(40)
+  dan_toc                  String?             @db.VarChar(50)
+  bhyt_so_the              String?             @db.VarChar(30)
+  bhyt_gia_tri_den         DateTime?           @db.Date
+  nguoi_nha_ho_ten_dia_chi String?
+  nguoi_nha_so_dien_thoai  String?             @db.VarChar(10)
+  nguoi                    nguoi               @relation(fields: [ma_benh_nhan], references: [ma_nguoi], onUpdate: NoAction, map: "fk_benh_nhan_nguoi")
+  chukytheodoiuas7         chukytheodoiuas7[]
+  dottonthuongda           dottonthuongda[]
+  hosobenhan               hosobenhan[]
+  nhatkyaashangngay        nhatkyaashangngay[]
+  nhatkyuashangngay        nhatkyuashangngay[]
+  sanglocbaodongdo         sanglocbaodongdo[]
 }
 
-model Permission {
-  id String @id @default(uuid()) @db.Uuid
-  code String @unique
-  name String
-  description String?
-  roles RolePermission[]
-  endpoints PermissionEndpoint[]
-  @@map("permissions")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model benhsucacdotbenhtruoc {
+  ma_tien_su                BigInt          @id(map: "pk_benhsucacdotbenhtruoc") @default(autoincrement())
+  ma_ho_so                  BigInt          @unique(map: "uq_benhsucacdotbenhtruoc_hoso")
+  tung_co_dot_tuong_tu      Boolean?
+  tuoi_khoi_phat            Int?            @db.SmallInt
+  so_dot_truoc              Int?
+  kieu_dien_bien            String?         @db.VarChar
+  bieu_hien_dot_truoc       String?
+  da_tung_nhap_vien         Boolean?
+  so_lan_nhap_vien          Int?
+  thoi_gian_tu_dot_gan_nhat Decimal?        @db.Decimal
+  dien_bien_cac_dot_truoc   String?
+  benhanmaydayman           benhanmaydayman @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_benhsucacdotbenhtruoc_benh_an_man")
 }
 
-model RolePermission {
-  role_id String @db.Uuid
-  permission_id String @db.Uuid
-  role Role @relation(fields:[role_id],references:[id],onDelete:Cascade)
-  permission Permission @relation(fields:[permission_id],references:[id],onDelete:Cascade)
-  @@id([role_id,permission_id])
-  @@map("role_permissions")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chidanngungthuoc {
+  ma_chi_dan_ngung     BigInt    @id(map: "pk_chidanngungthuoc") @default(autoincrement())
+  ma_don_thuoc         BigInt
+  thuoc_can_ngung      String    @db.VarChar(255)
+  ngung_tu_ngay        DateTime? @db.Date
+  thoi_gian_ngung_ngay Int?
+  muc_dich             String?   @db.VarChar(100)
+  muc_dich_khac_ghi_ro String?   @db.VarChar(255)
+  donthuoc             donthuoc  @relation(fields: [ma_don_thuoc], references: [ma_don_thuoc], onUpdate: NoAction, map: "fk_chidanngungthuoc_donthuoc")
+
+  @@index([ma_don_thuoc], map: "idx_chidanngungthuoc_ma_don_thuoc")
 }
 
-model ApiEndpoint {
-  id String @id @default(uuid()) @db.Uuid
-  method String
-  path String
-  description String?
-  permissions PermissionEndpoint[]
-  @@unique([method,path])
-  @@map("api_endpoints")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chinhanh {
+  ma_chi_nhanh  BigInt      @id(map: "pk_chi_nhanh") @default(autoincrement())
+  ten_chi_nhanh String      @db.VarChar(150)
+  dia_chi       String
+  so_dien_thoai String?     @db.VarChar(20)
+  trang_thai    Boolean     @default(true)
+  khoaphong     khoaphong[]
+  nhanvien      nhanvien[]
 }
 
-model PermissionEndpoint {
-  permission_id String @db.Uuid
-  endpoint_id String @db.Uuid
-  permission Permission @relation(fields:[permission_id],references:[id],onDelete:Cascade)
-  endpoint ApiEndpoint @relation(fields:[endpoint_id],references:[id],onDelete:Cascade)
-  @@id([permission_id,endpoint_id])
-  @@map("permissions_endpoints")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chitietdonthuoc {
+  ma_chi_tiet_don_thuoc BigInt   @id(map: "pk_chitietdonthuoc") @default(autoincrement())
+  ma_don_thuoc          BigInt
+  ma_thuoc              String?  @db.VarChar(50)
+  ten_thuoc_bo_sung     String?  @db.VarChar(255)
+  lieu_dung             String   @db.VarChar(100)
+  thoi_gian_dung        String   @db.VarChar(100)
+  ma_ke_hoach_dieu_tri  String?  @db.VarChar(50)
+  thoi_diem_tao         DateTime @default(now()) @db.Timestamptz(6)
+  donthuoc              donthuoc @relation(fields: [ma_don_thuoc], references: [ma_don_thuoc], onUpdate: NoAction, map: "fk_chitietdonthuoc_donthuoc")
+  thuoc                 thuoc?   @relation(fields: [ma_thuoc], references: [ma_thuoc], onDelete: Restrict, onUpdate: NoAction, map: "fk_chitietdonthuoc_thuoc")
+
+  @@index([ma_don_thuoc], map: "idx_chitietdonthuoc_ma_don_thuoc")
+  @@index([ma_thuoc], map: "idx_chitietdonthuoc_ma_thuoc")
 }
 
-model Branch {
-  id String @id @default(uuid()) @db.Uuid
-  name String
-  address String?
-  phone String?
-  is_active Boolean @default(true)
-  created_at DateTime @default(now())
-  departments Department[]
-  staffs Staff[]
-  @@map("branches")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chitietketquanghiemphap {
+  ma_chi_tiet_ket_qua_nghiem_phap                                                            BigInt                   @id(map: "pk_chi_tiet_kqnp") @default(autoincrement())
+  ma_phien_nghiem_phap                                                                       BigInt
+  loai_nghiem_phap                                                                           BigInt
+  ket_qua                                                                                    String?                  @db.VarChar(12)
+  nguong_gia_tri_so                                                                          Decimal?                 @db.Decimal(12, 4)
+  nguong_gia_tri_chu                                                                         String?
+  don_vi_do                                                                                  String?                  @db.VarChar(30)
+  diem_ngua_nrs                                                                              Int?                     @db.SmallInt
+  diem_bong_rat_nrs                                                                          Int?                     @db.SmallInt
+  diem_dau_nrs                                                                               Int?                     @db.SmallInt
+  can_nguyen_khac_ten                                                                        String?
+  la_can_nguyen_khac                                                                         Boolean                  @default(false)
+  loainghiemphap_chitietketquanghiemphap_loai_nghiem_phapToloainghiemphap                    loainghiemphap           @relation("chitietketquanghiemphap_loai_nghiem_phapToloainghiemphap", fields: [loai_nghiem_phap], references: [ma_nghiem_phap], onUpdate: NoAction, map: "fk_chi_tiet_kqnp_loai")
+  phiennghiemphapkichthich                                                                   phiennghiemphapkichthich @relation(fields: [ma_phien_nghiem_phap], references: [ma_phien_nghiem_phap], onUpdate: NoAction, map: "fk_chi_tiet_kqnp_phien")
+  loainghiemphap_chitietketquanghiemphap_loai_nghiem_phap_la_can_nguyen_khacToloainghiemphap loainghiemphap           @relation("chitietketquanghiemphap_loai_nghiem_phap_la_can_nguyen_khacToloainghiemphap", fields: [loai_nghiem_phap, la_can_nguyen_khac], references: [ma_nghiem_phap, la_can_nguyen_khac], onUpdate: NoAction, map: "fk_kqnp_phanloai")
+
+  @@index([loai_nghiem_phap], map: "idx_chi_tiet_kqnp_loai")
+  @@index([ma_phien_nghiem_phap], map: "idx_chi_tiet_kqnp_phien")
 }
 
-model Department {
-  id String @id @default(uuid()) @db.Uuid
-  branch_id String @db.Uuid
-  name String
-  description String?
-  branch Branch @relation(fields:[branch_id],references:[id],onDelete:Restrict)
-  rooms Room[]
-  staffs Staff[]
-  @@map("departments")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chitiettonthuongcaptinh {
+  ma_chi_tiet_ton_thuong_cap_tinh BigInt       @id(map: "pk_chitiettonthuongcaptinh") @default(autoincrement())
+  ma_phien_kham                   BigInt
+  dang_ton_thuong                 String?      @db.VarChar
+  dang_ton_thuong_khac            String?
+  kich_thuoc_max_mm               Decimal?     @db.Decimal
+  kich_thuoc_min_mm               Decimal?     @db.Decimal
+  kich_thuoc_dong_deu_mm          Decimal?     @db.Decimal
+  loai_kich_thuoc                 String?      @db.VarChar
+  thoi_gian_ton_tai_tb            Decimal?     @db.Decimal
+  dien_bien                       String?
+  so_luong_san_phu                Int?
+  phu_mach_ben                    Boolean?
+  vi_tri                          String?
+  vi_tri_dac_biet_ghi_ro          String?
+  phienkhamcap                    phienkhamcap @relation(fields: [ma_phien_kham], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_chitiettonthuongcaptinh_phien_cap")
+
+  @@index([ma_phien_kham], map: "idx_ton_thuong_cap_phien")
 }
 
-model Room {
-  id String @id @default(uuid()) @db.Uuid
-  department_id String? @db.Uuid
-  name String
-  description String?
-  department Department? @relation(fields:[department_id],references:[id],onDelete:SetNull)
-  staffs Staff[]
-  @@map("rooms")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chitiettonthuongsanphu {
+  ma_chi_tiet_ton_thuong BigInt         @id(map: "pk_chitiettonthuongsanphu") @default(autoincrement())
+  ma_phien_kham          BigInt
+  dang_ton_thuong        String?        @db.VarChar
+  kich_thuoc             Decimal?       @db.Decimal
+  thoi_gian_ton_tai      Decimal?       @db.Decimal
+  thoi_diem              DateTime?      @db.Timestamptz(6)
+  tinh_trang_dung_thuoc  String?        @db.VarChar
+  ma_dac_diem_san_phu    BigInt?
+  so_luong               Int?
+  vi_tri                 String?
+  phienkhamman           phienkhamman   @relation(fields: [ma_phien_kham], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_chitiettonthuongsanphu_phien_man")
+  dacdiemsanphu          dacdiemsanphu? @relation(fields: [ma_dac_diem_san_phu], references: [ma_dac_diem_san_phu], onDelete: Restrict, onUpdate: NoAction, map: "fk_sanphu_dacdiem")
+
+  @@index([ma_dac_diem_san_phu], map: "idx_chitiettonthuongsanphu_ma_dac_diem_san_phu")
+  @@index([ma_phien_kham], map: "idx_san_phu_phien")
 }
 
-model TokenBlacklist {
-  id String @id @default(uuid()) @db.Uuid
-  token_hash String @unique
-  user_id String @db.Uuid
-  expires_at DateTime
-  created_at DateTime @default(now())
-  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
-  @@index([expires_at])
-  @@map("token_blacklist")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model chukytheodoiuas7 {
+  ma_chu_ky                                                                                        BigInt              @id(map: "pk_chukytheodoiuas7") @default(autoincrement())
+  ma_benh_nhan                                                                                     BigInt
+  ngay_bat_dau                                                                                     DateTime            @db.Date
+  ngay_ket_thuc                                                                                    DateTime            @db.Date
+  trang_thai_chu_ky                                                                                String?             @default("DANG_THEO_DOI") @db.VarChar(50)
+  thoi_diem_tao                                                                                    DateTime            @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat                                                                               DateTime            @default(now()) @db.Timestamptz(6)
+  benhnhan                                                                                         benhnhan            @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onUpdate: NoAction, map: "fk_chukyuas7_benhnhan")
+  nhatkyuashangngay_nhatkyuashangngay_ma_chu_kyTochukytheodoiuas7                                  nhatkyuashangngay[] @relation("nhatkyuashangngay_ma_chu_kyTochukytheodoiuas7")
+  nhatkyuashangngay_nhatkyuashangngay_ma_chu_ky_ma_benh_nhan_ngay_bat_dau_chu_kyTochukytheodoiuas7 nhatkyuashangngay[] @relation("nhatkyuashangngay_ma_chu_ky_ma_benh_nhan_ngay_bat_dau_chu_kyTochukytheodoiuas7")
+
+  @@unique([ma_chu_ky, ma_benh_nhan, ngay_bat_dau], map: "uq_chuky_benhnhan_ngay")
+  @@index([ma_benh_nhan], map: "idx_chukyuas7_benhnhan")
 }
 
-model Template {
-  id String @id @default(uuid()) @db.Uuid
-  code_template String @unique @default(uuid())
-  kind String @default("clinical")
-  classification_rules Json?
-  name String
-  description String?
-  version String @default("1.0")
-  is_active Boolean @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  sections TemplateSection[]
-  medical_records MedicalRecord[]
-  @@map("templates")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model dacdiemsanphu {
+  ma_dac_diem_san_phu    BigInt                   @id @default(autoincrement())
+  ten_dac_diem           String                   @unique @db.VarChar(150)
+  mo_ta                  String?
+  chitiettonthuongsanphu chitiettonthuongsanphu[]
 }
 
-model TemplateSection {
-  id String @id @default(uuid()) @db.Uuid
-  template_id String @db.Uuid
-  title String
-  description String?
-  order Int @default(0)
-  filled_by String @default("both")
-  template Template @relation(fields:[template_id],references:[id],onDelete:Cascade)
-  questions Question[]
-  @@map("template_sections")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model danhgiamucdohoatdongbenh {
+  ma_danh_gia_hoat_dong             BigInt       @id(map: "pk_danhgiamucdohoatdongbenh") @default(autoincrement())
+  ma_phien_kham_man                 BigInt
+  du_du_lieu_7_ngay                 Boolean?     @default(true)
+  ma_nguoi_danh_gia                 BigInt?
+  thoi_diem_danh_gia                DateTime     @default(now()) @db.Timestamptz(6)
+  hss7_san_phu_khong_dung_thuoc     Int?         @db.SmallInt
+  hss7_san_phu_dung_thuoc_deu       Int?         @db.SmallInt
+  hss7_san_phu_dung_thuoc_khong_deu Int?         @db.SmallInt
+  iss7_ngua_khong_dung_thuoc        Int?         @db.SmallInt
+  iss7_ngua_dung_thuoc_deu          Int?         @db.SmallInt
+  iss7_ngua_dung_thuoc_khong_deu    Int?         @db.SmallInt
+  uas7_tong_khong_dung_thuoc        Int?         @db.SmallInt
+  uas7_tong_dung_thuoc_deu          Int?         @db.SmallInt
+  uas7_tong_dung_thuoc_khong_deu    Int?         @db.SmallInt
+  ghi_chu                           String?
+  nguoi                             nguoi?       @relation(fields: [ma_nguoi_danh_gia], references: [ma_nguoi], onDelete: Restrict, onUpdate: NoAction, map: "fk_danhgia_nguoi")
+  phienkhamman                      phienkhamman @relation(fields: [ma_phien_kham_man], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_danhgiahoatdong_phienkhamman")
+
+  @@index([ma_phien_kham_man], map: "idx_danhgia_phienkhamman")
+  @@index([ma_nguoi_danh_gia], map: "idx_danhgiamucdohoatdongbenh_ma_nguoi_danh_gia")
 }
 
-model Question {
-  id String @id @default(uuid()) @db.Uuid
-  section_id String @db.Uuid
-  parent_question_id String? @db.Uuid
-  content String
-  type_question String @default("text")
-  is_required Boolean @default(false)
-  order Int @default(0)
-  show_if_answer Json?
-  condition_rules Json?
-  section TemplateSection @relation(fields:[section_id],references:[id],onDelete:Cascade)
-  parent Question? @relation("QuestionHierarchy",fields:[parent_question_id],references:[id],onDelete:Cascade)
-  children Question[] @relation("QuestionHierarchy")
-  options QuestionOption[]
-  answers Answer[]
-  @@map("questions")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model dauhieusinhton {
+  ma_dau_hieu_sinh_ton           BigInt    @id(map: "pk_dauhieusinhton") @default(autoincrement())
+  ma_phien_kham                  BigInt
+  ma_bac_si                      BigInt?
+  thoi_diem                      DateTime? @db.Timestamptz(6)
+  tri_giac                       String?   @db.VarChar
+  nhiet_do                       Decimal?  @db.Decimal
+  spo2                           Decimal?  @db.Decimal
+  mach                           Decimal?  @db.Decimal
+  huyet_ap_tam_thu               Decimal?  @db.Decimal
+  huyet_ap_tam_truong            Decimal?  @db.Decimal
+  nhip_tho                       Decimal?  @db.Decimal
+  bat_thuong_co_quan_khac        Boolean?
+  bat_thuong_co_quan_khac_ghi_ro String?
+  thoi_diem_tao                  DateTime  @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat             DateTime  @default(now()) @db.Timestamptz(6)
+  nhanvien                       nhanvien? @relation(fields: [ma_bac_si], references: [ma_nhan_vien], onDelete: Restrict, onUpdate: NoAction, map: "fk_dauhieusinhton_bacsi")
+  phienkham                      phienkham @relation(fields: [ma_phien_kham], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_dauhieusinhton_phienkham")
+
+  @@index([ma_bac_si], map: "idx_dhst_bacsi")
+  @@index([ma_phien_kham, thoi_diem], map: "idx_dhst_phien_thoi_diem")
 }
 
-model QuestionOption {
-  id String @id @default(uuid()) @db.Uuid
-  question_id String @db.Uuid
-  label String
-  value String
-  order Int @default(0)
-  question Question @relation(fields:[question_id],references:[id],onDelete:Cascade)
-  answers Answer[]
-  @@unique([question_id,value])
-  @@map("question_options")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model donthuoc {
+  ma_don_thuoc                   BigInt             @id(map: "pk_donthuoc") @default(autoincrement())
+  ma_ho_so                       BigInt
+  ngay_ke_don                    DateTime           @default(dbgenerated("CURRENT_DATE")) @db.Date
+  trang_thai_don                 String?            @default("DANG_DIEU_TRI") @db.VarChar(50)
+  ghi_chu_dieu_tri               String?
+  ngung_thuoc_lan_sau            Boolean?           @default(false)
+  thuoc_can_ngung_truoc_tai_kham String?
+  thoi_diem_tao                  DateTime           @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat             DateTime           @default(now()) @db.Timestamptz(6)
+  ma_phien_kham                  BigInt
+  chidanngungthuoc               chidanngungthuoc[]
+  chitietdonthuoc                chitietdonthuoc[]
+  hosobenhan                     hosobenhan         @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_donthuoc_hosobenhan")
+  phienkham                      phienkham          @relation(fields: [ma_phien_kham, ma_ho_so], references: [ma_phien_kham, ma_ho_so], onUpdate: NoAction, map: "fk_donthuoc_phien_hoso")
+
+  @@index([ma_ho_so], map: "idx_donthuoc_ma_ho_so")
+  @@index([ma_phien_kham], map: "idx_donthuoc_ma_phien_kham")
 }
 
-model MedicalRecord {
-  id String @id @default(uuid()) @db.Uuid
-  patient_id String @db.Uuid
-  template_id String @db.Uuid
-  assigned_doctor_id String? @db.Uuid
-  created_by String? @db.Uuid
-  status String @default("pending")
-  diagnosis String?
-  notes String?
-  instructions String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  closed_at DateTime?
-  completed_at DateTime?
-  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
-  template Template @relation(fields:[template_id],references:[id],onDelete:Restrict)
-  assigned_doctor User? @relation("AssignedDoctor",fields:[assigned_doctor_id],references:[id],onDelete:SetNull)
-  creator User? @relation("RecordCreator",fields:[created_by],references:[id],onDelete:SetNull)
-  answers Answer[]
-  prescriptions Prescription[]
-  lab_requests LabRequest[]
-  lesion_episodes LesionEpisode[]
-  @@index([patient_id,created_at])
-  @@index([assigned_doctor_id,status])
-  @@map("medical_records")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model dottonthuongda {
+  ma_dot_ton_thuong_da                     BigInt             @id(map: "pk_dottonthuongda") @default(autoincrement())
+  ma_benh_nhan                             BigInt
+  ma_ho_so_man                             BigInt?
+  ten_dot_ton_thuong_da                    String?            @db.VarChar(255)
+  thoi_diem_xuat_hien                      DateTime?          @db.Timestamptz(6)
+  hoan_canh_xuat_hien                      String?            @db.VarChar(255)
+  hoan_canh_xuat_hien_khac                 String?
+  ten_thuoc_dung_gan_thoi_diem_xuat_hien   String?            @db.VarChar(255)
+  thoi_gian_dung_thuoc_truoc_khi_xuat_hien String?            @db.VarChar(100)
+  don_vi_thoi_gian                         String?            @db.VarChar(50)
+  chi_tiet_dot_ton_thuong                  String?
+  thoi_diem_tao                            DateTime           @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat                       DateTime           @default(now()) @db.Timestamptz(6)
+  anhchuptonthuong                         anhchuptonthuong[]
+  benhanmaydayman                          benhanmaydayman?   @relation(fields: [ma_ho_so_man], references: [ma_ho_so], onDelete: Restrict, onUpdate: NoAction, map: "fk_dottonthuongda_benhanman")
+  benhnhan                                 benhnhan           @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onUpdate: NoAction, map: "fk_dottonthuongda_benhnhan")
+  hosobenhan                               hosobenhan?        @relation(fields: [ma_ho_so_man, ma_benh_nhan], references: [ma_ho_so, ma_benh_nhan], onUpdate: NoAction, map: "fk_dottonthuongda_cung_benhnhan")
+  vitritonthuong                           vitritonthuong[]
+
+  @@index([ma_benh_nhan], map: "idx_dottonthuong_benhnhan")
+  @@index([ma_ho_so_man], map: "idx_dottonthuong_hoso_man")
 }
 
-model Answer {
-  id String @id @default(uuid()) @db.Uuid
-  medical_record_id String @db.Uuid
-  question_id String @db.Uuid
-  value Json
-  answer_text String?
-  question_option_id String? @db.Uuid
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Cascade)
-  question Question @relation(fields:[question_id],references:[id],onDelete:Restrict)
-  question_option QuestionOption? @relation(fields:[question_option_id],references:[id],onDelete:Restrict)
-  images AnswerImage[]
-  @@unique([medical_record_id,question_id])
-  @@map("answers")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hoancanhkhoiphatdiung {
+  ma_hoan_canh_khoi_phat   BigInt     @id(map: "pk_hoancanhkhoiphatdiung") @default(autoincrement())
+  ma_ho_so                 BigInt     @unique(map: "uq_hoancanhkhoiphatdiung_hoso")
+  thuc_an_nghi_ngo         String?
+  thuc_an_thoi_gian        Decimal?   @db.Decimal
+  thuc_an_tung_bi          Boolean?
+  thuc_an_loai_tien_su     String?    @db.VarChar
+  thuc_an_tien_su_ghi_ro   String?
+  thuoc_nghi_ngo           String?
+  thuoc_thoi_gian          Decimal?   @db.Decimal
+  thuoc_tung_bi            Boolean?
+  thuoc_loai_tien_su       String?    @db.VarChar
+  thuoc_tien_su_ghi_ro     String?
+  con_trung_nghi_ngo       String?
+  con_trung_thoi_gian      Decimal?   @db.Decimal
+  con_trung_tung_bi        Boolean?
+  con_trung_loai_tien_su   String?    @db.VarChar
+  con_trung_tien_su_ghi_ro String?
+  khac_nghi_ngo            String?
+  khac_thoi_gian           Decimal?   @db.Decimal
+  khac_tung_bi             Boolean?
+  khac_loai_tien_su        String?    @db.VarChar
+  khac_tien_su_ghi_ro      String?
+  hosobenhan               hosobenhan @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_hoancanhkhoiphatdiung_hoso")
 }
 
-model MediaAttachment {
-  id String @id @default(uuid()) @db.Uuid
-  uploaded_by String @db.Uuid
-  file_name String
-  mime_type String
-  file_size Int
-  storage_key String @unique
-  url String
-  created_at DateTime @default(now())
-  uploader User @relation(fields:[uploaded_by],references:[id],onDelete:Restrict)
-  answer_images AnswerImage[]
-  lesion_photos LesionPhoto[]
-  lab_results LabResult[]
-  @@map("media_attachments")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model hosobenhan {
+  ma_ho_so                                                          BigInt                 @id(map: "pk_hosobenhan") @default(autoincrement())
+  ma_benh_nhan                                                      BigInt
+  loai_benh_an                                                      String
+  ma_subtype_cap                                                    BigInt?                @default(dbgenerated("\nCASE\n    WHEN (loai_benh_an = 'CAP'::text) THEN ma_ho_so\n    ELSE NULL::bigint\nEND"))
+  ma_subtype_man                                                    BigInt?                @default(dbgenerated("\nCASE\n    WHEN (loai_benh_an = 'MAN'::text) THEN ma_ho_so\n    ELSE NULL::bigint\nEND"))
+  thoi_diem_kham_lan_dau                                            DateTime?              @db.Timestamptz(6)
+  ngay_bat_dau_dieu_tri_ngoai_tru                                   DateTime?              @db.Date
+  ngay_ket_thuc_dieu_tri_ngoai_tru                                  DateTime?              @db.Date
+  chan_doan_tuyen_truoc                                             String?
+  chan_doan_ban_dau_phong_kham                                      String?
+  ket_qua_dieu_tri_bao_hiem                                         String?
+  thoi_gian_khoi_phat_tuan                                          Decimal?               @db.Decimal(12, 2)
+  trang_thai                                                        String                 @default("draft")
+  tien_su_gia_dinh                                                  String?
+  tien_su_gia_dinh_ghi_ro                                           String?
+  da_dieu_tri_truoc_kham                                            Boolean?
+  benhanmaydaycap_benhanmaydaycap_ma_ho_so_loai_benh_anTohosobenhan benhanmaydaycap[]       @relation("benhanmaydaycap_ma_ho_so_loai_benh_anTohosobenhan")
+  benhanmaydayman_benhanmaydayman_ma_ho_so_loai_benh_anTohosobenhan benhanmaydayman[]       @relation("benhanmaydayman_ma_ho_so_loai_benh_anTohosobenhan")
+  donthuoc                                                          donthuoc[]
+  dottonthuongda                                                    dottonthuongda[]
+  hoancanhkhoiphatdiung                                             hoancanhkhoiphatdiung?
+  benhanmaydaycap_hosobenhan_ma_subtype_capTobenhanmaydaycap        benhanmaydaycap?       @relation("hosobenhan_ma_subtype_capTobenhanmaydaycap", fields: [ma_subtype_cap], references: [ma_ho_so], onDelete: NoAction, onUpdate: NoAction, map: "fk_hoso_bat_buoc_cap")
+  benhanmaydayman_hosobenhan_ma_subtype_manTobenhanmaydayman        benhanmaydayman?       @relation("hosobenhan_ma_subtype_manTobenhanmaydayman", fields: [ma_subtype_man], references: [ma_ho_so], onDelete: NoAction, onUpdate: NoAction, map: "fk_hoso_bat_buoc_man")
+  benhnhan                                                          benhnhan               @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onUpdate: NoAction, map: "fk_hosobenhan_benhnhan")
+  nhatkyaashangngay                                                 nhatkyaashangngay[]
+  nhatkyuashangngay                                                 nhatkyuashangngay[]
+  phienkham                                                         phienkham[]
+  tepdinhkem                                                        tepdinhkem[]
+  tiensubanthan                                                     tiensubanthan?
+
+  @@unique([ma_ho_so, ma_benh_nhan], map: "uq_hoso_benhnhan")
+  @@unique([ma_ho_so, loai_benh_an], map: "uq_hosobenhan_ma_loai")
+  @@index([ma_benh_nhan], map: "idx_hosobenhan_benhnhan")
 }
 
-model AnswerImage {
-  id String @id @default(uuid()) @db.Uuid
-  answer_id String @db.Uuid
-  media_id String @db.Uuid
-  option_value String?
-  answer Answer @relation(fields:[answer_id],references:[id],onDelete:Cascade)
-  media MediaAttachment @relation(fields:[media_id],references:[id],onDelete:Restrict)
-  @@unique([answer_id,media_id])
-  @@map("answer_images")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model ketquacanlamsang {
+  ma_ket_qua_can_lam_sang                                                                                     BigInt               @id(map: "pk_kqcls") @default(autoincrement())
+  ma_phien_kham                                                                                               BigInt
+  loai_ket_qua_can_lam_sang                                                                                   String               @db.VarChar(3)
+  wbc                                                                                                         Decimal?             @db.Decimal(12, 4)
+  crp                                                                                                         Decimal?             @db.Decimal(12, 4)
+  ige_toan_phan                                                                                               Decimal?             @db.Decimal(12, 4)
+  can_lam_sang_khac_ghi_chu                                                                                   String?
+  xet_nghiem_khac                                                                                             String?
+  thoi_diem_thuc_hien                                                                                         DateTime?            @db.Timestamptz(6)
+  thoi_diem_cap_nhat                                                                                          DateTime             @default(now()) @db.Timestamptz(6)
+  ma_subtype_cap                                                                                              BigInt?              @default(dbgenerated("\nCASE\n    WHEN ((loai_ket_qua_can_lam_sang)::text = 'CAP'::text) THEN ma_ket_qua_can_lam_sang\n    ELSE NULL::bigint\nEND"))
+  ma_subtype_man                                                                                              BigInt?              @default(dbgenerated("\nCASE\n    WHEN ((loai_ket_qua_can_lam_sang)::text = 'MAN'::text) THEN ma_ket_qua_can_lam_sang\n    ELSE NULL::bigint\nEND"))
+  ketquacanlamsangcap_ketquacanlamsang_ma_subtype_capToketquacanlamsangcap                                    ketquacanlamsangcap? @relation("ketquacanlamsang_ma_subtype_capToketquacanlamsangcap", fields: [ma_subtype_cap], references: [ma_ket_qua_can_lam_sang], onDelete: NoAction, onUpdate: NoAction, map: "fk_kqcls_bat_buoc_cap")
+  ketquacanlamsangman_ketquacanlamsang_ma_subtype_manToketquacanlamsangman                                    ketquacanlamsangman? @relation("ketquacanlamsang_ma_subtype_manToketquacanlamsangman", fields: [ma_subtype_man], references: [ma_ket_qua_can_lam_sang], onDelete: NoAction, onUpdate: NoAction, map: "fk_kqcls_bat_buoc_man")
+  phienkham                                                                                                   phienkham            @relation(fields: [ma_phien_kham, loai_ket_qua_can_lam_sang], references: [ma_phien_kham, loai_benh_an], onUpdate: NoAction, map: "fk_kqcls_phien_kham")
+  ketquacanlamsangcap_ketquacanlamsangcap_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang ketquacanlamsangcap[] @relation("ketquacanlamsangcap_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang")
+  ketquacanlamsangman_ketquacanlamsangman_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang ketquacanlamsangman[] @relation("ketquacanlamsangman_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang")
+
+  @@unique([ma_ket_qua_can_lam_sang, loai_ket_qua_can_lam_sang], map: "uq_kqcls_ma_loai")
+  @@index([ma_phien_kham], map: "idx_kqcls_phien_kham")
 }
 
-model LesionEpisode {
-  id String @id @default(uuid()) @db.Uuid
-  name String
-  patient_id String @db.Uuid
-  medical_record_id String @db.Uuid
-  started_at DateTime @default(now())
-  ended_at DateTime?
-  context_tags Json @default("[]")
-  medications String?
-  notes String?
-  created_at DateTime @default(now())
-  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
-  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
-  locations LesionLocation[]
-  @@map("lesion_episodes")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ketquacanlamsangcap {
+  ma_ket_qua_can_lam_sang                                                                                  BigInt             @id(map: "pk_kqcls_cap")
+  loai_ket_qua_can_lam_sang                                                                                String?            @default("CAP") @db.VarChar(3)
+  lym                                                                                                      Decimal?           @db.Decimal(12, 4)
+  neu                                                                                                      Decimal?           @db.Decimal(12, 4)
+  plt                                                                                                      Decimal?           @db.Decimal(12, 4)
+  tryptase_cap                                                                                             Decimal?           @db.Decimal(12, 4)
+  tryptase_nen                                                                                             Decimal?           @db.Decimal(12, 4)
+  nlr                                                                                                      Decimal?           @default(dbgenerated("round((neu / NULLIF(lym, (0)::numeric)), 6)")) @db.Decimal
+  plr                                                                                                      Decimal?           @default(dbgenerated("round((plt / NULLIF(lym, (0)::numeric)), 6)")) @db.Decimal
+  ketquacanlamsang_ketquacanlamsang_ma_subtype_capToketquacanlamsangcap                                    ketquacanlamsang[] @relation("ketquacanlamsang_ma_subtype_capToketquacanlamsangcap")
+  ketquacanlamsang_ketquacanlamsangcap_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang ketquacanlamsang?  @relation("ketquacanlamsangcap_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang", fields: [ma_ket_qua_can_lam_sang, loai_ket_qua_can_lam_sang], references: [ma_ket_qua_can_lam_sang, loai_ket_qua_can_lam_sang], onDelete: Cascade, onUpdate: NoAction, map: "fk_kqcls_cap_cha")
 }
 
-model LesionLocation {
-  id String @id @default(uuid()) @db.Uuid
-  episode_id String @db.Uuid
-  body_part String
-  description String?
-  episode LesionEpisode @relation(fields:[episode_id],references:[id],onDelete:Cascade)
-  photos LesionPhoto[]
-  @@map("lesion_locations")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ketquacanlamsangman {
+  ma_ket_qua_can_lam_sang                                                                                  BigInt             @id(map: "pk_kqcls_man")
+  loai_ket_qua_can_lam_sang                                                                                String?            @default("MAN") @db.VarChar(3)
+  test_huyet_thanh_tu_than                                                                                 String?            @db.VarChar(12)
+  ige_khang_tpo_ket_qua                                                                                    String?            @db.VarChar(12)
+  bat_ket_qua                                                                                              String?            @db.VarChar(12)
+  ige_khang_il24_ket_qua                                                                                   String?            @db.VarChar(12)
+  asst_duong_kinh_mm                                                                                       Decimal?           @db.Decimal(12, 4)
+  eo                                                                                                       Decimal?           @db.Decimal(12, 4)
+  ba_bach_cau                                                                                              Decimal?           @db.Decimal(12, 4)
+  anti_tpo                                                                                                 Decimal?           @db.Decimal(12, 4)
+  tsh                                                                                                      Decimal?           @db.Decimal(12, 4)
+  ft4                                                                                                      Decimal?           @db.Decimal(12, 4)
+  ft3                                                                                                      Decimal?           @db.Decimal(12, 4)
+  mau_lang_2h                                                                                              Decimal?           @db.Decimal(12, 4)
+  mau_lang_1h                                                                                              Decimal?           @db.Decimal(12, 4)
+  ana_hep2                                                                                                 String?            @db.VarChar(12)
+  sieu_am_tuyen_giap                                                                                       String?
+  ketquacanlamsang_ketquacanlamsang_ma_subtype_manToketquacanlamsangman                                    ketquacanlamsang[] @relation("ketquacanlamsang_ma_subtype_manToketquacanlamsangman")
+  ketquacanlamsang_ketquacanlamsangman_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang ketquacanlamsang?  @relation("ketquacanlamsangman_ma_ket_qua_can_lam_sang_loai_ket_qua_can_lam_sangToketquacanlamsang", fields: [ma_ket_qua_can_lam_sang, loai_ket_qua_can_lam_sang], references: [ma_ket_qua_can_lam_sang, loai_ket_qua_can_lam_sang], onDelete: Cascade, onUpdate: NoAction, map: "fk_kqcls_man_cha")
 }
 
-model LesionPhoto {
-  id String @id @default(uuid()) @db.Uuid
-  location_id String @db.Uuid
-  media_id String @db.Uuid
-  stage String
-  itch_score Int @default(0)
-  pain_score Int @default(0)
-  burning_score Int @default(0)
-  hives_count Int @default(0)
-  local_auas Float?
-  ai_result Json?
-  captured_at DateTime @default(now())
-  location LesionLocation @relation(fields:[location_id],references:[id],onDelete:Cascade)
-  media MediaAttachment @relation(fields:[media_id],references:[id],onDelete:Restrict)
-  @@map("lesion_photos")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ketquaproms {
+  ma_ket_qua_proms   BigInt       @id(map: "pk_ketquaproms") @default(autoincrement())
+  ma_phien_kham_man  BigInt
+  uct_diem           Int?         @db.SmallInt
+  aect_diem          Int?         @db.SmallInt
+  act_diem_legacy    Int?         @db.SmallInt
+  dlqi_diem          Int?         @db.SmallInt
+  cu_q2ol_diem       Decimal?     @db.Decimal(5, 2)
+  thoi_diem_cap_nhat DateTime     @default(now()) @db.Timestamptz(6)
+  phienkhamman       phienkhamman @relation(fields: [ma_phien_kham_man], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_ketquaproms_phienkhamman")
+
+  @@index([ma_phien_kham_man], map: "idx_ketquaproms_phienkhamman")
 }
 
-model Uas7Score {
-  id String @id @default(uuid()) @db.Uuid
-  patient_id String @db.Uuid
-  score_date DateTime @db.Date
-  iss7 Int
-  hss7 Int
-  daily_score Int
-  notes String?
-  created_at DateTime @default(now())
-  patient Patient @relation(fields:[patient_id],references:[user_id],onDelete:Restrict)
-  @@unique([patient_id,score_date])
-  @@map("uas7_scores")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model khoaphong {
+  ma_khoa_phong  BigInt      @id(map: "pk_khoa_phong") @default(autoincrement())
+  ten_khoa_phong String      @db.VarChar(150)
+  loai_khoa      String      @db.VarChar(50)
+  mo_ta          String?
+  ma_chi_nhanh   BigInt
+  chinhanh       chinhanh    @relation(fields: [ma_chi_nhanh], references: [ma_chi_nhanh], onUpdate: NoAction, map: "fk_khoa_phong_chi_nhanh")
+  phongkham      phongkham[]
+
+  @@unique([ma_chi_nhanh, ten_khoa_phong], map: "uq_khoa_phong_chi_nhanh_ten")
 }
 
-model Prescription {
-  id String @id @default(uuid()) @db.Uuid
-  medical_record_id String @db.Uuid
-  doctor_id String? @db.Uuid
-  notes String?
-  created_at DateTime @default(now())
-  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
-  doctor User? @relation(fields:[doctor_id],references:[id],onDelete:SetNull)
-  items PrescriptionItem[]
-  @@map("prescriptions")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model loainghiemphap {
+  ma_nghiem_phap                                                                                      BigInt                    @id(map: "pk_loai_nghiem_phap") @default(autoincrement())
+  ten_nghiem_phap                                                                                     String                    @unique(map: "uq_loai_nghiem_phap_ten") @db.VarChar(150)
+  phuong_phap_thuc_hien                                                                               String?
+  thoi_gian_chuan                                                                                     Decimal?                  @db.Decimal(10, 2)
+  thoi_diem_tao                                                                                       DateTime                  @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat                                                                                  DateTime                  @default(now()) @db.Timestamptz(6)
+  la_can_nguyen_khac                                                                                  Boolean                   @default(false)
+  chitietketquanghiemphap_chitietketquanghiemphap_loai_nghiem_phapToloainghiemphap                    chitietketquanghiemphap[] @relation("chitietketquanghiemphap_loai_nghiem_phapToloainghiemphap")
+  chitietketquanghiemphap_chitietketquanghiemphap_loai_nghiem_phap_la_can_nguyen_khacToloainghiemphap chitietketquanghiemphap[] @relation("chitietketquanghiemphap_loai_nghiem_phap_la_can_nguyen_khacToloainghiemphap")
+
+  @@unique([ma_nghiem_phap, la_can_nguyen_khac], map: "uq_nghiemphap_phanloai")
 }
 
-model PrescriptionItem {
-  id String @id @default(uuid()) @db.Uuid
-  prescription_id String @db.Uuid
-  medicine_name String
-  dosage String
-  frequency String
-  duration String
-  quantity Int @default(1)
-  instructions String?
-  prescription Prescription @relation(fields:[prescription_id],references:[id],onDelete:Cascade)
-  @@map("prescription_items")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model nguoi {
+  ma_nguoi                 BigInt                     @id(map: "pk_nguoi") @default(autoincrement())
+  ho_ten                   String                     @db.VarChar(150)
+  ngay_sinh                DateTime?                  @db.Date
+  gioi_tinh                String?                    @db.VarChar(3)
+  so_dien_thoai            String                     @db.VarChar(10)
+  dia_chi_tinh_tp          String?                    @db.VarChar(100)
+  dia_chi_xa_phuong        String?                    @db.VarChar(100)
+  dia_chi_so_nha_thon_pho  String?                    @db.VarChar(255)
+  thoi_diem_tao            DateTime                   @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat       DateTime                   @default(now()) @db.Timestamptz(6)
+  benhnhan                 benhnhan?
+  danhgiamucdohoatdongbenh danhgiamucdohoatdongbenh[]
+  nhanvien                 nhanvien?
+  taikhoan                 taikhoan?
+  vaitroquyenhan           vaitroquyenhan[]
 }
 
-model LabRequest {
-  id String @id @default(uuid()) @db.Uuid
-  medical_record_id String @db.Uuid
-  doctor_id String? @db.Uuid
-  status String @default("pending")
-  notes String?
-  created_at DateTime @default(now())
-  medical_record MedicalRecord @relation(fields:[medical_record_id],references:[id],onDelete:Restrict)
-  doctor User? @relation(fields:[doctor_id],references:[id],onDelete:SetNull)
-  items LabRequestItem[]
-  @@map("lab_requests")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model nhanvien {
+  ma_nhan_vien   BigInt           @id(map: "pk_nhan_vien")
+  ma_chi_nhanh   BigInt
+  dauhieusinhton dauhieusinhton[]
+  chinhanh       chinhanh         @relation(fields: [ma_chi_nhanh], references: [ma_chi_nhanh], onUpdate: NoAction, map: "fk_nhan_vien_chi_nhanh")
+  nguoi          nguoi            @relation(fields: [ma_nhan_vien], references: [ma_nguoi], onUpdate: NoAction, map: "fk_nhan_vien_nguoi")
+  phienkham      phienkham[]
+
+  @@index([ma_chi_nhanh], map: "idx_nhan_vien_chi_nhanh")
 }
 
-model LabRequestItem {
-  id String @id @default(uuid()) @db.Uuid
-  lab_request_id String @db.Uuid
-  test_name String
-  notes String?
-  lab_request LabRequest @relation(fields:[lab_request_id],references:[id],onDelete:Cascade)
-  results LabResult[]
-  @@map("lab_request_items")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model nhatkyaashangngay {
+  ma_nhat_ky_aas       BigInt           @id(map: "pk_nhatkyaashangngay") @default(autoincrement())
+  ma_benh_nhan         BigInt
+  ma_ho_so_man         BigInt?
+  ngay_theo_doi        DateTime         @db.Date
+  co_dot_sung_phu      Boolean          @default(false)
+  thoi_diem_xuat_hien  String?          @db.VarChar(50)
+  muc_kho_chiu         Int?             @db.SmallInt
+  han_che_hoat_dong    Int?             @db.SmallInt
+  anh_huong_ngoai_hinh Int?             @db.SmallInt
+  do_nang_tong_the     Int?             @db.SmallInt
+  diem_aas_ngay        Int?             @default(dbgenerated("\nCASE\n    WHEN (co_dot_sung_phu = true) THEN ((((muc_kho_chiu + han_che_hoat_dong) + anh_huong_ngoai_hinh) + do_nang_tong_the))::integer\n    ELSE 0\nEND")) @db.SmallInt
+  thoi_diem_cap_nhat   DateTime         @default(now()) @db.Timestamptz(6)
+  benhanmaydayman      benhanmaydayman? @relation(fields: [ma_ho_so_man], references: [ma_ho_so], onDelete: Restrict, onUpdate: NoAction, map: "fk_nhatkyaas_benhanman")
+  benhnhan             benhnhan         @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onUpdate: NoAction, map: "fk_nhatkyaas_benhnhan")
+  hosobenhan           hosobenhan?      @relation(fields: [ma_ho_so_man, ma_benh_nhan], references: [ma_ho_so, ma_benh_nhan], onUpdate: NoAction, map: "fk_nhatkyaashangngay_cung_benhnhan")
+
+  @@unique([ma_benh_nhan, ngay_theo_doi], map: "uq_nhatkyaas_benhnhan_ngay")
+  @@index([ma_ho_so_man], map: "idx_nhatkyaas_hoso_man")
 }
 
-model LabResult {
-  id String @id @default(uuid()) @db.Uuid
-  lab_request_item_id String @db.Uuid
-  result_value String
-  unit String?
-  reference_range String?
-  notes String?
-  media_id String? @db.Uuid
-  created_at DateTime @default(now())
-  item LabRequestItem @relation(fields:[lab_request_item_id],references:[id],onDelete:Cascade)
-  media MediaAttachment? @relation(fields:[media_id],references:[id],onDelete:Restrict)
-  @@map("lab_results")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model nhatkyuashangngay {
+  ma_nhat_ky_uas                                                                                  BigInt            @id(map: "pk_nhatkyuashangngay") @default(autoincrement())
+  ma_chu_ky                                                                                       BigInt?
+  ma_ho_so_man                                                                                    BigInt?
+  ma_benh_nhan                                                                                    BigInt
+  ngay_cham_diem                                                                                  DateTime          @db.Date
+  ngay_thu_may_trong_chu_ky                                                                       Int?              @db.SmallInt
+  diem_san_phu_hss                                                                                Int               @db.SmallInt
+  diem_ngua_iss                                                                                   Int               @db.SmallInt
+  diem_uas_ngay                                                                                   Int?              @default(dbgenerated("(diem_san_phu_hss + diem_ngua_iss)")) @db.SmallInt
+  trang_thai_dung_thuoc                                                                           String?           @db.VarChar(50)
+  trang_thai_ngay                                                                                 String            @default("HOP_LE") @db.VarChar(50)
+  thoi_diem_cap_nhat                                                                              DateTime          @default(now()) @db.Timestamptz(6)
+  ngay_bat_dau_chu_ky                                                                             DateTime?         @default(dbgenerated("(ngay_cham_diem - ((ngay_thu_may_trong_chu_ky)::integer - 1))")) @db.Date
+  benhanmaydayman                                                                                 benhanmaydayman?  @relation(fields: [ma_ho_so_man], references: [ma_ho_so], onDelete: Restrict, onUpdate: NoAction, map: "fk_nhatkyuas_benhanman")
+  benhnhan                                                                                        benhnhan          @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onUpdate: NoAction, map: "fk_nhatkyuas_benhnhan")
+  chukytheodoiuas7_nhatkyuashangngay_ma_chu_kyTochukytheodoiuas7                                  chukytheodoiuas7? @relation("nhatkyuashangngay_ma_chu_kyTochukytheodoiuas7", fields: [ma_chu_ky], references: [ma_chu_ky], onDelete: Restrict, onUpdate: NoAction, map: "fk_nhatkyuas_chuky")
+  hosobenhan                                                                                      hosobenhan?       @relation(fields: [ma_ho_so_man, ma_benh_nhan], references: [ma_ho_so, ma_benh_nhan], onUpdate: NoAction, map: "fk_nhatkyuashangngay_cung_benhnhan")
+  chukytheodoiuas7_nhatkyuashangngay_ma_chu_ky_ma_benh_nhan_ngay_bat_dau_chu_kyTochukytheodoiuas7 chukytheodoiuas7? @relation("nhatkyuashangngay_ma_chu_ky_ma_benh_nhan_ngay_bat_dau_chu_kyTochukytheodoiuas7", fields: [ma_chu_ky, ma_benh_nhan, ngay_bat_dau_chu_ky], references: [ma_chu_ky, ma_benh_nhan, ngay_bat_dau], onUpdate: NoAction, map: "fk_uas_chuky_benhnhan_ngay")
+
+  @@unique([ma_benh_nhan, ngay_cham_diem], map: "uq_nhatkyuas_benhnhan_ngay")
+  @@index([ma_chu_ky], map: "idx_nhatkyuas_chuky")
+  @@index([ma_ho_so_man], map: "idx_nhatkyuas_hoso_man")
 }
 
-model Notification {
-  id String @id @default(uuid()) @db.Uuid
-  user_id String @db.Uuid
-  title String
-  body String
-  type String @default("system")
-  data Json?
-  is_read Boolean @default(false)
-  sent_at DateTime?
-  delivery_status String @default("pending")
-  created_at DateTime @default(now())
-  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
-  @@index([user_id,is_read,created_at])
-  @@map("notifications")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model phienkham {
+  ma_phien_kham                                                   BigInt             @id(map: "pk_phienkham") @default(autoincrement())
+  ma_ho_so                                                        BigInt
+  ma_bac_si                                                       BigInt
+  ma_phong_kham                                                   BigInt?
+  loai_benh_an                                                    String
+  ma_subtype_cap                                                  BigInt?            @default(dbgenerated("\nCASE\n    WHEN (loai_benh_an = 'CAP'::text) THEN ma_phien_kham\n    ELSE NULL::bigint\nEND"))
+  ma_subtype_man                                                  BigInt?            @default(dbgenerated("\nCASE\n    WHEN (loai_benh_an = 'MAN'::text) THEN ma_phien_kham\n    ELSE NULL::bigint\nEND"))
+  ngay_kham                                                       DateTime           @db.Date
+  lan_kham_thu                                                    Int
+  loai_phien_kham                                                 String?
+  luu_huyet_thanh                                                 Boolean?
+  sot                                                             Boolean?
+  sot_nhiet_do_c                                                  Decimal?           @db.Decimal(4, 1)
+  ngay_hen_tai_kham                                               DateTime?          @db.Date
+  tom_tat_buoi_kham                                               String?
+  huong_xu_tri_lan_sau                                            String?
+  dan_do                                                          String?
+  dauhieusinhton                                                  dauhieusinhton[]
+  donthuoc                                                        donthuoc[]
+  ketquacanlamsang                                                ketquacanlamsang[]
+  phienkhamcap_phienkham_ma_subtype_capTophienkhamcap             phienkhamcap?      @relation("phienkham_ma_subtype_capTophienkhamcap", fields: [ma_subtype_cap], references: [ma_phien_kham], onDelete: NoAction, onUpdate: NoAction, map: "fk_phien_bat_buoc_cap")
+  phienkhamman_phienkham_ma_subtype_manTophienkhamman             phienkhamman?      @relation("phienkham_ma_subtype_manTophienkhamman", fields: [ma_subtype_man], references: [ma_phien_kham], onDelete: NoAction, onUpdate: NoAction, map: "fk_phien_bat_buoc_man")
+  nhanvien                                                        nhanvien           @relation(fields: [ma_bac_si], references: [ma_nhan_vien], onUpdate: NoAction, map: "fk_phienkham_bacsi")
+  hosobenhan                                                      hosobenhan         @relation(fields: [ma_ho_so, loai_benh_an], references: [ma_ho_so, loai_benh_an], onDelete: NoAction, onUpdate: NoAction, map: "fk_phienkham_hoso")
+  phongkham                                                       phongkham?         @relation(fields: [ma_phong_kham], references: [ma_phong_kham], onDelete: Restrict, onUpdate: NoAction, map: "fk_phienkham_phong")
+  phienkhamcap_phienkhamcap_ma_phien_kham_loai_benh_anTophienkham phienkhamcap[]      @relation("phienkhamcap_ma_phien_kham_loai_benh_anTophienkham")
+  phienkhamman_phienkhamman_ma_phien_kham_loai_benh_anTophienkham phienkhamman[]      @relation("phienkhamman_ma_phien_kham_loai_benh_anTophienkham")
+
+  @@unique([ma_phien_kham, ma_ho_so], map: "uq_phien_hoso")
+  @@unique([ma_ho_so, lan_kham_thu], map: "uq_phienkham_lan_kham")
+  @@unique([ma_phien_kham, loai_benh_an], map: "uq_phienkham_ma_loai")
+  @@index([ma_bac_si], map: "idx_phienkham_bacsi")
+  @@index([ma_ho_so, ngay_kham], map: "idx_phienkham_hoso_ngay")
+  @@index([ma_phong_kham], map: "idx_phienkham_phong")
 }
 
-model UserFcmToken {
-  id String @id @default(uuid()) @db.Uuid
-  user_id String @db.Uuid
-  token String @unique
-  device_id String?
-  platform String @default("web")
-  created_at DateTime @default(now())
-  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
-  @@map("user_fcm_tokens")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model phienkhamcap {
+  ma_phien_kham                                                BigInt                    @id(map: "pk_phienkhamcap")
+  loai_benh_an                                                 String?                   @default("CAP")
+  trieu_chung_da                                               String?
+  trieu_chung_ho_hap                                           String?
+  so_voi_thuong_ngay_ho_hap                                    String?
+  trieu_chung_tuan_hoan                                        String?
+  so_voi_thuong_ngay_tuan_hoan                                 String?
+  trieu_chung_tieu_hoa                                         String?
+  so_voi_thuong_ngay_tieu_hoa                                  String?
+  co_san_phu                                                   Boolean?
+  co_anh_san_phu                                               Boolean?
+  so_lan_non                                                   Int?
+  chitiettonthuongcaptinh                                      chitiettonthuongcaptinh[]
+  phienkham_phienkham_ma_subtype_capTophienkhamcap             phienkham[]               @relation("phienkham_ma_subtype_capTophienkhamcap")
+  phienkham_phienkhamcap_ma_phien_kham_loai_benh_anTophienkham phienkham?                @relation("phienkhamcap_ma_phien_kham_loai_benh_anTophienkham", fields: [ma_phien_kham, loai_benh_an], references: [ma_phien_kham, loai_benh_an], onDelete: NoAction, onUpdate: NoAction, map: "fk_phienkhamcap_phienkham")
 }
 
-model UserNotificationSetting {
-  user_id String @id @db.Uuid
-  push_enabled Boolean @default(true)
-  sound_enabled Boolean @default(true)
-  uas7_reminder Boolean @default(true)
-  medication_reminder Boolean @default(true)
-  lab_results_enabled Boolean @default(true)
-  prescriptions_enabled Boolean @default(true)
-  appointment_enabled Boolean @default(true)
-  reminder_time String @default("20:00")
-  user User @relation(fields:[user_id],references:[id],onDelete:Cascade)
-  @@map("user_notification_settings")
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model phienkhamman {
+  ma_phien_kham                                                BigInt                     @id(map: "pk_phienkhamman")
+  loai_benh_an                                                 String?                    @default("MAN")
+  hien_tai_co_san_phu                                          Boolean?
+  uu_the_ngau_nhien                                            Boolean?
+  vi_tri_san_phu                                               String?
+  yeu_to_lam_nang_sa_phu                                       String?
+  hoan_canh_xuat_hien_san_phu                                  String?
+  trong_dot_co_phu_mach                                        Boolean?
+  hien_tai_co_phu_mach                                         Boolean?
+  so_lan_phu_mach_dot_nay                                      Int?
+  hoan_canh_xuat_hien_phu_mach                                 String?
+  so_lan_phu_mach_nang_phai_nhap_vien                          Int?
+  thoi_gian_ton_tai_phu_mach_co_dung_thuoc                     String?
+  thoi_gian_ton_tai_phu_mach_khong_dung_thuoc                  String?
+  diem_aas7                                                    Int?                       @db.SmallInt
+  ben_phu_mach                                                 String?
+  thoi_gian_ngau_nhien_tuan                                    Decimal?                   @db.Decimal(12, 2)
+  uu_the_kich_thich                                            Boolean?
+  thoi_gian_kich_thich_tuan                                    Decimal?                   @db.Decimal(12, 2)
+  uu_the_tuong_duong                                           Boolean?
+  uu_the_khong_ro                                              Boolean?
+  thu_tu_xuat_hien_so_voi_san_phu                              String?
+  phu_mach_1_tuan_gan_day                                      Boolean?
+  chan_doan_tai_kham                                           String?
+  khoang_cach_xuat_hien                                        String?
+  phu_mi_mat                                                   Boolean?
+  phu_luoi                                                     Boolean?
+  phu_moi                                                      Boolean?
+  phu_vung_mat_khac                                            Boolean?
+  phu_thanh_quan                                               Boolean?
+  phu_ban_chan                                                 Boolean?
+  phu_sinh_duc                                                 Boolean?
+  phu_vi_tri_khac                                              Boolean?
+  phu_vi_tri_khac_ghi_ro                                       String?
+  phu_ban_tay                                                  Boolean?
+  chitiettonthuongsanphu                                       chitiettonthuongsanphu[]
+  danhgiamucdohoatdongbenh                                     danhgiamucdohoatdongbenh[]
+  ketquaproms                                                  ketquaproms[]
+  phienkham_phienkham_ma_subtype_manTophienkhamman             phienkham[]                @relation("phienkham_ma_subtype_manTophienkhamman")
+  phienkham_phienkhamman_ma_phien_kham_loai_benh_anTophienkham phienkham?                 @relation("phienkhamman_ma_phien_kham_loai_benh_anTophienkham", fields: [ma_phien_kham, loai_benh_an], references: [ma_phien_kham, loai_benh_an], onDelete: NoAction, onUpdate: NoAction, map: "fk_phienkhamman_phienkham")
+  phiennghiemphapkichthich                                     phiennghiemphapkichthich?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model phiennghiemphapkichthich {
+  ma_phien_nghiem_phap      BigInt                    @id(map: "pk_phien_nghiem_phap") @default(autoincrement())
+  ma_phien_kham             BigInt                    @unique(map: "uq_phien_nghiem_phap_phien_kham")
+  ngung_khang_histamine     Boolean?
+  thoi_gian_ngung_histamine Decimal?                  @db.Decimal(8, 2)
+  ngung_corticoid           Boolean?
+  thoi_gian_ngung_corticoid Decimal?                  @db.Decimal(8, 2)
+  thoi_diem_cap_nhat        DateTime                  @default(now()) @db.Timestamptz(6)
+  chitietketquanghiemphap   chitietketquanghiemphap[]
+  phienkhamman              phienkhamman              @relation(fields: [ma_phien_kham], references: [ma_phien_kham], onUpdate: NoAction, map: "fk_phien_np_phien_kham_man")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model phongkham {
+  ma_phong_kham  BigInt      @id @default(autoincrement())
+  ten_phong_kham String      @db.VarChar(150)
+  ma_khoa_phong  BigInt
+  phienkham      phienkham[]
+  khoaphong      khoaphong   @relation(fields: [ma_khoa_phong], references: [ma_khoa_phong], onUpdate: NoAction, map: "fk_phong_kham_khoa_phong")
+
+  @@unique([ma_khoa_phong, ten_phong_kham], map: "uq_phong_kham_khoa_ten")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model quyenhan {
+  ma_quyen_han       BigInt           @id(map: "pk_quyen_han") @default(autoincrement())
+  ten_quyen_han      String           @unique(map: "uq_quyen_han_ten") @db.VarChar(100)
+  nhom_quyen         String?          @db.VarChar(100)
+  mo_ta              String?
+  thoi_diem_tao      DateTime         @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat DateTime         @default(now()) @db.Timestamptz(6)
+  vaitroquyenhan     vaitroquyenhan[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sanglocbaodongdo {
+  ma_luot_sang_loc               BigInt    @id(map: "pk_sanglocbaodongdo") @default(autoincrement())
+  ma_phien_ung_dung              String    @unique(map: "uq_sanglocbaodongdo_phien") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ma_benh_nhan                   BigInt?
+  phien_ban_bo_cau_hoi           String    @default("APP_GD1_V1") @db.VarChar(30)
+  co_kho_tho_kho_khe_nghen_hong  Boolean
+  co_chong_mat_tuc_nguc_sap_ngat Boolean
+  co_sung_moi_luoi_co_hong       Boolean
+  co_dau_bung_non_lien_tuc       Boolean
+  co_nguy_co_phan_ve             Boolean?  @default(dbgenerated("(co_kho_tho_kho_khe_nghen_hong OR co_chong_mat_tuc_nguc_sap_ngat OR co_sung_moi_luoi_co_hong OR co_dau_bung_non_lien_tuc)"))
+  ket_qua_dieu_huong             String?   @default(dbgenerated("\nCASE\n    WHEN (co_kho_tho_kho_khe_nghen_hong OR co_chong_mat_tuc_nguc_sap_ngat OR co_sung_moi_luoi_co_hong OR co_dau_bung_non_lien_tuc) THEN 'NGUY_CO_PHAN_VE'::text\n    ELSE 'CHUYEN_BUOC_1'::text\nEND")) @db.VarChar(30)
+  xac_nhan_muon_goi_cap_cuu      Boolean?
+  da_nhan_nut_goi_cap_cuu        Boolean   @default(false)
+  so_dien_thoai_cap_cuu          String?   @db.VarChar(20)
+  thoi_diem_nhan_nut_goi         DateTime? @db.Timestamptz(6)
+  thoi_diem_bat_dau              DateTime  @default(now()) @db.Timestamptz(6)
+  thoi_diem_hoan_tat             DateTime  @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat             DateTime  @default(now()) @db.Timestamptz(6)
+  benhnhan                       benhnhan? @relation(fields: [ma_benh_nhan], references: [ma_benh_nhan], onDelete: Restrict, onUpdate: NoAction, map: "fk_sanglocbaodongdo_benhnhan")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model taikhoan {
+  ma_tai_khoan         BigInt       @id(map: "pk_tai_khoan") @default(autoincrement())
+  ma_nguoi             BigInt       @unique(map: "uq_tai_khoan_nguoi")
+  ma_vai_tro           BigInt
+  ten_dang_nhap        String       @db.VarChar(100)
+  mat_khau_ma_hoa      String
+  trang_thai_hoat_dong Boolean      @default(true)
+  thoi_diem_tao        DateTime     @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat   DateTime     @default(now()) @db.Timestamptz(6)
+  nguoi                nguoi        @relation(fields: [ma_nguoi], references: [ma_nguoi], onUpdate: NoAction, map: "fk_tai_khoan_nguoi")
+  vaitro               vaitro       @relation(fields: [ma_vai_tro], references: [ma_vai_tro], onUpdate: NoAction, map: "fk_tai_khoan_vai_tro")
+  tepdinhkem           tepdinhkem[]
+
+  @@index([ma_vai_tro], map: "idx_tai_khoan_vai_tro")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tepdinhkem {
+  ma_tep_dinh_kem    BigInt             @id(map: "pk_tepdinhkem") @default(autoincrement())
+  ma_ho_so           BigInt
+  ma_tai_khoan       BigInt?
+  ten_tep_goc        String             @db.VarChar(255)
+  duong_dan_luu_tru  String             @db.VarChar(500)
+  duong_dan_url      String?            @db.VarChar(500)
+  dinh_dang_tep      String?            @db.VarChar(50)
+  loai_phuong_tien   String?            @db.VarChar(50)
+  dung_luong_byte    BigInt?
+  phan_loai_muc_dich String?            @db.VarChar(100)
+  mo_ta_tep          String?
+  diem_do_mo         Decimal?           @db.Decimal(6, 2)
+  thoi_diem_tao      DateTime           @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat DateTime           @default(now()) @db.Timestamptz(6)
+  anhchuptonthuong   anhchuptonthuong[]
+  hosobenhan         hosobenhan         @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_tepdinhkem_hosobenhan")
+  taikhoan           taikhoan?          @relation(fields: [ma_tai_khoan], references: [ma_tai_khoan], onUpdate: NoAction, map: "fk_tepdinhkem_taikhoan")
+
+  @@index([ma_ho_so], map: "idx_tepdinhkem_ma_ho_so")
+  @@index([ma_tai_khoan], map: "idx_tepdinhkem_tai_khoan")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model thuoc {
+  ma_thuoc           String            @id(map: "pk_thuoc") @db.VarChar(50)
+  ten_thuoc          String            @db.VarChar(255)
+  hoat_chat          String?           @db.VarChar(255)
+  nhom_dieu_tri      String?           @db.VarChar(100)
+  thoi_diem_tao      DateTime          @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat DateTime          @default(now()) @db.Timestamptz(6)
+  chitietdonthuoc    chitietdonthuoc[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tiensubanthan {
+  ma_tien_su_ban_than           BigInt     @id(map: "pk_tiensubanthan") @default(autoincrement())
+  ma_ho_so                      BigInt     @unique(map: "uq_tiensubanthan_hoso")
+  tien_su_co_dia                Boolean?
+  tien_su_co_dia_ghi_ro         String?
+  tien_su_tuyen_giap            Boolean?
+  tien_su_tuyen_giap_ghi_ro     String?
+  tien_su_tu_mien               Boolean?
+  tien_su_tu_mien_ghi_ro        String?
+  tien_su_di_ung                Boolean?
+  tien_su_di_ung_ghi_ro         String?
+  tien_su_phan_ve               Boolean?
+  tien_su_phan_ve_ghi_ro        String?
+  tien_su_viem_nhiem_man        Boolean?
+  tien_su_viem_nhiem_man_ghi_ro String?
+  tien_su_benh_khac             Boolean?
+  tien_su_benh_khac_ghi_ro      String?
+  hosobenhan                    hosobenhan @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_tiensubanthan_hoso")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tinhtrangnhiemtrung {
+  ma_tinh_trang_nhiem_trung BigInt          @id(map: "pk_tinhtrangnhiemtrung") @default(autoincrement())
+  ma_ho_so                  BigInt          @unique(map: "uq_tinhtrangnhiemtrung_hoso")
+  ho_hap_ho                 Boolean?
+  ho_hap_dau_hong           Boolean?
+  ho_hap_hat_hoi            Boolean?
+  ho_hap_so_mui             Boolean?
+  ho_hap_thoi_gian          Decimal?        @db.Decimal
+  ho_hap_khoang_cach        Decimal?        @db.Decimal
+  tiet_nieu_tieu_rat        Boolean?
+  tiet_nieu_tieu_buot       Boolean?
+  tiet_nieu_thoi_gian       Decimal?        @db.Decimal
+  tiet_nieu_khoang_cach     Decimal?        @db.Decimal
+  da_mun                    Boolean?
+  da_nhot                   Boolean?
+  da_thoi_gian              Decimal?        @db.Decimal
+  da_khoang_cach            Decimal?        @db.Decimal
+  khac_ghi_ro               String?
+  khac_thoi_gian            Decimal?        @db.Decimal
+  khac_khoang_cach          Decimal?        @db.Decimal
+  benhanmaydaycap           benhanmaydaycap @relation(fields: [ma_ho_so], references: [ma_ho_so], onUpdate: NoAction, map: "fk_tinhtrangnhiemtrung_benh_an_cap")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model vaitro {
+  ma_vai_tro         BigInt           @id(map: "pk_vai_tro") @default(autoincrement())
+  ten_vai_tro        String           @unique(map: "uq_vai_tro_ten") @db.VarChar(50)
+  ten_hien_thi       String           @db.VarChar(100)
+  mo_ta_vai_tro      String?
+  thoi_diem_tao      DateTime         @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat DateTime         @default(now()) @db.Timestamptz(6)
+  taikhoan           taikhoan[]
+  vaitroquyenhan     vaitroquyenhan[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model vaitroquyenhan {
+  ma_vai_tro    BigInt
+  ma_quyen_han  BigInt
+  thoi_diem_gan DateTime @default(now()) @db.Timestamptz(6)
+  ma_nguoi_gan  BigInt?
+  nguoi         nguoi?   @relation(fields: [ma_nguoi_gan], references: [ma_nguoi], onDelete: Restrict, onUpdate: NoAction, map: "fk_vtqh_nguoi_gan")
+  quyenhan      quyenhan @relation(fields: [ma_quyen_han], references: [ma_quyen_han], onDelete: Cascade, onUpdate: NoAction, map: "fk_vtqh_quyen_han")
+  vaitro        vaitro   @relation(fields: [ma_vai_tro], references: [ma_vai_tro], onDelete: Cascade, onUpdate: NoAction, map: "fk_vtqh_vai_tro")
+
+  @@id([ma_vai_tro, ma_quyen_han], map: "pk_vai_tro_quyen_han")
+  @@index([ma_nguoi_gan], map: "idx_vtqh_nguoi_gan")
+  @@index([ma_quyen_han], map: "idx_vtqh_quyen_han")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model vitritonthuong {
+  ma_vi_tri_ton_thuong                                                                        BigInt             @id(map: "pk_vitritonthuong") @default(autoincrement())
+  ma_dot_ton_thuong_da                                                                        BigInt
+  vi_tri_co_the                                                                               String?            @db.VarChar(255)
+  thoi_diem_xuat_hien                                                                         DateTime?          @db.Timestamptz(6)
+  ten_thuoc_lien_quan                                                                         String?            @db.VarChar(255)
+  thoi_gian_dung_thuoc_truoc_khi_xuat_hien                                                    String?            @db.VarChar(100)
+  hoan_canh_xuat_hien                                                                         String?            @db.VarChar(255)
+  hoan_canh_xuat_hien_khac                                                                    String?
+  don_vi_thoi_gian                                                                            String?            @db.VarChar(50)
+  thoi_diem_tao                                                                               DateTime           @default(now()) @db.Timestamptz(6)
+  thoi_diem_cap_nhat                                                                          DateTime           @default(now()) @db.Timestamptz(6)
+  anhchuptonthuong_anhchuptonthuong_ma_vi_tri_ton_thuong_ma_dot_ton_thuong_daTovitritonthuong anhchuptonthuong[] @relation("anhchuptonthuong_ma_vi_tri_ton_thuong_ma_dot_ton_thuong_daTovitritonthuong")
+  anhchuptonthuong_anhchuptonthuong_ma_vi_tri_ton_thuongTovitritonthuong                      anhchuptonthuong[] @relation("anhchuptonthuong_ma_vi_tri_ton_thuongTovitritonthuong")
+  dottonthuongda                                                                              dottonthuongda     @relation(fields: [ma_dot_ton_thuong_da], references: [ma_dot_ton_thuong_da], onUpdate: NoAction, map: "fk_vitritonthuong_dottonthuongda")
+
+  @@unique([ma_vi_tri_ton_thuong, ma_dot_ton_thuong_da], map: "uq_vitri_dot")
+  @@index([ma_dot_ton_thuong_da], map: "idx_vitritonthuong_dot")
 }

@@ -1,0 +1,228 @@
+{
+  "verified_at": "2026-10-28T13:32:18.834Z",
+  "source_file": "mayday_backup.sql",
+  "source_sha256": "bd3ec5d0fe30fa79df3ffcf255cb47caa608b9f0dd57cb97e921c0578f90cd4c",
+  "tables": [
+    {
+      "table": "anhchuptonthuong",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "benhanmaydaycap",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "benhanmaydayman",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "benhnhan",
+      "rows": 1,
+      "checksum": "fe8a178522267c997859282d99a565ff"
+    },
+    {
+      "table": "benhsucacdotbenhtruoc",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chidanngungthuoc",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chinhanh",
+      "rows": 1,
+      "checksum": "202ba227b66aec0df6ca044baa2e1262"
+    },
+    {
+      "table": "chitietdonthuoc",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chitietketquanghiemphap",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chitiettonthuongcaptinh",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chitiettonthuongsanphu",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "chukytheodoiuas7",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "dacdiemsanphu",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "danhgiamucdohoatdongbenh",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "dauhieusinhton",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "donthuoc",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "dottonthuongda",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "hoancanhkhoiphatdiung",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "hosobenhan",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "ketquacanlamsang",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "ketquacanlamsangcap",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "ketquacanlamsangman",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "ketquaproms",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "khoaphong",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "loainghiemphap",
+      "rows": 9,
+      "checksum": "c82f5bb51b9ef25d5617d01076198c99"
+    },
+    {
+      "table": "nguoi",
+      "rows": 12,
+      "checksum": "8007a550a1b587454d853d1e140af353"
+    },
+    {
+      "table": "nhanvien",
+      "rows": 11,
+      "checksum": "3aec33db98c13594e2f44e7379eea5e0"
+    },
+    {
+      "table": "nhatkyaashangngay",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "nhatkyuashangngay",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "phienkham",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "phienkhamcap",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "phienkhamman",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "phiennghiemphapkichthich",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "phongkham",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "quyenhan",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "sanglocbaodongdo",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "taikhoan",
+      "rows": 12,
+      "checksum": "fcc1b1e27ee1dd0afa0e103c05a6df01"
+    },
+    {
+      "table": "tepdinhkem",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "thuoc",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "tiensubanthan",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "tinhtrangnhiemtrung",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "vaitro",
+      "rows": 4,
+      "checksum": "bd7c9980ec8909254f540f2604f43fb4"
+    },
+    {
+      "table": "vaitroquyenhan",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "table": "vitritonthuong",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+  ],
+  "exact_data_match": true
+}

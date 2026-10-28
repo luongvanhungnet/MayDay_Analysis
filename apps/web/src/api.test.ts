@@ -24,7 +24,7 @@ test("preserves server pagination totals alongside decoded record rows", async (
         ),
     ),
   );
-  const page = await apiPage<{ id: string }>("/medical_records/all");
+  const page = await apiPage<{ id: string }>("/data/hosobenhan");
   expect(page).toEqual({
     items: [{ id: "record" }],
     meta: { page: 1, limit: 25, total: 120, total_pages: 5 },

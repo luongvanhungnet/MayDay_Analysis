@@ -1,0 +1,42 @@
+{
+  "tested_at": "2026-10-28T13:34:50.630Z",
+  "tables": 44,
+  "checks": [
+    {
+      "name": "login with existing bcrypt accounts and no password disclosure",
+      "passed": true
+    },
+    {
+      "name": "all 44 native tables support schema and list reads",
+      "passed": true
+    },
+    {
+      "name": "acute and chronic records create required subtype rows",
+      "passed": true
+    },
+    {
+      "name": "visits and lab results persist parent/subtype atomically",
+      "passed": true
+    },
+    {
+      "name": "prescriptions use the native drug/dosage model",
+      "passed": true
+    },
+    {
+      "name": "patient writes daily UAS and database calculates total",
+      "passed": true
+    },
+    {
+      "name": "patient cannot read foreign records, link foreign records or change roles",
+      "passed": true
+    },
+    {
+      "name": "invalid updates and unsafe table names are rejected",
+      "passed": true
+    },
+    {
+      "name": "password changes revoke old sessions and logout is durable",
+      "passed": true
+    }
+  ]
+}

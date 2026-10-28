@@ -1,0 +1,6899 @@
+[
+  {
+    "name": "anhchuptonthuong",
+    "columns": [
+      {
+        "name": "ma_anh",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_tep_dinh_kem",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_dot_ton_thuong_da",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_vi_tri_ton_thuong",
+        "type": "bigint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_chup",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "moc_tien_trien",
+        "type": "character varying(50)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_ngua_nrs",
+        "type": "smallint",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_dau_nrs",
+        "type": "smallint",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_bong_rat_nrs",
+        "type": "smallint",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_luong_not_san",
+        "type": "integer",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chi_so_auas_cuc_bo",
+        "type": "numeric(5,2)",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "url_anh",
+        "type": "character varying(500)",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 13,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 14,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_anh_bong_rat_nrs",
+        "definition": "CHECK (((diem_bong_rat_nrs >= 0) AND (diem_bong_rat_nrs <= 10)))"
+      },
+      {
+        "name": "ck_anh_dau_nrs",
+        "definition": "CHECK (((diem_dau_nrs >= 0) AND (diem_dau_nrs <= 10)))"
+      },
+      {
+        "name": "ck_anh_ngua_nrs",
+        "definition": "CHECK (((diem_ngua_nrs >= 0) AND (diem_ngua_nrs <= 10)))"
+      },
+      {
+        "name": "ck_anh_so_luong",
+        "definition": "CHECK ((so_luong_not_san >= 0))"
+      },
+      {
+        "name": "ck_anh_vitri_can_dot",
+        "definition": "CHECK (((ma_vi_tri_ton_thuong IS NULL) OR (ma_dot_ton_thuong_da IS NOT NULL)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_vi_tri_ton_thuong",
+          "ma_dot_ton_thuong_da"
+        ],
+        "table": "vitritonthuong",
+        "references": [
+          "ma_vi_tri_ton_thuong",
+          "ma_dot_ton_thuong_da"
+        ]
+      },
+      {
+        "columns": [
+          "ma_dot_ton_thuong_da"
+        ],
+        "table": "dottonthuongda",
+        "references": [
+          "ma_dot_ton_thuong_da"
+        ]
+      },
+      {
+        "columns": [
+          "ma_tep_dinh_kem"
+        ],
+        "table": "tepdinhkem",
+        "references": [
+          "ma_tep_dinh_kem"
+        ]
+      },
+      {
+        "columns": [
+          "ma_vi_tri_ton_thuong"
+        ],
+        "table": "vitritonthuong",
+        "references": [
+          "ma_vi_tri_ton_thuong"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "benhanmaydaycap",
+    "columns": [
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 2,
+        "nullable": true,
+        "default": "'CAP'::text",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "nhap_vien",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "cd_soc_phan_ve",
+        "type": "boolean",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "cd_phan_ve",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "cd_may_day_cap_nang",
+        "type": "boolean",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "cd_may_day_cap_thong_thuong",
+        "type": "boolean",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_nen_da",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_nen_ho_hap",
+        "type": "text",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_nen_tuan_hoan",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_tim_mach_ghi_ro",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_tieu_hoa_man_tinh_ghi_ro",
+        "type": "text",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_nen_tieu_hoa",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nhom_yeu_to_nghi_ngo",
+        "type": "text",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_nghi_ngo_dot_nay",
+        "type": "boolean",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_yeu_to_nghi_ngo",
+        "type": "text",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_tien_su",
+        "type": "text",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_tung_phan_ung_truoc_day",
+        "type": "boolean",
+        "position": 18,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_tiep_xuc_den_khoi_phat",
+        "type": "interval",
+        "position": 19,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_keo_dai_tb",
+        "type": "interval",
+        "position": 20,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dot_gan_nhat_cach",
+        "type": "interval",
+        "position": 21,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_phan_ve_ghi_ro",
+        "type": "text",
+        "position": 22,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_di_ung_ghi_ro",
+        "type": "text",
+        "position": 23,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_dieu_tri_benh_dot_nay",
+        "type": "boolean",
+        "position": 24,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tuoi_lan_dau_bi_benh",
+        "type": "integer",
+        "position": 25,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_lan_may_day_cap_truoc",
+        "type": "integer",
+        "position": 26,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 27,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "benh_phu",
+        "type": "text",
+        "position": 28,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_benhanmaydaycap_dot_gan_nhat",
+        "definition": "CHECK ((dot_gan_nhat_cach >= '00:00:00'::interval))"
+      },
+      {
+        "name": "ck_benhanmaydaycap_keo_dai",
+        "definition": "CHECK ((thoi_gian_keo_dai_tb >= '00:00:00'::interval))"
+      },
+      {
+        "name": "ck_benhanmaydaycap_so_lan",
+        "definition": "CHECK ((so_lan_may_day_cap_truoc >= 0))"
+      },
+      {
+        "name": "ck_benhanmaydaycap_tiep_xuc",
+        "definition": "CHECK ((thoi_gian_tiep_xuc_den_khoi_phat >= '00:00:00'::interval))"
+      },
+      {
+        "name": "ck_benhanmaydaycap_tuoi",
+        "definition": "CHECK ((tuoi_lan_dau_bi_benh >= 0))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "benhanmaydayman",
+    "columns": [
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 2,
+        "nullable": true,
+        "default": "'MAN'::text",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "chan_doan_chinh",
+        "type": "text",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phan_nhom_csu",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chung_da_ve_noi",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_cholinergic",
+        "type": "boolean",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_do_lanh",
+        "type": "boolean",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_adrenergic",
+        "type": "boolean",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_do_nuoc",
+        "type": "boolean",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_do_anh_sang",
+        "type": "boolean",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_cam_ung_khac",
+        "type": "boolean",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "may_day_cam_ung_khac_ghi_ro",
+        "type": "text",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bieu_hien_qua_trinh_benh",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_benhanmaydayman_bieu_hien",
+        "definition": "CHECK ((bieu_hien_qua_trinh_benh = ANY (ARRAY['Chi san phu'::text, 'Chi phu mach'::text, 'San phu + phu mach'::text])))"
+      },
+      {
+        "name": "ck_benhanmaydayman_chan_doan",
+        "definition": "CHECK ((chan_doan_chinh = ANY (ARRAY['CSU'::text, 'CIndU'::text, 'CSU + CIndU'::text, 'Phu mach don thuan'::text])))"
+      },
+      {
+        "name": "ck_benhanmaydayman_csu",
+        "definition": "CHECK ((phan_nhom_csu = ANY (ARRAY['CSU Type I'::text, 'CSU Type IIb'::text, 'Chong lap Type I + Type IIb'::text, 'Khong xac dinh'::text])))"
+      },
+      {
+        "name": "ck_detail_may_day_cam_ung_khac",
+        "definition": "CHECK ((((may_day_cam_ung_khac IS TRUE) AND (may_day_cam_ung_khac_ghi_ro IS NOT NULL) AND (btrim(may_day_cam_ung_khac_ghi_ro) <> ''::text)) OR ((NOT (may_day_cam_ung_khac IS TRUE)) AND (may_day_cam_ung_khac_ghi_ro IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "benhnhan",
+    "columns": [
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_his",
+        "type": "character varying(50)",
+        "position": 2,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nghe_nghiep",
+        "type": "character varying(40)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dan_toc",
+        "type": "character varying(50)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bhyt_so_the",
+        "type": "character varying(30)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bhyt_gia_tri_den",
+        "type": "date",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nguoi_nha_ho_ten_dia_chi",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nguoi_nha_so_dien_thoai",
+        "type": "character varying(10)",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_benh_nhan_bhyt",
+        "definition": "CHECK ((btrim((bhyt_so_the)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_benh_nhan_ma_his",
+        "definition": "CHECK ((btrim((ma_his)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_benh_nhan_nghe_nghiep",
+        "definition": "CHECK (((nghe_nghiep)::text = ANY (ARRAY[('Cong nhan'::character varying)::text, ('Nong dan'::character varying)::text, ('Hoc sinh - Sinh vien'::character varying)::text, ('Can bo cong chuc'::character varying)::text, ('Khac'::character varying)::text])))"
+      },
+      {
+        "name": "ck_benh_nhan_sdt_nguoi_nha",
+        "definition": "CHECK (((nguoi_nha_so_dien_thoai)::text ~ '^[0-9]{10}$'::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "nguoi",
+        "references": [
+          "ma_nguoi"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "benhsucacdotbenhtruoc",
+    "columns": [
+      {
+        "name": "ma_tien_su",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tung_co_dot_tuong_tu",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tuoi_khoi_phat",
+        "type": "smallint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_dot_truoc",
+        "type": "integer",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "kieu_dien_bien",
+        "type": "character varying",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bieu_hien_dot_truoc",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_tung_nhap_vien",
+        "type": "boolean",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_lan_nhap_vien",
+        "type": "integer",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_tu_dot_gan_nhat",
+        "type": "numeric",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dien_bien_cac_dot_truoc",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_benh_su_so_dot",
+        "definition": "CHECK ((so_dot_truoc >= 0))"
+      },
+      {
+        "name": "ck_benh_su_so_lan_nhap_vien",
+        "definition": "CHECK ((so_lan_nhap_vien >= 0))"
+      },
+      {
+        "name": "ck_benh_su_thoi_gian",
+        "definition": "CHECK (((thoi_gian_tu_dot_gan_nhat >= (0)::numeric) AND (thoi_gian_tu_dot_gan_nhat < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_benh_su_tuoi",
+        "definition": "CHECK ((tuoi_khoi_phat >= 0))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "benhanmaydayman",
+        "references": [
+          "ma_ho_so"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chidanngungthuoc",
+    "columns": [
+      {
+        "name": "ma_chi_dan_ngung",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_don_thuoc",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_can_ngung",
+        "type": "character varying(255)",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngung_tu_ngay",
+        "type": "date",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ngung_ngay",
+        "type": "integer",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "muc_dich",
+        "type": "character varying(100)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "muc_dich_khac_ghi_ro",
+        "type": "character varying(255)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_chidan_muc_dich",
+        "definition": "CHECK (((muc_dich IS NULL) OR ((muc_dich)::text = ANY (ARRAY[('Test huyet thanh tu than'::character varying)::text, ('Test kich thich'::character varying)::text, ('Khac'::character varying)::text]))))"
+      },
+      {
+        "name": "ck_chidan_thoi_gian",
+        "definition": "CHECK ((thoi_gian_ngung_ngay >= 0))"
+      },
+      {
+        "name": "ck_ngung_mucdich_detail",
+        "definition": "CHECK ((((NOT ((muc_dich)::text IS DISTINCT FROM 'Khac'::text)) AND (muc_dich_khac_ghi_ro IS NOT NULL) AND (btrim((muc_dich_khac_ghi_ro)::text) <> ''::text)) OR ((NOT (NOT ((muc_dich)::text IS DISTINCT FROM 'Khac'::text))) AND (muc_dich_khac_ghi_ro IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_don_thuoc"
+        ],
+        "table": "donthuoc",
+        "references": [
+          "ma_don_thuoc"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chinhanh",
+    "columns": [
+      {
+        "name": "ma_chi_nhanh",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_chi_nhanh",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dia_chi",
+        "type": "text",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_dien_thoai",
+        "type": "character varying(20)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai",
+        "type": "boolean",
+        "position": 5,
+        "nullable": false,
+        "default": "true",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_chi_nhanh_dia_chi",
+        "definition": "CHECK ((btrim(dia_chi) <> ''::text))"
+      },
+      {
+        "name": "ck_chi_nhanh_sdt",
+        "definition": "CHECK ((btrim((so_dien_thoai)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_chi_nhanh_ten",
+        "definition": "CHECK ((btrim((ten_chi_nhanh)::text) <> ''::text))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "chitietdonthuoc",
+    "columns": [
+      {
+        "name": "ma_chi_tiet_don_thuoc",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_don_thuoc",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_thuoc",
+        "type": "character varying(50)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_thuoc_bo_sung",
+        "type": "character varying(255)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "lieu_dung",
+        "type": "character varying(100)",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_dung",
+        "type": "character varying(100)",
+        "position": 6,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_ke_hoach_dieu_tri",
+        "type": "character varying(50)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 8,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_ctdt_ten_thuoc_bo_sung",
+        "definition": "CHECK ((btrim((ten_thuoc_bo_sung)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_ctdt_lieu_dung",
+        "definition": "CHECK ((btrim((lieu_dung)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_ctdt_ma_ke_hoach_dieu_tri",
+        "definition": "CHECK ((btrim((ma_ke_hoach_dieu_tri)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_ctdt_mot_thuoc",
+        "definition": "CHECK (((ma_thuoc IS NOT NULL) <> (ten_thuoc_bo_sung IS NOT NULL)))"
+      },
+      {
+        "name": "ck_ctdt_thoi_gian_dung",
+        "definition": "CHECK ((btrim((thoi_gian_dung)::text) <> ''::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_don_thuoc"
+        ],
+        "table": "donthuoc",
+        "references": [
+          "ma_don_thuoc"
+        ]
+      },
+      {
+        "columns": [
+          "ma_thuoc"
+        ],
+        "table": "thuoc",
+        "references": [
+          "ma_thuoc"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chitietketquanghiemphap",
+    "columns": [
+      {
+        "name": "ma_chi_tiet_ket_qua_nghiem_phap",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_nghiem_phap",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_nghiem_phap",
+        "type": "bigint",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ket_qua",
+        "type": "character varying(12)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nguong_gia_tri_so",
+        "type": "numeric(12,4)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nguong_gia_tri_chu",
+        "type": "text",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "don_vi_do",
+        "type": "character varying(30)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_ngua_nrs",
+        "type": "smallint",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_bong_rat_nrs",
+        "type": "smallint",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_dau_nrs",
+        "type": "smallint",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "can_nguyen_khac_ten",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "la_can_nguyen_khac",
+        "type": "boolean",
+        "position": 12,
+        "nullable": false,
+        "default": "false",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_chi_tiet_kqnp_bong_nrs",
+        "definition": "CHECK (((diem_bong_rat_nrs >= 0) AND (diem_bong_rat_nrs <= 10)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_can_nguyen",
+        "definition": "CHECK ((btrim(can_nguyen_khac_ten) <> ''::text))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_dau_nrs",
+        "definition": "CHECK (((diem_dau_nrs >= 0) AND (diem_dau_nrs <= 10)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_don_vi",
+        "definition": "CHECK ((((nguong_gia_tri_so IS NULL) AND (nguong_gia_tri_chu IS NULL)) OR (don_vi_do IS NOT NULL)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_don_vi_val",
+        "definition": "CHECK ((btrim((don_vi_do)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_ket_qua",
+        "definition": "CHECK (((ket_qua)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text])))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_ngua_nrs",
+        "definition": "CHECK (((diem_ngua_nrs >= 0) AND (diem_ngua_nrs <= 10)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_nguong",
+        "definition": "CHECK (((nguong_gia_tri_so IS NULL) OR (nguong_gia_tri_chu IS NULL)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_nguong_chu",
+        "definition": "CHECK ((btrim(nguong_gia_tri_chu) <> ''::text))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_nguong_khong_am",
+        "definition": "CHECK ((((don_vi_do)::text <> ALL (ARRAY[('phut'::character varying)::text, ('kg'::character varying)::text, ('nm'::character varying)::text, ('diem'::character varying)::text])) OR (nguong_gia_tri_so >= (0)::numeric)))"
+      },
+      {
+        "name": "ck_chi_tiet_kqnp_nguong_so",
+        "definition": "CHECK ((nguong_gia_tri_so < 'Infinity'::numeric))"
+      },
+      {
+        "name": "ck_kqnp_can_nguyen_detail",
+        "definition": "CHECK ((((la_can_nguyen_khac IS TRUE) AND (can_nguyen_khac_ten IS NOT NULL) AND (btrim(can_nguyen_khac_ten) <> ''::text)) OR ((NOT (la_can_nguyen_khac IS TRUE)) AND (can_nguyen_khac_ten IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "loai_nghiem_phap"
+        ],
+        "table": "loainghiemphap",
+        "references": [
+          "ma_nghiem_phap"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phien_nghiem_phap"
+        ],
+        "table": "phiennghiemphapkichthich",
+        "references": [
+          "ma_phien_nghiem_phap"
+        ]
+      },
+      {
+        "columns": [
+          "loai_nghiem_phap",
+          "la_can_nguyen_khac"
+        ],
+        "table": "loainghiemphap",
+        "references": [
+          "ma_nghiem_phap",
+          "la_can_nguyen_khac"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chitiettonthuongcaptinh",
+    "columns": [
+      {
+        "name": "ma_chi_tiet_ton_thuong_cap_tinh",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dang_ton_thuong",
+        "type": "character varying",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dang_ton_thuong_khac",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "kich_thuoc_max_mm",
+        "type": "numeric",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "kich_thuoc_min_mm",
+        "type": "numeric",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "kich_thuoc_dong_deu_mm",
+        "type": "numeric",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_kich_thuoc",
+        "type": "character varying",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ton_tai_tb",
+        "type": "numeric",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dien_bien",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_luong_san_phu",
+        "type": "integer",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_mach_ben",
+        "type": "boolean",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "vi_tri",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "vi_tri_dac_biet_ghi_ro",
+        "type": "text",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_ton_thuong_cap_min_max",
+        "definition": "CHECK ((kich_thuoc_max_mm >= kich_thuoc_min_mm))"
+      },
+      {
+        "name": "ck_dang_tonthuong_khac",
+        "definition": "CHECK ((((NOT ((dang_ton_thuong)::text IS DISTINCT FROM 'Khac'::text)) AND (dang_ton_thuong_khac IS NOT NULL) AND (btrim(dang_ton_thuong_khac) <> ''::text)) OR ((NOT (NOT ((dang_ton_thuong)::text IS DISTINCT FROM 'Khac'::text))) AND (dang_ton_thuong_khac IS NULL))))"
+      },
+      {
+        "name": "ck_ton_thuong_cap_kich_thuoc_dong_deu",
+        "definition": "CHECK (((kich_thuoc_dong_deu_mm >= (0)::numeric) AND (kich_thuoc_dong_deu_mm < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_ton_thuong_cap_kich_thuoc_max",
+        "definition": "CHECK (((kich_thuoc_max_mm >= (0)::numeric) AND (kich_thuoc_max_mm < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_ton_thuong_cap_kich_thuoc_min",
+        "definition": "CHECK (((kich_thuoc_min_mm >= (0)::numeric) AND (kich_thuoc_min_mm < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_ton_thuong_cap_so_luong",
+        "definition": "CHECK ((so_luong_san_phu >= 0))"
+      },
+      {
+        "name": "ck_ton_thuong_cap_thoi_gian",
+        "definition": "CHECK (((thoi_gian_ton_tai_tb >= (0)::numeric) AND (thoi_gian_ton_tai_tb < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham"
+        ],
+        "table": "phienkhamcap",
+        "references": [
+          "ma_phien_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chitiettonthuongsanphu",
+    "columns": [
+      {
+        "name": "ma_chi_tiet_ton_thuong",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dang_ton_thuong",
+        "type": "character varying",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "kich_thuoc",
+        "type": "numeric",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ton_tai",
+        "type": "numeric",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tinh_trang_dung_thuoc",
+        "type": "character varying",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_dac_diem_san_phu",
+        "type": "bigint",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_luong",
+        "type": "integer",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "vi_tri",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_san_phu_kich_thuoc",
+        "definition": "CHECK (((kich_thuoc >= (0)::numeric) AND (kich_thuoc < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_san_phu_so_luong",
+        "definition": "CHECK ((so_luong >= 0))"
+      },
+      {
+        "name": "ck_san_phu_thoi_gian",
+        "definition": "CHECK (((thoi_gian_ton_tai >= (0)::numeric) AND (thoi_gian_ton_tai < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham"
+        ],
+        "table": "phienkhamman",
+        "references": [
+          "ma_phien_kham"
+        ]
+      },
+      {
+        "columns": [
+          "ma_dac_diem_san_phu"
+        ],
+        "table": "dacdiemsanphu",
+        "references": [
+          "ma_dac_diem_san_phu"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "chukytheodoiuas7",
+    "columns": [
+      {
+        "name": "ma_chu_ky",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_bat_dau",
+        "type": "date",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_ket_thuc",
+        "type": "date",
+        "position": 4,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai_chu_ky",
+        "type": "character varying(50)",
+        "position": 5,
+        "nullable": true,
+        "default": "'DANG_THEO_DOI'::character varying",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 7,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_chukyuas7_ngay",
+        "definition": "CHECK ((ngay_ket_thuc = (ngay_bat_dau + 6)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "dacdiemsanphu",
+    "columns": [
+      {
+        "name": "ma_dac_diem_san_phu",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_dac_diem",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mo_ta",
+        "type": "text",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "dacdiemsanphu_ten_dac_diem_check",
+        "definition": "CHECK ((btrim((ten_dac_diem)::text) <> ''::text))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "danhgiamucdohoatdongbenh",
+    "columns": [
+      {
+        "name": "ma_danh_gia_hoat_dong",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham_man",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "du_du_lieu_7_ngay",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": "true",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_nguoi_danh_gia",
+        "type": "bigint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_danh_gia",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hss7_san_phu_khong_dung_thuoc",
+        "type": "smallint",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hss7_san_phu_dung_thuoc_deu",
+        "type": "smallint",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hss7_san_phu_dung_thuoc_khong_deu",
+        "type": "smallint",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "iss7_ngua_khong_dung_thuoc",
+        "type": "smallint",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "iss7_ngua_dung_thuoc_deu",
+        "type": "smallint",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "iss7_ngua_dung_thuoc_khong_deu",
+        "type": "smallint",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uas7_tong_khong_dung_thuoc",
+        "type": "smallint",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uas7_tong_dung_thuoc_deu",
+        "type": "smallint",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uas7_tong_dung_thuoc_khong_deu",
+        "type": "smallint",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ghi_chu",
+        "type": "text",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_danhgia_hss7_1",
+        "definition": "CHECK (((hss7_san_phu_khong_dung_thuoc >= 0) AND (hss7_san_phu_khong_dung_thuoc <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_hss7_2",
+        "definition": "CHECK (((hss7_san_phu_dung_thuoc_deu >= 0) AND (hss7_san_phu_dung_thuoc_deu <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_hss7_3",
+        "definition": "CHECK (((hss7_san_phu_dung_thuoc_khong_deu >= 0) AND (hss7_san_phu_dung_thuoc_khong_deu <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_iss7_1",
+        "definition": "CHECK (((iss7_ngua_khong_dung_thuoc >= 0) AND (iss7_ngua_khong_dung_thuoc <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_iss7_2",
+        "definition": "CHECK (((iss7_ngua_dung_thuoc_deu >= 0) AND (iss7_ngua_dung_thuoc_deu <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_iss7_3",
+        "definition": "CHECK (((iss7_ngua_dung_thuoc_khong_deu >= 0) AND (iss7_ngua_dung_thuoc_khong_deu <= 21)))"
+      },
+      {
+        "name": "ck_danhgia_uas7_1",
+        "definition": "CHECK (((uas7_tong_khong_dung_thuoc >= 0) AND (uas7_tong_khong_dung_thuoc <= 42)))"
+      },
+      {
+        "name": "ck_danhgia_uas7_2",
+        "definition": "CHECK (((uas7_tong_dung_thuoc_deu >= 0) AND (uas7_tong_dung_thuoc_deu <= 42)))"
+      },
+      {
+        "name": "ck_danhgia_uas7_3",
+        "definition": "CHECK (((uas7_tong_dung_thuoc_khong_deu >= 0) AND (uas7_tong_dung_thuoc_khong_deu <= 42)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_nguoi_danh_gia"
+        ],
+        "table": "nguoi",
+        "references": [
+          "ma_nguoi"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phien_kham_man"
+        ],
+        "table": "phienkhamman",
+        "references": [
+          "ma_phien_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "dauhieusinhton",
+    "columns": [
+      {
+        "name": "ma_dau_hieu_sinh_ton",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_bac_si",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem",
+        "type": "timestamp with time zone",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tri_giac",
+        "type": "character varying",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nhiet_do",
+        "type": "numeric",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "spo2",
+        "type": "numeric",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mach",
+        "type": "numeric",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "huyet_ap_tam_thu",
+        "type": "numeric",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "huyet_ap_tam_truong",
+        "type": "numeric",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nhip_tho",
+        "type": "numeric",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bat_thuong_co_quan_khac",
+        "type": "boolean",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bat_thuong_co_quan_khac_ghi_ro",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 14,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 15,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_detail_bat_thuong_co_quan_khac",
+        "definition": "CHECK ((((bat_thuong_co_quan_khac IS TRUE) AND (bat_thuong_co_quan_khac_ghi_ro IS NOT NULL) AND (btrim(bat_thuong_co_quan_khac_ghi_ro) <> ''::text)) OR ((NOT (bat_thuong_co_quan_khac IS TRUE)) AND (bat_thuong_co_quan_khac_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_dhst_bat_thuong_ghi_ro",
+        "definition": "CHECK ((btrim(bat_thuong_co_quan_khac_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_dhst_huyet_ap_tam_thu",
+        "definition": "CHECK (((huyet_ap_tam_thu >= (0)::numeric) AND (huyet_ap_tam_thu < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_dhst_huyet_ap_tam_truong",
+        "definition": "CHECK (((huyet_ap_tam_truong >= (0)::numeric) AND (huyet_ap_tam_truong < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_dhst_mach",
+        "definition": "CHECK (((mach >= (0)::numeric) AND (mach < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_dhst_nhiet_do",
+        "definition": "CHECK (((nhiet_do > '-Infinity'::numeric) AND (nhiet_do < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_dhst_nhip_tho",
+        "definition": "CHECK (((nhip_tho >= (0)::numeric) AND (nhip_tho < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_dhst_spo2",
+        "definition": "CHECK (((spo2 >= (0)::numeric) AND (spo2 <= (100)::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_bac_si"
+        ],
+        "table": "nhanvien",
+        "references": [
+          "ma_nhan_vien"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phien_kham"
+        ],
+        "table": "phienkham",
+        "references": [
+          "ma_phien_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "donthuoc",
+    "columns": [
+      {
+        "name": "ma_don_thuoc",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_ke_don",
+        "type": "date",
+        "position": 3,
+        "nullable": false,
+        "default": "CURRENT_DATE",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai_don",
+        "type": "character varying(50)",
+        "position": 4,
+        "nullable": true,
+        "default": "'DANG_DIEU_TRI'::character varying",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ghi_chu_dieu_tri",
+        "type": "text",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngung_thuoc_lan_sau",
+        "type": "boolean",
+        "position": 6,
+        "nullable": true,
+        "default": "false",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_can_ngung_truoc_tai_kham",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 8,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 9,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 10,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_donthuoc_ngung_detail",
+        "definition": "CHECK ((((ngung_thuoc_lan_sau IS TRUE) AND (thuoc_can_ngung_truoc_tai_kham IS NOT NULL) AND (btrim(thuoc_can_ngung_truoc_tai_kham) <> ''::text)) OR ((NOT (ngung_thuoc_lan_sau IS TRUE)) AND (thuoc_can_ngung_truoc_tai_kham IS NULL))))"
+      },
+      {
+        "name": "ck_donthuoc_trang_thai",
+        "definition": "CHECK (((trang_thai_don)::text = ANY (ARRAY[('DANG_DIEU_TRI'::character varying)::text, ('HOAN_THANH'::character varying)::text, ('HUY'::character varying)::text])))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phien_kham",
+          "ma_ho_so"
+        ],
+        "table": "phienkham",
+        "references": [
+          "ma_phien_kham",
+          "ma_ho_so"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "dottonthuongda",
+    "columns": [
+      {
+        "name": "ma_dot_ton_thuong_da",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_ho_so_man",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_dot_ton_thuong_da",
+        "type": "character varying(255)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_xuat_hien",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien",
+        "type": "character varying(255)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien_khac",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_thuoc_dung_gan_thoi_diem_xuat_hien",
+        "type": "character varying(255)",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_dung_thuoc_truoc_khi_xuat_hien",
+        "type": "character varying(100)",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "don_vi_thoi_gian",
+        "type": "character varying(50)",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chi_tiet_dot_ton_thuong",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 12,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 13,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_dottonthuongda_hoancanh",
+        "definition": "CHECK ((((NOT ((hoan_canh_xuat_hien)::text IS DISTINCT FROM 'Khac'::text)) AND (hoan_canh_xuat_hien_khac IS NOT NULL) AND (btrim(hoan_canh_xuat_hien_khac) <> ''::text)) OR ((NOT (NOT ((hoan_canh_xuat_hien)::text IS DISTINCT FROM 'Khac'::text))) AND (hoan_canh_xuat_hien_khac IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so_man"
+        ],
+        "table": "benhanmaydayman",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      },
+      {
+        "columns": [
+          "ma_ho_so_man",
+          "ma_benh_nhan"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "ma_benh_nhan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "hoancanhkhoiphatdiung",
+    "columns": [
+      {
+        "name": "ma_hoan_canh_khoi_phat",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuc_an_nghi_ngo",
+        "type": "text",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuc_an_thoi_gian",
+        "type": "numeric",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuc_an_tung_bi",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuc_an_loai_tien_su",
+        "type": "character varying",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuc_an_tien_su_ghi_ro",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_nghi_ngo",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_thoi_gian",
+        "type": "numeric",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_tung_bi",
+        "type": "boolean",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_loai_tien_su",
+        "type": "character varying",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thuoc_tien_su_ghi_ro",
+        "type": "text",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "con_trung_nghi_ngo",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "con_trung_thoi_gian",
+        "type": "numeric",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "con_trung_tung_bi",
+        "type": "boolean",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "con_trung_loai_tien_su",
+        "type": "character varying",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "con_trung_tien_su_ghi_ro",
+        "type": "text",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_nghi_ngo",
+        "type": "text",
+        "position": 18,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_thoi_gian",
+        "type": "numeric",
+        "position": 19,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_tung_bi",
+        "type": "boolean",
+        "position": 20,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_loai_tien_su",
+        "type": "character varying",
+        "position": 21,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_tien_su_ghi_ro",
+        "type": "text",
+        "position": 22,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_hoan_canh_con_trung_thoi_gian",
+        "definition": "CHECK (((con_trung_thoi_gian >= (0)::numeric) AND (con_trung_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_hoan_canh_khac_thoi_gian",
+        "definition": "CHECK (((khac_thoi_gian >= (0)::numeric) AND (khac_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_hoan_canh_thuc_an_thoi_gian",
+        "definition": "CHECK (((thuc_an_thoi_gian >= (0)::numeric) AND (thuc_an_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_hoan_canh_thuoc_thoi_gian",
+        "definition": "CHECK (((thuoc_thoi_gian >= (0)::numeric) AND (thuoc_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_hoancanh_con_trung_tiensu",
+        "definition": "CHECK ((((con_trung_tung_bi IS TRUE) AND (con_trung_tien_su_ghi_ro IS NOT NULL) AND (btrim(con_trung_tien_su_ghi_ro) <> ''::text)) OR ((NOT (con_trung_tung_bi IS TRUE)) AND (con_trung_tien_su_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_hoancanh_khac_tiensu",
+        "definition": "CHECK ((((khac_tung_bi IS TRUE) AND (khac_tien_su_ghi_ro IS NOT NULL) AND (btrim(khac_tien_su_ghi_ro) <> ''::text)) OR ((NOT (khac_tung_bi IS TRUE)) AND (khac_tien_su_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_hoancanh_thuc_an_tiensu",
+        "definition": "CHECK ((((thuc_an_tung_bi IS TRUE) AND (thuc_an_tien_su_ghi_ro IS NOT NULL) AND (btrim(thuc_an_tien_su_ghi_ro) <> ''::text)) OR ((NOT (thuc_an_tung_bi IS TRUE)) AND (thuc_an_tien_su_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_hoancanh_thuoc_tiensu",
+        "definition": "CHECK ((((thuoc_tung_bi IS TRUE) AND (thuoc_tien_su_ghi_ro IS NOT NULL) AND (btrim(thuoc_tien_su_ghi_ro) <> ''::text)) OR ((NOT (thuoc_tung_bi IS TRUE)) AND (thuoc_tien_su_ghi_ro IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "hosobenhan",
+    "columns": [
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_cap",
+        "type": "bigint",
+        "position": 4,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (loai_benh_an = 'CAP'::text) THEN ma_ho_so\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_man",
+        "type": "bigint",
+        "position": 5,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (loai_benh_an = 'MAN'::text) THEN ma_ho_so\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_kham_lan_dau",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_bat_dau_dieu_tri_ngoai_tru",
+        "type": "date",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_ket_thuc_dieu_tri_ngoai_tru",
+        "type": "date",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chan_doan_tuyen_truoc",
+        "type": "text",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chan_doan_ban_dau_phong_kham",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ket_qua_dieu_tri_bao_hiem",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_khoi_phat_tuan",
+        "type": "numeric(12,2)",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai",
+        "type": "text",
+        "position": 13,
+        "nullable": false,
+        "default": "'draft'::text",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_gia_dinh",
+        "type": "text",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_gia_dinh_ghi_ro",
+        "type": "text",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_dieu_tri_truoc_kham",
+        "type": "boolean",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_hosobenhan_thoi_gian",
+        "definition": "CHECK (((thoi_gian_khoi_phat_tuan >= (0)::numeric) AND (thoi_gian_khoi_phat_tuan < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_hoso_giadinh_detail",
+        "definition": "CHECK ((((NOT (tien_su_gia_dinh IS DISTINCT FROM 'Co'::text)) AND (tien_su_gia_dinh_ghi_ro IS NOT NULL) AND (btrim(tien_su_gia_dinh_ghi_ro) <> ''::text)) OR ((NOT (NOT (tien_su_gia_dinh IS DISTINCT FROM 'Co'::text))) AND (tien_su_gia_dinh_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_hosobenhan_ket_qua",
+        "definition": "CHECK ((ket_qua_dieu_tri_bao_hiem = ANY (ARRAY['Khoi benh'::text, 'Do'::text, 'Khong do'::text, 'Nang hon'::text, 'Chet'::text, 'Bien chung'::text])))"
+      },
+      {
+        "name": "ck_hosobenhan_loai",
+        "definition": "CHECK ((loai_benh_an = ANY (ARRAY['CAP'::text, 'MAN'::text])))"
+      },
+      {
+        "name": "ck_hosobenhan_ngay_dieu_tri",
+        "definition": "CHECK ((ngay_ket_thuc_dieu_tri_ngoai_tru >= ngay_bat_dau_dieu_tri_ngoai_tru))"
+      },
+      {
+        "name": "ck_hosobenhan_tien_su_gia_dinh",
+        "definition": "CHECK ((tien_su_gia_dinh = ANY (ARRAY['Co'::text, 'Khong'::text, 'Khong ro'::text])))"
+      },
+      {
+        "name": "ck_hosobenhan_trang_thai",
+        "definition": "CHECK ((trang_thai = ANY (ARRAY['draft'::text, 'pending'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_subtype_cap"
+        ],
+        "table": "benhanmaydaycap",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_subtype_man"
+        ],
+        "table": "benhanmaydayman",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ketquacanlamsang",
+    "columns": [
+      {
+        "name": "ma_ket_qua_can_lam_sang",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_ket_qua_can_lam_sang",
+        "type": "character varying(3)",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "wbc",
+        "type": "numeric(12,4)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "crp",
+        "type": "numeric(12,4)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ige_toan_phan",
+        "type": "numeric(12,4)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "can_lam_sang_khac_ghi_chu",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "xet_nghiem_khac",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_thuc_hien",
+        "type": "timestamp with time zone",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 10,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_cap",
+        "type": "bigint",
+        "position": 11,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN ((loai_ket_qua_can_lam_sang)::text = 'CAP'::text) THEN ma_ket_qua_can_lam_sang\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_man",
+        "type": "bigint",
+        "position": 12,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN ((loai_ket_qua_can_lam_sang)::text = 'MAN'::text) THEN ma_ket_qua_can_lam_sang\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_kqcls_crp",
+        "definition": "CHECK (((crp >= (0)::numeric) AND (crp < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_ige",
+        "definition": "CHECK (((ige_toan_phan >= (0)::numeric) AND (ige_toan_phan < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_loai",
+        "definition": "CHECK (((loai_ket_qua_can_lam_sang)::text = ANY (ARRAY[('CAP'::character varying)::text, ('MAN'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_wbc",
+        "definition": "CHECK (((wbc >= (0)::numeric) AND (wbc < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_subtype_cap"
+        ],
+        "table": "ketquacanlamsangcap",
+        "references": [
+          "ma_ket_qua_can_lam_sang"
+        ]
+      },
+      {
+        "columns": [
+          "ma_subtype_man"
+        ],
+        "table": "ketquacanlamsangman",
+        "references": [
+          "ma_ket_qua_can_lam_sang"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phien_kham",
+          "loai_ket_qua_can_lam_sang"
+        ],
+        "table": "phienkham",
+        "references": [
+          "ma_phien_kham",
+          "loai_benh_an"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ketquacanlamsangcap",
+    "columns": [
+      {
+        "name": "ma_ket_qua_can_lam_sang",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_ket_qua_can_lam_sang",
+        "type": "character varying(3)",
+        "position": 2,
+        "nullable": true,
+        "default": "'CAP'::character varying(3)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "lym",
+        "type": "numeric(12,4)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "neu",
+        "type": "numeric(12,4)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "plt",
+        "type": "numeric(12,4)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tryptase_cap",
+        "type": "numeric(12,4)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tryptase_nen",
+        "type": "numeric(12,4)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nlr",
+        "type": "numeric",
+        "position": 8,
+        "nullable": true,
+        "default": "round((neu / NULLIF(lym, (0)::numeric)), 6)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "plr",
+        "type": "numeric",
+        "position": 9,
+        "nullable": true,
+        "default": "round((plt / NULLIF(lym, (0)::numeric)), 6)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_kqcls_cap_lym",
+        "definition": "CHECK (((lym >= (0)::numeric) AND (lym < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_cap_neu",
+        "definition": "CHECK (((neu >= (0)::numeric) AND (neu < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_cap_plt",
+        "definition": "CHECK (((plt >= (0)::numeric) AND (plt < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_cap_tryptase_cap",
+        "definition": "CHECK (((tryptase_cap >= (0)::numeric) AND (tryptase_cap < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_cap_tryptase_nen",
+        "definition": "CHECK (((tryptase_nen >= (0)::numeric) AND (tryptase_nen < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ket_qua_can_lam_sang",
+          "loai_ket_qua_can_lam_sang"
+        ],
+        "table": "ketquacanlamsang",
+        "references": [
+          "ma_ket_qua_can_lam_sang",
+          "loai_ket_qua_can_lam_sang"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ketquacanlamsangman",
+    "columns": [
+      {
+        "name": "ma_ket_qua_can_lam_sang",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_ket_qua_can_lam_sang",
+        "type": "character varying(3)",
+        "position": 2,
+        "nullable": true,
+        "default": "'MAN'::character varying(3)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "test_huyet_thanh_tu_than",
+        "type": "character varying(12)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ige_khang_tpo_ket_qua",
+        "type": "character varying(12)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "bat_ket_qua",
+        "type": "character varying(12)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ige_khang_il24_ket_qua",
+        "type": "character varying(12)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "asst_duong_kinh_mm",
+        "type": "numeric(12,4)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "eo",
+        "type": "numeric(12,4)",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ba_bach_cau",
+        "type": "numeric(12,4)",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "anti_tpo",
+        "type": "numeric(12,4)",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tsh",
+        "type": "numeric(12,4)",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ft4",
+        "type": "numeric(12,4)",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ft3",
+        "type": "numeric(12,4)",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mau_lang_2h",
+        "type": "numeric(12,4)",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mau_lang_1h",
+        "type": "numeric(12,4)",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ana_hep2",
+        "type": "character varying(12)",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "sieu_am_tuyen_giap",
+        "type": "text",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_kqcls_man_ana",
+        "definition": "CHECK (((ana_hep2)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_man_anti_tpo",
+        "definition": "CHECK (((anti_tpo >= (0)::numeric) AND (anti_tpo < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_asst",
+        "definition": "CHECK (((asst_duong_kinh_mm >= (0)::numeric) AND (asst_duong_kinh_mm < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_asst_logic",
+        "definition": "CHECK (((asst_duong_kinh_mm IS NULL) OR (NOT ((test_huyet_thanh_tu_than)::text IS DISTINCT FROM 'Duong tinh'::text))))"
+      },
+      {
+        "name": "ck_kqcls_man_ba",
+        "definition": "CHECK (((ba_bach_cau >= (0)::numeric) AND (ba_bach_cau < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_bat",
+        "definition": "CHECK (((bat_ket_qua)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text, ('Chua lam'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_man_eo",
+        "definition": "CHECK (((eo >= (0)::numeric) AND (eo < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_ft3",
+        "definition": "CHECK (((ft3 >= (0)::numeric) AND (ft3 < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_ft4",
+        "definition": "CHECK (((ft4 >= (0)::numeric) AND (ft4 < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_ige_il24",
+        "definition": "CHECK (((ige_khang_il24_ket_qua)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text, ('Chua lam'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_man_ige_tpo",
+        "definition": "CHECK (((ige_khang_tpo_ket_qua)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text, ('Chua lam'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_man_ml_1h",
+        "definition": "CHECK (((mau_lang_1h >= (0)::numeric) AND (mau_lang_1h < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_ml_2h",
+        "definition": "CHECK (((mau_lang_2h >= (0)::numeric) AND (mau_lang_2h < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_kqcls_man_test_ht",
+        "definition": "CHECK (((test_huyet_thanh_tu_than)::text = ANY (ARRAY[('Duong tinh'::character varying)::text, ('Am tinh'::character varying)::text, ('Chua lam'::character varying)::text])))"
+      },
+      {
+        "name": "ck_kqcls_man_tsh",
+        "definition": "CHECK (((tsh >= (0)::numeric) AND (tsh < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ket_qua_can_lam_sang",
+          "loai_ket_qua_can_lam_sang"
+        ],
+        "table": "ketquacanlamsang",
+        "references": [
+          "ma_ket_qua_can_lam_sang",
+          "loai_ket_qua_can_lam_sang"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ketquaproms",
+    "columns": [
+      {
+        "name": "ma_ket_qua_proms",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham_man",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uct_diem",
+        "type": "smallint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "aect_diem",
+        "type": "smallint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "act_diem_legacy",
+        "type": "smallint",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dlqi_diem",
+        "type": "smallint",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "cu_q2ol_diem",
+        "type": "numeric(5,2)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 8,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_proms_act",
+        "definition": "CHECK (((act_diem_legacy >= 0) AND (act_diem_legacy <= 16)))"
+      },
+      {
+        "name": "ck_proms_aect",
+        "definition": "CHECK (((aect_diem >= 0) AND (aect_diem <= 16)))"
+      },
+      {
+        "name": "ck_proms_cu_q2ol",
+        "definition": "CHECK ((cu_q2ol_diem >= (0)::numeric))"
+      },
+      {
+        "name": "ck_proms_dlqi",
+        "definition": "CHECK (((dlqi_diem >= 0) AND (dlqi_diem <= 30)))"
+      },
+      {
+        "name": "ck_proms_uct",
+        "definition": "CHECK (((uct_diem >= 0) AND (uct_diem <= 16)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham_man"
+        ],
+        "table": "phienkhamman",
+        "references": [
+          "ma_phien_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "khoaphong",
+    "columns": [
+      {
+        "name": "ma_khoa_phong",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_khoa_phong",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_khoa",
+        "type": "character varying(50)",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mo_ta",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_chi_nhanh",
+        "type": "bigint",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_khoa_phong_loai",
+        "definition": "CHECK ((btrim((loai_khoa)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_khoa_phong_ten",
+        "definition": "CHECK ((btrim((ten_khoa_phong)::text) <> ''::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_chi_nhanh"
+        ],
+        "table": "chinhanh",
+        "references": [
+          "ma_chi_nhanh"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "loainghiemphap",
+    "columns": [
+      {
+        "name": "ma_nghiem_phap",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_nghiem_phap",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phuong_phap_thuc_hien",
+        "type": "text",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_chuan",
+        "type": "numeric(10,2)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "la_can_nguyen_khac",
+        "type": "boolean",
+        "position": 7,
+        "nullable": false,
+        "default": "false",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_loai_nghiem_phap_ten",
+        "definition": "CHECK ((btrim((ten_nghiem_phap)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_loai_nghiem_phap_thoi_gian",
+        "definition": "CHECK ((thoi_diem_cap_nhat >= thoi_diem_tao))"
+      },
+      {
+        "name": "ck_loai_nghiem_phap_thoi_gian_chuan",
+        "definition": "CHECK (((thoi_gian_chuan >= (0)::numeric) AND (thoi_gian_chuan < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "nguoi",
+    "columns": [
+      {
+        "name": "ma_nguoi",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ho_ten",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_sinh",
+        "type": "date",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "gioi_tinh",
+        "type": "character varying(3)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_dien_thoai",
+        "type": "character varying(10)",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dia_chi_tinh_tp",
+        "type": "character varying(100)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dia_chi_xa_phuong",
+        "type": "character varying(100)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dia_chi_so_nha_thon_pho",
+        "type": "character varying(255)",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 9,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 10,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_nguoi_gioi_tinh",
+        "definition": "CHECK (((gioi_tinh)::text = ANY (ARRAY[('Nam'::character varying)::text, ('Nu'::character varying)::text])))"
+      },
+      {
+        "name": "ck_nguoi_ho_ten",
+        "definition": "CHECK ((btrim((ho_ten)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_nguoi_ngay_sinh",
+        "definition": "CHECK ((ngay_sinh <= CURRENT_DATE))"
+      },
+      {
+        "name": "ck_nguoi_sdt",
+        "definition": "CHECK (((so_dien_thoai)::text ~ '^[0-9]{10}$'::text))"
+      },
+      {
+        "name": "ck_nguoi_thoi_gian",
+        "definition": "CHECK ((thoi_diem_cap_nhat >= thoi_diem_tao))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "nhanvien",
+    "columns": [
+      {
+        "name": "ma_nhan_vien",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_chi_nhanh",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [],
+    "relations": [
+      {
+        "columns": [
+          "ma_chi_nhanh"
+        ],
+        "table": "chinhanh",
+        "references": [
+          "ma_chi_nhanh"
+        ]
+      },
+      {
+        "columns": [
+          "ma_nhan_vien"
+        ],
+        "table": "nguoi",
+        "references": [
+          "ma_nguoi"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nhatkyaashangngay",
+    "columns": [
+      {
+        "name": "ma_nhat_ky_aas",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_ho_so_man",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_theo_doi",
+        "type": "date",
+        "position": 4,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_dot_sung_phu",
+        "type": "boolean",
+        "position": 5,
+        "nullable": false,
+        "default": "false",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_xuat_hien",
+        "type": "character varying(50)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "muc_kho_chiu",
+        "type": "smallint",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "han_che_hoat_dong",
+        "type": "smallint",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "anh_huong_ngoai_hinh",
+        "type": "smallint",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "do_nang_tong_the",
+        "type": "smallint",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_aas_ngay",
+        "type": "smallint",
+        "position": 11,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (co_dot_sung_phu = true) THEN ((((muc_kho_chiu + han_che_hoat_dong) + anh_huong_ngoai_hinh) + do_nang_tong_the))::integer\n    ELSE 0\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 12,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_aas_day_du_diem",
+        "definition": "CHECK (((co_dot_sung_phu AND (muc_kho_chiu IS NOT NULL) AND (han_che_hoat_dong IS NOT NULL) AND (anh_huong_ngoai_hinh IS NOT NULL) AND (do_nang_tong_the IS NOT NULL)) OR ((NOT co_dot_sung_phu) AND (muc_kho_chiu IS NULL) AND (han_che_hoat_dong IS NULL) AND (anh_huong_ngoai_hinh IS NULL) AND (do_nang_tong_the IS NULL))))"
+      },
+      {
+        "name": "ck_aas_do_nang",
+        "definition": "CHECK (((do_nang_tong_the >= 0) AND (do_nang_tong_the <= 3)))"
+      },
+      {
+        "name": "ck_aas_han_che",
+        "definition": "CHECK (((han_che_hoat_dong >= 0) AND (han_che_hoat_dong <= 3)))"
+      },
+      {
+        "name": "ck_aas_kho_chiu",
+        "definition": "CHECK (((muc_kho_chiu >= 0) AND (muc_kho_chiu <= 3)))"
+      },
+      {
+        "name": "ck_aas_ngoai_hinh",
+        "definition": "CHECK (((anh_huong_ngoai_hinh >= 0) AND (anh_huong_ngoai_hinh <= 3)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so_man"
+        ],
+        "table": "benhanmaydayman",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      },
+      {
+        "columns": [
+          "ma_ho_so_man",
+          "ma_benh_nhan"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "ma_benh_nhan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nhatkyuashangngay",
+    "columns": [
+      {
+        "name": "ma_nhat_ky_uas",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_chu_ky",
+        "type": "bigint",
+        "position": 2,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_ho_so_man",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 4,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_cham_diem",
+        "type": "date",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_thu_may_trong_chu_ky",
+        "type": "smallint",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_san_phu_hss",
+        "type": "smallint",
+        "position": 7,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_ngua_iss",
+        "type": "smallint",
+        "position": 8,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_uas_ngay",
+        "type": "smallint",
+        "position": 9,
+        "nullable": true,
+        "default": "(diem_san_phu_hss + diem_ngua_iss)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "trang_thai_dung_thuoc",
+        "type": "character varying(50)",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai_ngay",
+        "type": "character varying(50)",
+        "position": 11,
+        "nullable": false,
+        "default": "'HOP_LE'::character varying",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 12,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_bat_dau_chu_ky",
+        "type": "date",
+        "position": 13,
+        "nullable": true,
+        "default": "(ngay_cham_diem - ((ngay_thu_may_trong_chu_ky)::integer - 1))",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_nhatkyuas_hss",
+        "definition": "CHECK (((diem_san_phu_hss >= 0) AND (diem_san_phu_hss <= 3)))"
+      },
+      {
+        "name": "ck_nhatkyuas_iss",
+        "definition": "CHECK (((diem_ngua_iss >= 0) AND (diem_ngua_iss <= 3)))"
+      },
+      {
+        "name": "ck_nhatkyuas_thu_may",
+        "definition": "CHECK (((ngay_thu_may_trong_chu_ky >= 1) AND (ngay_thu_may_trong_chu_ky <= 7)))"
+      },
+      {
+        "name": "ck_uas_chuky_ngay",
+        "definition": "CHECK (((ma_chu_ky IS NULL) = (ngay_thu_may_trong_chu_ky IS NULL)))"
+      },
+      {
+        "name": "ck_uas_trangthai",
+        "definition": "CHECK (((trang_thai_ngay)::text = ANY (ARRAY[('HOP_LE'::character varying)::text, ('KHONG_HOP_LE'::character varying)::text])))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so_man"
+        ],
+        "table": "benhanmaydayman",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      },
+      {
+        "columns": [
+          "ma_chu_ky"
+        ],
+        "table": "chukytheodoiuas7",
+        "references": [
+          "ma_chu_ky"
+        ]
+      },
+      {
+        "columns": [
+          "ma_ho_so_man",
+          "ma_benh_nhan"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "ma_benh_nhan"
+        ]
+      },
+      {
+        "columns": [
+          "ma_chu_ky",
+          "ma_benh_nhan",
+          "ngay_bat_dau_chu_ky"
+        ],
+        "table": "chukytheodoiuas7",
+        "references": [
+          "ma_chu_ky",
+          "ma_benh_nhan",
+          "ngay_bat_dau"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "phienkham",
+    "columns": [
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_bac_si",
+        "type": "bigint",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_phong_kham",
+        "type": "bigint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_cap",
+        "type": "bigint",
+        "position": 6,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (loai_benh_an = 'CAP'::text) THEN ma_phien_kham\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "ma_subtype_man",
+        "type": "bigint",
+        "position": 7,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (loai_benh_an = 'MAN'::text) THEN ma_phien_kham\n    ELSE NULL::bigint\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "ngay_kham",
+        "type": "date",
+        "position": 8,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "lan_kham_thu",
+        "type": "integer",
+        "position": 9,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_phien_kham",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "luu_huyet_thanh",
+        "type": "boolean",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "sot",
+        "type": "boolean",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "sot_nhiet_do_c",
+        "type": "numeric(4,1)",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngay_hen_tai_kham",
+        "type": "date",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tom_tat_buoi_kham",
+        "type": "text",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "huong_xu_tri_lan_sau",
+        "type": "text",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dan_do",
+        "type": "text",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_phienkham_loai",
+        "definition": "CHECK ((loai_benh_an = ANY (ARRAY['CAP'::text, 'MAN'::text])))"
+      },
+      {
+        "name": "ck_phienkham_ngay_hen",
+        "definition": "CHECK ((ngay_hen_tai_kham >= ngay_kham))"
+      },
+      {
+        "name": "ck_phienkham_lan_kham",
+        "definition": "CHECK ((lan_kham_thu > 0))"
+      },
+      {
+        "name": "ck_phienkham_nhiet_do",
+        "definition": "CHECK (((sot_nhiet_do_c > (0)::numeric) AND (sot_nhiet_do_c < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_subtype_cap"
+        ],
+        "table": "phienkhamcap",
+        "references": [
+          "ma_phien_kham"
+        ]
+      },
+      {
+        "columns": [
+          "ma_subtype_man"
+        ],
+        "table": "phienkhamman",
+        "references": [
+          "ma_phien_kham"
+        ]
+      },
+      {
+        "columns": [
+          "ma_bac_si"
+        ],
+        "table": "nhanvien",
+        "references": [
+          "ma_nhan_vien"
+        ]
+      },
+      {
+        "columns": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so",
+          "loai_benh_an"
+        ]
+      },
+      {
+        "columns": [
+          "ma_phong_kham"
+        ],
+        "table": "phongkham",
+        "references": [
+          "ma_phong_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "phienkhamcap",
+    "columns": [
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 2,
+        "nullable": true,
+        "default": "'CAP'::text",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "trieu_chung_da",
+        "type": "text",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trieu_chung_ho_hap",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_voi_thuong_ngay_ho_hap",
+        "type": "text",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trieu_chung_tuan_hoan",
+        "type": "text",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_voi_thuong_ngay_tuan_hoan",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trieu_chung_tieu_hoa",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_voi_thuong_ngay_tieu_hoa",
+        "type": "text",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_san_phu",
+        "type": "boolean",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_anh_san_phu",
+        "type": "boolean",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_lan_non",
+        "type": "integer",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_phienkhamcap_so_lan_non",
+        "definition": "CHECK ((so_lan_non >= 0))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham",
+          "loai_benh_an"
+        ],
+        "table": "phienkham",
+        "references": [
+          "ma_phien_kham",
+          "loai_benh_an"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "phienkhamman",
+    "columns": [
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "loai_benh_an",
+        "type": "text",
+        "position": 2,
+        "nullable": true,
+        "default": "'MAN'::text",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "hien_tai_co_san_phu",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uu_the_ngau_nhien",
+        "type": "boolean",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "vi_tri_san_phu",
+        "type": "text",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "yeu_to_lam_nang_sa_phu",
+        "type": "text",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien_san_phu",
+        "type": "text",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trong_dot_co_phu_mach",
+        "type": "boolean",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hien_tai_co_phu_mach",
+        "type": "boolean",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_lan_phu_mach_dot_nay",
+        "type": "integer",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien_phu_mach",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_lan_phu_mach_nang_phai_nhap_vien",
+        "type": "integer",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ton_tai_phu_mach_co_dung_thuoc",
+        "type": "text",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ton_tai_phu_mach_khong_dung_thuoc",
+        "type": "text",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_aas7",
+        "type": "smallint",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ben_phu_mach",
+        "type": "text",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ngau_nhien_tuan",
+        "type": "numeric(12,2)",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uu_the_kich_thich",
+        "type": "boolean",
+        "position": 18,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_kich_thich_tuan",
+        "type": "numeric(12,2)",
+        "position": 19,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uu_the_tuong_duong",
+        "type": "boolean",
+        "position": 20,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "uu_the_khong_ro",
+        "type": "boolean",
+        "position": 21,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thu_tu_xuat_hien_so_voi_san_phu",
+        "type": "text",
+        "position": 22,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_mach_1_tuan_gan_day",
+        "type": "boolean",
+        "position": 23,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "chan_doan_tai_kham",
+        "type": "text",
+        "position": 24,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khoang_cach_xuat_hien",
+        "type": "text",
+        "position": 25,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_mi_mat",
+        "type": "boolean",
+        "position": 26,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_luoi",
+        "type": "boolean",
+        "position": 27,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_moi",
+        "type": "boolean",
+        "position": 28,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_vung_mat_khac",
+        "type": "boolean",
+        "position": 29,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_thanh_quan",
+        "type": "boolean",
+        "position": 30,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_ban_chan",
+        "type": "boolean",
+        "position": 31,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_sinh_duc",
+        "type": "boolean",
+        "position": 32,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_vi_tri_khac",
+        "type": "boolean",
+        "position": 33,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_vi_tri_khac_ghi_ro",
+        "type": "text",
+        "position": 34,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phu_ban_tay",
+        "type": "boolean",
+        "position": 35,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_detail_phu_vi_tri_khac",
+        "definition": "CHECK ((((phu_vi_tri_khac IS TRUE) AND (phu_vi_tri_khac_ghi_ro IS NOT NULL) AND (btrim(phu_vi_tri_khac_ghi_ro) <> ''::text)) OR ((NOT (phu_vi_tri_khac IS TRUE)) AND (phu_vi_tri_khac_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_phienkhamman_aas7",
+        "definition": "CHECK (((diem_aas7 >= 0) AND (diem_aas7 <= 105)))"
+      },
+      {
+        "name": "ck_phienkhamman_so_lan_nhap_vien",
+        "definition": "CHECK ((so_lan_phu_mach_nang_phai_nhap_vien >= 0))"
+      },
+      {
+        "name": "ck_phienkhamman_so_lan_phu",
+        "definition": "CHECK ((so_lan_phu_mach_dot_nay >= 0))"
+      },
+      {
+        "name": "ck_phienkhamman_tuan_kich_thich",
+        "definition": "CHECK (((thoi_gian_kich_thich_tuan >= (0)::numeric) AND (thoi_gian_kich_thich_tuan < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_phienkhamman_tuan_ngau_nhien",
+        "definition": "CHECK (((thoi_gian_ngau_nhien_tuan >= (0)::numeric) AND (thoi_gian_ngau_nhien_tuan < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham",
+          "loai_benh_an"
+        ],
+        "table": "phienkham",
+        "references": [
+          "ma_phien_kham",
+          "loai_benh_an"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "phiennghiemphapkichthich",
+    "columns": [
+      {
+        "name": "ma_phien_nghiem_phap",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_kham",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngung_khang_histamine",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ngung_histamine",
+        "type": "numeric(8,2)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ngung_corticoid",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_ngung_corticoid",
+        "type": "numeric(8,2)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 7,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_phien_np_corticoid",
+        "definition": "CHECK (((thoi_gian_ngung_corticoid IS NULL) OR (ngung_corticoid IS TRUE)))"
+      },
+      {
+        "name": "ck_phien_np_corticoid_val",
+        "definition": "CHECK (((thoi_gian_ngung_corticoid >= (0)::numeric) AND (thoi_gian_ngung_corticoid < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_phien_np_histamine",
+        "definition": "CHECK (((thoi_gian_ngung_histamine IS NULL) OR (ngung_khang_histamine IS TRUE)))"
+      },
+      {
+        "name": "ck_phien_np_histamine_val",
+        "definition": "CHECK (((thoi_gian_ngung_histamine >= (0)::numeric) AND (thoi_gian_ngung_histamine < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_phien_kham"
+        ],
+        "table": "phienkhamman",
+        "references": [
+          "ma_phien_kham"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "phongkham",
+    "columns": [
+      {
+        "name": "ma_phong_kham",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_phong_kham",
+        "type": "character varying(150)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_khoa_phong",
+        "type": "bigint",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "phongkham_ten_phong_kham_check",
+        "definition": "CHECK ((btrim((ten_phong_kham)::text) <> ''::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_khoa_phong"
+        ],
+        "table": "khoaphong",
+        "references": [
+          "ma_khoa_phong"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "quyenhan",
+    "columns": [
+      {
+        "name": "ma_quyen_han",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_quyen_han",
+        "type": "character varying(100)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nhom_quyen",
+        "type": "character varying(100)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mo_ta",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_quyen_han_nhom",
+        "definition": "CHECK ((btrim((nhom_quyen)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_quyen_han_ten",
+        "definition": "CHECK ((btrim((ten_quyen_han)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_quyen_han_thoi_gian",
+        "definition": "CHECK ((thoi_diem_cap_nhat >= thoi_diem_tao))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "sanglocbaodongdo",
+    "columns": [
+      {
+        "name": "ma_luot_sang_loc",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_phien_ung_dung",
+        "type": "uuid",
+        "position": 2,
+        "nullable": false,
+        "default": "gen_random_uuid()",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_benh_nhan",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phien_ban_bo_cau_hoi",
+        "type": "character varying(30)",
+        "position": 4,
+        "nullable": false,
+        "default": "'APP_GD1_V1'::character varying",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_kho_tho_kho_khe_nghen_hong",
+        "type": "boolean",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_chong_mat_tuc_nguc_sap_ngat",
+        "type": "boolean",
+        "position": 6,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_sung_moi_luoi_co_hong",
+        "type": "boolean",
+        "position": 7,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_dau_bung_non_lien_tuc",
+        "type": "boolean",
+        "position": 8,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "co_nguy_co_phan_ve",
+        "type": "boolean",
+        "position": 9,
+        "nullable": true,
+        "default": "(co_kho_tho_kho_khe_nghen_hong OR co_chong_mat_tuc_nguc_sap_ngat OR co_sung_moi_luoi_co_hong OR co_dau_bung_non_lien_tuc)",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "ket_qua_dieu_huong",
+        "type": "character varying(30)",
+        "position": 10,
+        "nullable": true,
+        "default": "\nCASE\n    WHEN (co_kho_tho_kho_khe_nghen_hong OR co_chong_mat_tuc_nguc_sap_ngat OR co_sung_moi_luoi_co_hong OR co_dau_bung_non_lien_tuc) THEN 'NGUY_CO_PHAN_VE'::text\n    ELSE 'CHUYEN_BUOC_1'::text\nEND",
+        "identity": false,
+        "generated": true,
+        "pk": false
+      },
+      {
+        "name": "xac_nhan_muon_goi_cap_cuu",
+        "type": "boolean",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_nhan_nut_goi_cap_cuu",
+        "type": "boolean",
+        "position": 12,
+        "nullable": false,
+        "default": "false",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "so_dien_thoai_cap_cuu",
+        "type": "character varying(20)",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_nhan_nut_goi",
+        "type": "timestamp with time zone",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_bat_dau",
+        "type": "timestamp with time zone",
+        "position": 15,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_hoan_tat",
+        "type": "timestamp with time zone",
+        "position": 16,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 17,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_sanglocbaodongdo_goi_cap_cuu",
+        "definition": "CHECK (((da_nhan_nut_goi_cap_cuu AND co_nguy_co_phan_ve AND (xac_nhan_muon_goi_cap_cuu IS TRUE) AND (thoi_diem_nhan_nut_goi IS NOT NULL) AND (so_dien_thoai_cap_cuu IS NOT NULL) AND (btrim((so_dien_thoai_cap_cuu)::text) <> ''::text)) OR ((NOT da_nhan_nut_goi_cap_cuu) AND (thoi_diem_nhan_nut_goi IS NULL) AND (so_dien_thoai_cap_cuu IS NULL))))"
+      },
+      {
+        "name": "ck_sanglocbaodongdo_phien_ban",
+        "definition": "CHECK ((btrim((phien_ban_bo_cau_hoi)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_sanglocbaodongdo_thoi_gian",
+        "definition": "CHECK ((thoi_diem_hoan_tat >= thoi_diem_bat_dau))"
+      },
+      {
+        "name": "ck_sanglocbaodongdo_xac_nhan",
+        "definition": "CHECK (((co_nguy_co_phan_ve AND (xac_nhan_muon_goi_cap_cuu IS NOT NULL)) OR ((NOT co_nguy_co_phan_ve) AND (xac_nhan_muon_goi_cap_cuu IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_benh_nhan"
+        ],
+        "table": "benhnhan",
+        "references": [
+          "ma_benh_nhan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "taikhoan",
+    "columns": [
+      {
+        "name": "ma_tai_khoan",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_nguoi",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_vai_tro",
+        "type": "bigint",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_dang_nhap",
+        "type": "character varying(100)",
+        "position": 4,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mat_khau_ma_hoa",
+        "type": "text",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "trang_thai_hoat_dong",
+        "type": "boolean",
+        "position": 6,
+        "nullable": false,
+        "default": "true",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 7,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 8,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_tai_khoan_mat_khau",
+        "definition": "CHECK ((btrim(mat_khau_ma_hoa) <> ''::text))"
+      },
+      {
+        "name": "ck_tai_khoan_ten",
+        "definition": "CHECK (((btrim((ten_dang_nhap)::text) <> ''::text) AND ((ten_dang_nhap)::text = btrim((ten_dang_nhap)::text))))"
+      },
+      {
+        "name": "ck_tai_khoan_thoi_gian",
+        "definition": "CHECK ((thoi_diem_cap_nhat >= thoi_diem_tao))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_nguoi"
+        ],
+        "table": "nguoi",
+        "references": [
+          "ma_nguoi"
+        ]
+      },
+      {
+        "columns": [
+          "ma_vai_tro"
+        ],
+        "table": "vaitro",
+        "references": [
+          "ma_vai_tro"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "tepdinhkem",
+    "columns": [
+      {
+        "name": "ma_tep_dinh_kem",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_tai_khoan",
+        "type": "bigint",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_tep_goc",
+        "type": "character varying(255)",
+        "position": 4,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "duong_dan_luu_tru",
+        "type": "character varying(500)",
+        "position": 5,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "duong_dan_url",
+        "type": "character varying(500)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dinh_dang_tep",
+        "type": "character varying(50)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "loai_phuong_tien",
+        "type": "character varying(50)",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "dung_luong_byte",
+        "type": "bigint",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "phan_loai_muc_dich",
+        "type": "character varying(100)",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mo_ta_tep",
+        "type": "text",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "diem_do_mo",
+        "type": "numeric(6,2)",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 13,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 14,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_tep_dung_luong",
+        "definition": "CHECK ((dung_luong_byte > 0))"
+      },
+      {
+        "name": "ck_tep_duong_dan",
+        "definition": "CHECK ((btrim((duong_dan_luu_tru)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_tep_ten_goc",
+        "definition": "CHECK ((btrim((ten_tep_goc)::text) <> ''::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so"
+        ]
+      },
+      {
+        "columns": [
+          "ma_tai_khoan"
+        ],
+        "table": "taikhoan",
+        "references": [
+          "ma_tai_khoan"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "thuoc",
+    "columns": [
+      {
+        "name": "ma_thuoc",
+        "type": "character varying(50)",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_thuoc",
+        "type": "character varying(255)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoat_chat",
+        "type": "character varying(255)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "nhom_dieu_tri",
+        "type": "character varying(100)",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_thuoc_nhom_dieu_tri",
+        "definition": "CHECK (((nhom_dieu_tri IS NULL) OR ((nhom_dieu_tri)::text = ANY (ARRAY[('Khang histamine H1 TH2'::character varying)::text, ('Sinh hoc/dich'::character varying)::text, ('Uc che mien dich'::character varying)::text, ('Corticosteroid toan than'::character varying)::text, ('Khac'::character varying)::text]))))"
+      },
+      {
+        "name": "ck_thuoc_ten",
+        "definition": "CHECK ((btrim((ten_thuoc)::text) <> ''::text))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "tiensubanthan",
+    "columns": [
+      {
+        "name": "ma_tien_su_ban_than",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_co_dia",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_co_dia_ghi_ro",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_tuyen_giap",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_tuyen_giap_ghi_ro",
+        "type": "text",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_tu_mien",
+        "type": "boolean",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_tu_mien_ghi_ro",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_di_ung",
+        "type": "boolean",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_di_ung_ghi_ro",
+        "type": "text",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_phan_ve",
+        "type": "boolean",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_phan_ve_ghi_ro",
+        "type": "text",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_viem_nhiem_man",
+        "type": "boolean",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_viem_nhiem_man_ghi_ro",
+        "type": "text",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_khac",
+        "type": "boolean",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tien_su_benh_khac_ghi_ro",
+        "type": "text",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_tsbt_tuyen_giap_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_tuyen_giap_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_detail_tien_su_benh_khac",
+        "definition": "CHECK ((((tien_su_benh_khac IS TRUE) AND (tien_su_benh_khac_ghi_ro IS NOT NULL) AND (btrim(tien_su_benh_khac_ghi_ro) <> ''::text)) OR ((NOT (tien_su_benh_khac IS TRUE)) AND (tien_su_benh_khac_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_detail_tien_su_co_dia",
+        "definition": "CHECK ((((tien_su_co_dia IS TRUE) AND (tien_su_co_dia_ghi_ro IS NOT NULL) AND (btrim(tien_su_co_dia_ghi_ro) <> ''::text)) OR ((NOT (tien_su_co_dia IS TRUE)) AND (tien_su_co_dia_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_detail_tien_su_di_ung",
+        "definition": "CHECK ((((tien_su_di_ung IS TRUE) AND (tien_su_di_ung_ghi_ro IS NOT NULL) AND (btrim(tien_su_di_ung_ghi_ro) <> ''::text)) OR ((NOT (tien_su_di_ung IS TRUE)) AND (tien_su_di_ung_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_detail_tien_su_phan_ve",
+        "definition": "CHECK ((((tien_su_phan_ve IS TRUE) AND (tien_su_phan_ve_ghi_ro IS NOT NULL) AND (btrim(tien_su_phan_ve_ghi_ro) <> ''::text)) OR ((NOT (tien_su_phan_ve IS TRUE)) AND (tien_su_phan_ve_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_tsbt_tu_mien_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_tu_mien_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_detail_tien_su_tu_mien",
+        "definition": "CHECK ((((tien_su_tu_mien IS TRUE) AND (tien_su_tu_mien_ghi_ro IS NOT NULL) AND (btrim(tien_su_tu_mien_ghi_ro) <> ''::text)) OR ((NOT (tien_su_tu_mien IS TRUE)) AND (tien_su_tu_mien_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_detail_tien_su_tuyen_giap",
+        "definition": "CHECK ((((tien_su_tuyen_giap IS TRUE) AND (tien_su_tuyen_giap_ghi_ro IS NOT NULL) AND (btrim(tien_su_tuyen_giap_ghi_ro) <> ''::text)) OR ((NOT (tien_su_tuyen_giap IS TRUE)) AND (tien_su_tuyen_giap_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_detail_tien_su_viem_nhiem_man",
+        "definition": "CHECK ((((tien_su_viem_nhiem_man IS TRUE) AND (tien_su_viem_nhiem_man_ghi_ro IS NOT NULL) AND (btrim(tien_su_viem_nhiem_man_ghi_ro) <> ''::text)) OR ((NOT (tien_su_viem_nhiem_man IS TRUE)) AND (tien_su_viem_nhiem_man_ghi_ro IS NULL))))"
+      },
+      {
+        "name": "ck_tsbt_benh_khac_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_benh_khac_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_tsbt_co_dia_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_co_dia_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_tsbt_di_ung_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_di_ung_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_tsbt_phan_ve_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_phan_ve_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_tsbt_viem_nhiem_man_ghi_ro",
+        "definition": "CHECK ((btrim(tien_su_viem_nhiem_man_ghi_ro) <> ''::text))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "hosobenhan",
+        "references": [
+          "ma_ho_so"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "tinhtrangnhiemtrung",
+    "columns": [
+      {
+        "name": "ma_tinh_trang_nhiem_trung",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_ho_so",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_ho",
+        "type": "boolean",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_dau_hong",
+        "type": "boolean",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_hat_hoi",
+        "type": "boolean",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_so_mui",
+        "type": "boolean",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_thoi_gian",
+        "type": "numeric",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ho_hap_khoang_cach",
+        "type": "numeric",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tiet_nieu_tieu_rat",
+        "type": "boolean",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tiet_nieu_tieu_buot",
+        "type": "boolean",
+        "position": 10,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tiet_nieu_thoi_gian",
+        "type": "numeric",
+        "position": 11,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "tiet_nieu_khoang_cach",
+        "type": "numeric",
+        "position": 12,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_mun",
+        "type": "boolean",
+        "position": 13,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_nhot",
+        "type": "boolean",
+        "position": 14,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_thoi_gian",
+        "type": "numeric",
+        "position": 15,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "da_khoang_cach",
+        "type": "numeric",
+        "position": 16,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_ghi_ro",
+        "type": "text",
+        "position": 17,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_thoi_gian",
+        "type": "numeric",
+        "position": 18,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "khac_khoang_cach",
+        "type": "numeric",
+        "position": 19,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_nhiem_trung_da_khoang_cach",
+        "definition": "CHECK (((da_khoang_cach >= (0)::numeric) AND (da_khoang_cach < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_da_thoi_gian",
+        "definition": "CHECK (((da_thoi_gian >= (0)::numeric) AND (da_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_ho_hap_khoang_cach",
+        "definition": "CHECK (((ho_hap_khoang_cach >= (0)::numeric) AND (ho_hap_khoang_cach < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_ho_hap_thoi_gian",
+        "definition": "CHECK (((ho_hap_thoi_gian >= (0)::numeric) AND (ho_hap_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_khac_ghi_ro",
+        "definition": "CHECK ((btrim(khac_ghi_ro) <> ''::text))"
+      },
+      {
+        "name": "ck_nhiem_trung_khac_khoang_cach",
+        "definition": "CHECK (((khac_khoang_cach >= (0)::numeric) AND (khac_khoang_cach < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_khac_thoi_gian",
+        "definition": "CHECK (((khac_thoi_gian >= (0)::numeric) AND (khac_thoi_gian < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_tiet_nieu_khoang_cach",
+        "definition": "CHECK (((tiet_nieu_khoang_cach >= (0)::numeric) AND (tiet_nieu_khoang_cach < 'Infinity'::numeric)))"
+      },
+      {
+        "name": "ck_nhiem_trung_tiet_nieu_thoi_gian",
+        "definition": "CHECK (((tiet_nieu_thoi_gian >= (0)::numeric) AND (tiet_nieu_thoi_gian < 'Infinity'::numeric)))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_ho_so"
+        ],
+        "table": "benhanmaydaycap",
+        "references": [
+          "ma_ho_so"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "vaitro",
+    "columns": [
+      {
+        "name": "ma_vai_tro",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ten_vai_tro",
+        "type": "character varying(50)",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_hien_thi",
+        "type": "character varying(100)",
+        "position": 3,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "mo_ta_vai_tro",
+        "type": "text",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 5,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 6,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_vai_tro_hien_thi",
+        "definition": "CHECK ((btrim((ten_hien_thi)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_vai_tro_ten",
+        "definition": "CHECK ((btrim((ten_vai_tro)::text) <> ''::text))"
+      },
+      {
+        "name": "ck_vai_tro_thoi_gian",
+        "definition": "CHECK ((thoi_diem_cap_nhat >= thoi_diem_tao))"
+      }
+    ],
+    "relations": []
+  },
+  {
+    "name": "vaitroquyenhan",
+    "columns": [
+      {
+        "name": "ma_vai_tro",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_quyen_han",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "thoi_diem_gan",
+        "type": "timestamp with time zone",
+        "position": 3,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ma_nguoi_gan",
+        "type": "bigint",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [],
+    "relations": [
+      {
+        "columns": [
+          "ma_nguoi_gan"
+        ],
+        "table": "nguoi",
+        "references": [
+          "ma_nguoi"
+        ]
+      },
+      {
+        "columns": [
+          "ma_quyen_han"
+        ],
+        "table": "quyenhan",
+        "references": [
+          "ma_quyen_han"
+        ]
+      },
+      {
+        "columns": [
+          "ma_vai_tro"
+        ],
+        "table": "vaitro",
+        "references": [
+          "ma_vai_tro"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "vitritonthuong",
+    "columns": [
+      {
+        "name": "ma_vi_tri_ton_thuong",
+        "type": "bigint",
+        "position": 1,
+        "nullable": false,
+        "default": null,
+        "identity": true,
+        "generated": false,
+        "pk": true
+      },
+      {
+        "name": "ma_dot_ton_thuong_da",
+        "type": "bigint",
+        "position": 2,
+        "nullable": false,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "vi_tri_co_the",
+        "type": "character varying(255)",
+        "position": 3,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_xuat_hien",
+        "type": "timestamp with time zone",
+        "position": 4,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "ten_thuoc_lien_quan",
+        "type": "character varying(255)",
+        "position": 5,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_gian_dung_thuoc_truoc_khi_xuat_hien",
+        "type": "character varying(100)",
+        "position": 6,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien",
+        "type": "character varying(255)",
+        "position": 7,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "hoan_canh_xuat_hien_khac",
+        "type": "text",
+        "position": 8,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "don_vi_thoi_gian",
+        "type": "character varying(50)",
+        "position": 9,
+        "nullable": true,
+        "default": null,
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_tao",
+        "type": "timestamp with time zone",
+        "position": 10,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      },
+      {
+        "name": "thoi_diem_cap_nhat",
+        "type": "timestamp with time zone",
+        "position": 11,
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP",
+        "identity": false,
+        "generated": false,
+        "pk": false
+      }
+    ],
+    "checks": [
+      {
+        "name": "ck_vitritonthuong_hoancanh",
+        "definition": "CHECK ((((NOT ((hoan_canh_xuat_hien)::text IS DISTINCT FROM 'Khac'::text)) AND (hoan_canh_xuat_hien_khac IS NOT NULL) AND (btrim(hoan_canh_xuat_hien_khac) <> ''::text)) OR ((NOT (NOT ((hoan_canh_xuat_hien)::text IS DISTINCT FROM 'Khac'::text))) AND (hoan_canh_xuat_hien_khac IS NULL))))"
+      }
+    ],
+    "relations": [
+      {
+        "columns": [
+          "ma_dot_ton_thuong_da"
+        ],
+        "table": "dottonthuongda",
+        "references": [
+          "ma_dot_ton_thuong_da"
+        ]
+      }
+    ]
+  }
+]

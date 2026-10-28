@@ -112,22 +112,3 @@ export async function apiPage<T>(
   const envelope = await request<T[]>(path, options);
   return { items: envelope.data, meta: envelope.meta };
 }
-export async function upload(
-  files: FileList | File[],
-): Promise<import("./types").Media[]> {
-  const data = new FormData();
-  Array.from(files).forEach((file) => data.append("files", file));
-  return api("/image-attachments/upload", { method: "POST", body: data });
-}
-export async function mediaBlob(id: string): Promise<Blob> {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_URL || "/api/v1"}/image-attachments/${id}/content`,
-    {
-      headers: session?.token
-        ? { Authorization: `Bearer ${session.token}` }
-        : {},
-    },
-  );
-  if (!response.ok) throw new ApiError("Không tải được ảnh.", response.status);
-  return response.blob();
-}

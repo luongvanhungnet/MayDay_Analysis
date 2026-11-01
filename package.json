@@ -15,6 +15,8 @@
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
     "test:integration": "node scripts/native-smoke.mjs",
+    "test:spec": "npm run build -w @mayday/api && node scripts/spec-smoke.mjs",
+    "docs:api": "npm run build -w @mayday/api && node scripts/spec-docs.mjs",
     "db:generate": "npm run db:generate -w @mayday/api",
     "db:migrate": "node scripts/database-protected.mjs",
     "db:seed": "node scripts/database-protected.mjs",

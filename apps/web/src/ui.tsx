@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import {
   AlertCircle,
   ArrowRight,
@@ -225,6 +232,8 @@ export function Empty({
     </div>
   );
 }
+const modalStack: HTMLElement[] = [];
+let pageOverflow = "";
 export function Modal({
   title,
   children,
@@ -236,21 +245,59 @@ export function Modal({
   onClose: () => void;
   wide?: boolean;
 }) {
+  const element = useRef<HTMLElement>(null),
+    closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
+    const current = element.current!;
+    const previous = document.activeElement as HTMLElement | null;
+    if (!modalStack.length) {
+      pageOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+    }
+    modalStack.forEach((m) => {
+      m.inert = true;
+    });
+    modalStack.push(current);
+    current.querySelector<HTMLElement>("button,input,select,textarea")?.focus();
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (modalStack.at(-1) !== current) return;
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeRef.current();
+      }
+      if (e.key === "Tab") {
+        const controls = Array.from(
+          current.querySelectorAll<HTMLElement>(
+            'button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]',
+          ),
+        ).filter((el) => el.getClientRects().length > 0);
+        const first = controls[0],
+          last = controls.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
     };
     document.addEventListener("keydown", key);
-    const overflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", key);
-      document.body.style.overflow = overflow;
+      const i = modalStack.indexOf(current);
+      if (i >= 0) modalStack.splice(i, 1);
+      if (modalStack.at(-1)) modalStack.at(-1)!.inert = false;
+      else document.body.style.overflow = pageOverflow;
+      if (previous?.isConnected && !previous.closest("[inert]"))
+        previous.focus();
     };
-  }, [onClose]);
-  return (
+  }, []);
+  return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <section
+        ref={element}
         className={`modal ${wide ? "wide" : ""}`}
         role="dialog"
         aria-modal="true"
@@ -265,7 +312,8 @@ export function Modal({
         </header>
         {children}
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 export function Badge({ status }: { status: string }) {

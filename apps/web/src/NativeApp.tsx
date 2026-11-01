@@ -1,5 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
-import ParallelAI from './ParallelAI';
+import ParallelAI from "./ParallelAI";
+import CarePage from "./CarePage";
+import { Signup } from "./care-account";
+import { availableMenus, initialPage } from "./care-model";
+import { ConfirmHost, confirmAction } from "./confirmation";
 import {
   Activity,
   FileHeart,
@@ -13,6 +17,7 @@ import {
   api,
   patch,
   post,
+  put,
   remove,
   restoreSession,
   storeSession,
@@ -47,20 +52,32 @@ export default function NativeApp() {
   );
   useEffect(() => {
     const clear = () => setSession(null);
+    const profile = () => setSession(restoreSession());
     window.addEventListener("mayday:unauthorized", clear);
-    return () => window.removeEventListener("mayday:unauthorized", clear);
+    window.addEventListener("mayday:profile", profile);
+    return () => {
+      window.removeEventListener("mayday:unauthorized", clear);
+      window.removeEventListener("mayday:profile", profile);
+    };
   }, []);
   const save = (s: Session | null) => {
     storeSession(s);
     setSession(s);
   };
-  return session ? (
-    <Workspace session={session} logout={() => save(null)} />
-  ) : (
-    <Login saved={save} />
+  return (
+    <>
+      {session ? (
+        <Workspace session={session} logout={() => save(null)} />
+      ) : (
+        <Login saved={save} />
+      )}
+      <ConfirmHost />
+    </>
   );
 }
 function Login({ saved }: { saved: (s: Session) => void }) {
+  const [signup, setSignup] = useState(false),
+    [registered, setRegistered] = useState(false);
   const [identifier, setIdentifier] = useState(""),
     [password, setPassword] = useState(""),
     [error, setError] = useState(""),
@@ -134,11 +151,37 @@ function Login({ saved }: { saved: (s: Session) => void }) {
             />
           </Field>
           <ErrorBox message={error} />
+          <Success
+            message={
+              registered
+                ? "Đã tạo tài khoản. Đăng nhập bằng số điện thoại và mật khẩu vừa chọn."
+                : ""
+            }
+          />
           <Button type="submit" busy={busy}>
             Đăng nhập
           </Button>
+          <button
+            type="button"
+            className="text-link"
+            onClick={() => setSignup(true)}
+          >
+            Chưa có tài khoản? Đăng ký bệnh nhân
+          </button>
+          <small className="muted">
+            Quên mật khẩu? Vui lòng liên hệ quản trị viên cơ sở khám.
+          </small>
         </form>
       </div>
+      {signup && (
+        <Signup
+          close={() => setSignup(false)}
+          saved={() => {
+            setSignup(false);
+            setRegistered(true);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -150,9 +193,7 @@ function Workspace({
   logout: () => void;
 }) {
   const schema = useResource<NativeTable[]>("/data/schema");
-  const [name, setName] = useState(
-    () => new URLSearchParams(location.search).get("table") || "hosobenhan",
-  );
+  const [name, setName] = useState(() => initialPage(location.search));
   const [navSearch, setNavSearch] = useState(""),
     [password, setPassword] = useState(false),
     [error, setError] = useState("");
@@ -160,7 +201,13 @@ function Workspace({
     schema.data?.find((t) => t.name === name) ?? schema.data?.[0];
   function navigate(next: string) {
     setName(next);
-    history.replaceState(null, "", `?table=${next}`);
+    history.replaceState(
+      null,
+      "",
+      next.startsWith("care:")
+        ? `?view=${encodeURIComponent(next.slice(5))}`
+        : `?table=${encodeURIComponent(next)}`,
+    );
   }
   async function signout() {
     try {
@@ -187,26 +234,86 @@ function Workspace({
           />
         </div>
         <nav>
-          <button className={name === 'ai' ? 'active' : ''} onClick={() => navigate('ai')}>Phân tích ảnh AI</button>
-          {schema.data
-            ?.filter((t) =>
-              titles[t.name]
-                ?.toLocaleLowerCase("vi")
+          {availableMenus(session.user.role)
+            .filter((m) =>
+              m.title
+                .toLocaleLowerCase("vi")
                 .includes(navSearch.toLocaleLowerCase("vi")),
             )
-            .map((t) => (
-              <button
-                className={name !== 'ai' && selected?.name === t.name ? "active" : ""}
-                key={t.name}
-                onClick={() => navigate(t.name)}
-              >
-                {titles[t.name] || t.name}
-              </button>
+            .map((m, i, items) => (
+              <div key={m.id}>
+                {(i === 0 || items[i - 1].group !== m.group) && (
+                  <span className="care-nav-heading">{m.group}</span>
+                )}
+                <button
+                  className={name === `care:${m.id}` ? "active" : ""}
+                  onClick={() => navigate(`care:${m.id}`)}
+                >
+                  {m.title}
+                </button>
+              </div>
             ))}
+          <button
+            className={name === "ai" ? "active" : ""}
+            onClick={() => navigate("ai")}
+          >
+            Phân tích ảnh AI
+          </button>
+          <details className="care-advanced">
+            <summary>Hồ sơ chuyên sâu</summary>
+            {schema.data
+              ?.filter(
+                (t) =>
+                  ![
+                    "nguoi",
+                    "benhnhan",
+                    "hosobenhan",
+                    "dottonthuongda",
+                    "vitritonthuong",
+                    "anhchuptonthuong",
+                    "nhatkyuashangngay",
+                    "tepdinhkem",
+                    "chinhanh",
+                    "khoaphong",
+                    "phongkham",
+                    "taikhoan",
+                    "vaitro",
+                    "quyenhan",
+                    "vaitroquyenhan",
+                  ].includes(t.name),
+              )
+              ?.filter((t) =>
+                titles[t.name]
+                  ?.toLocaleLowerCase("vi")
+                  .includes(navSearch.toLocaleLowerCase("vi")),
+              )
+              .map((t) => (
+                <button
+                  className={
+                    !name.startsWith("care:") &&
+                    name !== "ai" &&
+                    selected?.name === t.name
+                      ? "active"
+                      : ""
+                  }
+                  key={t.name}
+                  onClick={() => navigate(t.name)}
+                >
+                  {titles[t.name] || t.name}
+                </button>
+              ))}
+          </details>
         </nav>
         <div className="native-account">
           <strong>{session.user.full_name}</strong>
-          <small>{display(session.user.role)}</small>
+          <small>
+            {{
+              admin: "Quản trị viên",
+              bac_si: "Bác sĩ",
+              dieu_duong: "Điều dưỡng",
+              benh_nhan: "Bệnh nhân",
+            }[session.user.role] ?? session.user.role}
+          </small>
           <button onClick={() => setPassword(true)}>Đổi mật khẩu</button>
           <button onClick={() => void signout()}>
             <LogOut size={15} /> Đăng xuất
@@ -219,7 +326,11 @@ function Workspace({
           <span>MayDay / Chăm sóc mề đay</span>
           <span>{new Date().toLocaleDateString("vi-VN")}</span>
         </header>
-        {name === 'ai' ? <ParallelAI /> : schema.loading ? (
+        {name.startsWith("care:") ? (
+          <CarePage key={name} page={name.slice(5)} session={session} />
+        ) : name === "ai" ? (
+          <ParallelAI />
+        ) : schema.loading ? (
           <Loading />
         ) : schema.error ? (
           <ErrorBox message={schema.error} />
@@ -278,7 +389,7 @@ function DataPage({
     data.reload();
   };
   async function erase(row: NativeRow) {
-    if (!confirm("Xóa mục danh mục này?")) return;
+    if (!(await confirmAction("Xóa mục danh mục này?"))) return;
     try {
       await remove(`/data/${t.name}/${encodeURIComponent(row._key)}`);
       data.reload();
@@ -774,7 +885,7 @@ function PasswordModal({
     }
     setBusy(true);
     try {
-      await post("/auth/change-password", {
+      await put("/auth/change-password", {
         old_password: oldPassword,
         new_password: password,
       });

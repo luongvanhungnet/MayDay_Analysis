@@ -547,4 +547,20 @@ export class NativeService {
       );
     });
   }
+  /** Reuse native row scoping and database FKs for the explicitly supported spec deletions. */
+  async removeMapped(actor: Actor, name: string, key: string) {
+    if (dictionaries.has(name)) return this.remove(actor,name,key);
+    const clinical=['dottonthuongda','vitritonthuong','anhchuptonthuong','tepdinhkem'];
+    const admin=['quyenhan','vaitroquyenhan'];
+    if (!(clinical.includes(name) && ['admin','bac_si','benh_nhan'].includes(actor.role)) &&
+        !(admin.includes(name) && actor.role==='admin'))
+      throw new DomainException(3101,'Không có quyền xóa dữ liệu này',403);
+    const t=table(name);
+    return this.db.$transaction(async db=>{
+      await this.detail(actor,name,key,db);
+      const count=await db.$executeRaw(Prisma.sql`DELETE FROM ${sqlTable(t)} r WHERE ${this.key(t,key)} AND ${this.scope(t,actor)}`);
+      if(!count)throw new DomainException(4004,'Không tìm thấy bản ghi',404);
+      return {deleted:true};
+    });
+  }
 }

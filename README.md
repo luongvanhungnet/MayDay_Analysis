@@ -34,6 +34,16 @@ npm run dev
 
 Vite chuyển tiếp `/api` tới API ở cổng 3000. `npm run dev` khởi chạy cả API và web.
 
+### API theo tài liệu đặc tả
+
+Backend có lớp API thích nghi cho đủ 92 chức năng trong `docs/MayDay.md`: 67 chức năng ánh xạ vào database hiện tại, 25 chức năng trả HTTP 501 kèm lý do vì thiếu bảng lưu trữ hoặc không phù hợp chính sách giữ hồ sơ. Không thay đổi schema hoặc dữ liệu import. Xem [bảng đối chiếu và payload](docs/API_SPEC_MAPPING.md) trước khi tích hợp; DTO và một số hành vi khác schema cũ. Các route `/data` và giao diện hiện có vẫn được giữ.
+
+Swagger hiển thị trường request, kiểu dữ liệu, lựa chọn hợp lệ, trường bắt buộc và ví dụ cho các API ghi dữ liệu. Với `/data/:table`, xem schema có title trùng tên bảng và dùng tên cột native. Upload ảnh dùng `multipart/form-data` với trường file `image`. ID và tài khoản trong ví dụ chỉ là minh họa, cần thay bằng dữ liệu phù hợp; các thao tác Execute tác động backend thật. Các API chưa hỗ trợ chỉ được mô tả phản hồi 501 và không có body ví dụ giả.
+
+`npm run test:spec` kiểm thử HTTP trên database mới được tạo từ bản sao schema và xóa sau kiểm thử (cần PostgreSQL CLI và quyền tạo database). `npm run docs:api` tái tạo bảng đối chiếu. Kho ảnh private local dùng `UPLOAD_DIR`, mặc định `.data/uploads`.
+
+Web có các luồng đăng ký/hồ sơ cá nhân, tiếp nhận/chốt bệnh án, kê đơn, UAS, kho ảnh và tổn thương da, cùng quản trị tài khoản/quyền/cơ sở theo vai trò. Xem [đối chiếu giao diện với 67 API](docs/WEB_API_INTEGRATION.md) cho phạm vi và kiểm thử.
+
 ### Cấu hình môi trường
 
 | Biến | Ý nghĩa |

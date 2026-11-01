@@ -98,6 +98,42 @@ export const put = <T>(path: string, data: unknown) =>
 export const patch = <T>(path: string, data: unknown) =>
   api<T>(path, { method: "PATCH", body: JSON.stringify(data) });
 export const remove = (path: string) => api(path, { method: "DELETE" });
+export async function apiBlob(
+  path: string,
+  signal?: AbortSignal,
+): Promise<Blob> {
+  let response: Response;
+  try {
+    response = await fetch(
+      `${import.meta.env.VITE_API_URL || "/api/v1"}${path}`,
+      {
+        signal,
+        headers: session?.token
+          ? { Authorization: `Bearer ${session.token}` }
+          : {},
+      },
+    );
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    throw new ApiError("Không tải được ảnh. Vui lòng kiểm tra kết nối.", 0);
+  }
+  if (!response.ok) {
+    if (response.status === 401) {
+      storeSession(null);
+      window.dispatchEvent(new Event("mayday:unauthorized"));
+    }
+    const error = (await response.json().catch(() => null)) as {
+      message?: string;
+      code?: number;
+    } | null;
+    throw new ApiError(
+      error?.message ?? "Không tải được ảnh.",
+      response.status,
+      error?.code,
+    );
+  }
+  return response.blob();
+}
 export interface PageMeta {
   page: number;
   limit: number;

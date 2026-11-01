@@ -18,6 +18,13 @@ import { Reflector } from "@nestjs/core";
 import { Public, PUBLIC_KEY } from "../auth/access.decorator";
 import { NativeService } from "./native.service";
 import { Actor } from "./schema";
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from "@nestjs/swagger";
+import {
+  nativePatientDocumentation,
+  nativeRequestDocumentation,
+  requestDocumentation,
+} from "../spec/openapi";
+import { tables } from "./schema";
 
 interface Request {
   user: Actor;
@@ -46,38 +53,35 @@ export class NativeGuard implements CanActivate {
   }
 }
 @Controller()
+@ApiBearerAuth()
+@ApiTags("Dữ liệu native và tương thích")
 export class NativeController {
   constructor(private readonly native: NativeService) {}
-  @Post("auth/login") @Public() @HttpCode(200) login(
-    @Body() body: Record<string, unknown>,
-    @Req() req: Request,
-  ) {
-    return this.native.login(body ?? {}, req.ip);
-  }
-  @Post("auth/logout") @HttpCode(200) logout(
-    @Headers("authorization") header: string,
-  ) {
-    return this.native.logout(header);
-  }
   @Get("auth/me") me(@Req() req: Request) {
     return this.native.profile(req.user);
   }
   @Get("auth/profile") profile(@Req() req: Request) {
     return this.native.profile(req.user);
   }
-  @Post("auth/change-password") @HttpCode(200) password(
-    @Req() req: Request,
-    @Body() body: Record<string, unknown>,
-  ) {
+  @Post("auth/change-password")
+  @HttpCode(200)
+  @ApiBody(
+    requestDocumentation({
+      source: "change-password",
+      method: "POST",
+      path: "auth/change-password",
+      action: "password",
+    })!,
+  )
+  password(@Req() req: Request, @Body() body: Record<string, unknown>) {
     return this.native.changePassword(req.user, body ?? {});
   }
   @Get("data/schema") schema(@Req() req: Request) {
     return this.native.schema(req.user);
   }
-  @Post("data/patients") patient(
-    @Req() req: Request,
-    @Body() body: Record<string, unknown>,
-  ) {
+  @Post("data/patients")
+  @ApiBody(nativePatientDocumentation())
+  patient(@Req() req: Request, @Body() body: Record<string, unknown>) {
     return this.native.createPerson(req.user, body ?? {});
   }
   @Get("data/:table") list(
@@ -94,14 +98,31 @@ export class NativeController {
   ) {
     return this.native.detail(req.user, table, key);
   }
-  @Post("data/:table") create(
+  @Post("data/:table")
+  @ApiParam({
+    name: "table",
+    enum: tables.map((t) => t.name),
+    description:
+      "Chọn bảng rồi chọn schema body cùng tên; không POST bảng subtype tự động.",
+  })
+  @ApiBody(nativeRequestDocumentation())
+  create(
     @Req() req: Request,
     @Param("table") table: string,
     @Body() body: unknown,
   ) {
     return this.native.create(req.user, table, body);
   }
-  @Patch("data/:table/:key") update(
+  @Patch("data/:table/:key")
+  @ApiParam({ name: "table", enum: tables.map((t) => t.name) })
+  @ApiParam({
+    name: "key",
+    example: '{"ma_chi_nhanh":"1"}',
+    description:
+      "Khóa chính JSON. Nhập JSON thô; Swagger tự URL-encode giá trị trong đường dẫn.",
+  })
+  @ApiBody(nativeRequestDocumentation(true))
+  update(
     @Req() req: Request,
     @Param("table") table: string,
     @Param("key") key: string,

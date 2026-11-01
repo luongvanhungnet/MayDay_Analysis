@@ -1,0 +1,34 @@
+<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MayDay — Pilot đếm 50 ảnh</title>
+<style>body{font:16px system-ui;margin:20px;background:#101722;color:#e9eff8}button,input,select{font:inherit;margin:5px;padding:8px}button{cursor:pointer}main{display:grid;grid-template-columns:minmax(300px,1fr) minmax(280px,420px);gap:20px}svg{width:100%;max-height:78vh;background:#05080e;touch-action:none}aside{max-height:78vh;overflow:auto}.warn{color:#ffc56d}.box{padding:12px;border:1px solid #53647b;margin:10px 0}h1{font-size:24px}small{display:block}#summary{font-weight:bold}text{pointer-events:none}@media(max-width:800px){main{display:block}}</style>
+<h1>MayDay — Bộ thử đếm 50 ảnh</h1>
+<p class="warn">Nhãn khởi tạo từ dataset cũ, chưa phải số đếm chuẩn. Điểm xanh = Single đề xuất; khung vàng = Multiple cần quyết định. Không tự biến Multiple thành một nốt.</p>
+<div><button id="prev">← Trước</button><select id="select" aria-label="Chọn ảnh"></select><button id="next">Sau →</button><button id="undo">Hoàn tác</button><button id="save">Tải nhãn JSON</button><label>Nạp nhãn đã lưu<input id="load" type="file" accept="application/json"></label></div>
+<p id="summary" role="status"></p>
+<main><section><svg id="canvas" xmlns="http://www.w3.org/2000/svg" aria-label="Ảnh và điểm đếm"></svg><p>Bấm trên ảnh để thêm điểm; bấm điểm để xóa. Mỗi điểm là một nốt được tính. Hai nốt chạm nhưng tách được: hai điểm. Hợp lưu không rõ ranh giới: một điểm.</p></section>
+<aside><h2 id="name"></h2><div class="box"><label><input id="review" type="checkbox">Tôi đã duyệt mọi điểm, vùng bỏ qua và quy tắc mép ảnh/độ rõ</label><small>Chỉ xác nhận sau khi xử lý mọi Multiple. Ảnh quá khó có thể để draft.</small></div><h3>Vùng cần tách/gộp</h3><div id="regions"></div><h3>Các ứng viên loại bỏ</h3><div id="excluded"></div></aside></main>
+<script id="payload" type="application/json">PAYLOAD</script><script>
+let data=JSON.parse(document.getElementById('payload').textContent), current=0, history=[];
+const el=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
+const r=()=>data.images[current];
+function checkpoint(){history.push(JSON.stringify(data));if(history.length>50)history.shift();}
+function dirty(){r().status='draft';r().count_verified=null;}
+function svgNode(tag,attrs){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);return n;}
+function draw(){
+ const item=r();el('select').value=String(current);el('name').textContent='#'+item.id+' '+item.source_image;
+ el('summary').textContent=`Ảnh ${current+1}/50 · ${item.split} · ${item.points.length} điểm đề xuất · ${item.unresolved.filter(x=>!x.resolved).length} vùng chưa xử lý · Đã duyệt ${data.images.filter(x=>x.status==='reviewed').length}/50`;
+ el('review').checked=item.status==='reviewed';const svg=el('canvas');svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${item.width} ${item.height}`);
+ svg.append(svgNode('image',{href:item.image,width:item.width,height:item.height}));
+ item.unresolved.forEach((region,i)=>{if(region.resolved)return;const b=region.bbox_xyxy;svg.append(svgNode('rect',{x:b[0],y:b[1],width:b[2]-b[0],height:b[3]-b[1],fill:'none',stroke:'#ffc400','stroke-width':2,'pointer-events':'none'}));const t=svgNode('text',{x:b[0],y:Math.max(12,b[1]),fill:'#ffc400','font-size':12});t.textContent='M'+(i+1);svg.append(t);});
+ item.points.forEach((p,i)=>{const circle=svgNode('circle',{cx:p.x,cy:p.y,r:4,fill:'#15eb84',stroke:'black','stroke-width':1});circle.addEventListener('click',e=>{e.stopPropagation();checkpoint();item.points.splice(i,1);dirty();draw();});svg.append(circle);});
+ const regions=el('regions');regions.replaceChildren();item.unresolved.forEach((region,i)=>{const box=document.createElement('div');box.className='box';const label=document.createElement('p');label.textContent=`M${i+1}, dòng nguồn ${region.source_line}: ${region.resolved?'đã xử lý':'chưa xử lý'}`;box.append(label);const button=document.createElement('button');button.textContent=region.resolved?'Mở lại vùng':'Đã thêm đủ điểm cho vùng / loại vùng không rõ';button.onclick=()=>{checkpoint();region.resolved=!region.resolved;region.decision=region.resolved?'manually_resolved_in_points_or_excluded':null;dirty();draw();};box.append(button);regions.append(box);});
+ el('excluded').textContent=item.excluded.map(x=>`L${x.source_line}: ${x.reason}`).join(' · ')||'Không có cờ tự động';
+}
+el('canvas').onclick=e=>{const svg=el('canvas'),p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());if(q.x<0||q.y<0||q.x>r().width||q.y>r().height)return;checkpoint();r().points.push({x:q.x,y:q.y,origin:'manual_point',reviewed:true});dirty();draw();};
+el('select').onchange=e=>{current=Number(e.target.value);draw();};
+el('prev').onclick=()=>{current=Math.max(0,current-1);draw();};el('next').onclick=()=>{current=Math.min(49,current+1);draw();};
+el('undo').onclick=()=>{if(history.length){data=JSON.parse(history.pop());draw();}};
+el('review').onchange=e=>{if(e.target.checked&&r().unresolved.some(x=>!x.resolved)){alert('Cần xử lý các vùng Multiple trước.');draw();return;}checkpoint();r().status=e.target.checked?'reviewed':'draft';r().count_verified=e.target.checked?r().points.length:null;r().review_origin='manual_review_in_pilot_editor';draw();};
+el('save').onclick=()=>{data.status=data.images.every(x=>x.status==='reviewed')?'POINT_REVIEW_COMPLETE':'DRAFT_NOT_TRAIN_READY';const a=document.createElement('a');const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=url;a.download='counting-pilot-50-reviewed.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+el('load').onchange=async e=>{try{const loaded=JSON.parse(await e.target.files[0].text());if(loaded.source_archive_sha256!==data.source_archive_sha256||loaded.images.length!==50||loaded.images.some((x,i)=>x.source_sha256!==data.images[i].source_sha256))throw Error('Không khớp bộ ảnh');checkpoint();data=loaded;draw();}catch(error){alert(error.message);}};
+data.images.forEach((item,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`#${item.id} · ${item.split}`;el('select').append(o);});draw();
+</script></html>

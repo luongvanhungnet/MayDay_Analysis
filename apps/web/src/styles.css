@@ -1,5 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap");
 
+.native-shell { display: flex; min-height: 100vh; }
+.native-sidebar { width: 260px; height: 100vh; position: sticky; top: 0; background: #fff; border-right: 1px solid #e8eef0; display: flex; flex-direction: column; padding: 24px 18px 12px; gap: 16px; flex-shrink: 0; }
+.native-brand { display: flex; gap: 10px; align-items: center; color: #087e80; font-weight: 800; font-size: 28px; padding: 5px 10px 18px; }
+.login-story .native-brand { color: white; }
+.native-sidebar nav { overflow-y: auto; display: flex; flex-direction: column; flex: 1; gap: 4px; }
+.native-sidebar nav button { background: none; border: 0; text-align: left; color: #586e78; padding: 10px 12px; border-radius: 8px; font-size: 12px; }
+.native-sidebar nav button:hover, .native-sidebar nav button.active { background: #e7f4f3; color: #087e80; font-weight: 700; }
+.native-sidebar .search-box { min-width: 0; width: 100%; }
+.native-account { border-top: 1px solid #e8eef0; padding: 12px 8px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.native-account strong, .native-account small { width: 100%; }
+.native-account button { display: flex; gap: 4px; align-items: center; border: 0; background: none; color: #087e80; padding: 4px 0; font-size: 12px; }
+.native-main { min-width: 0; flex: 1; }
+.native-topbar { min-height: 72px; padding: 18px 36px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-bottom: 1px solid #e8eef0; color: #809199; font-size: 12px; }
+.native-content { padding: 36px; max-width: 1800px; margin: auto; }
+.native-content .page-title { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 24px; }
+.native-content .page-title h1 { margin: 8px 0; font-size: 27px; }
+.native-actions { display: flex; gap: 10px; }
+.native-toolbar { display: flex; gap: 20px; padding: 20px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid #e8eef0; }
+.native-filter { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.native-filter .field { min-width: 130px; }
+.native-content table { width: 100%; border-collapse: collapse; text-align: left; }
+.native-content th { background: #f7fafb; font-weight: 600; font-size: 11px; color: #647982; white-space: nowrap; }
+.native-content td, .native-content th { padding: 15px 18px; border-bottom: 1px solid #eef2f4; }
+.native-content td { font-size: 12px; }
+.native-content tbody tr:hover { background: #f7fbfb; }
+.native-cell { display: block; max-width: 240px; min-width: 60px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.native-login { display: flex; align-items: center; justify-content: center; padding: 40px; flex: 1; }
+.native-login form { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 18px; }
+.native-login h1 { margin: 0; font-size: 30px; }
+.native-login p { margin: 0 0 12px; }
+.native-content .table-scroll { overflow-x: auto; }
+@media (max-width: 900px) { .native-sidebar { width: 215px; padding: 16px 10px; } .native-content { padding: 22px; } .native-content .page-title { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 600px) { .native-shell { flex-direction: column; } .native-sidebar { position: static; width: 100%; height: auto; padding: 16px; } .native-sidebar nav { max-height: 170px; display: grid; grid-template-columns: 1fr 1fr; } .native-sidebar .native-brand { padding-bottom: 0; } .native-account { align-items: center; } .native-account strong,.native-account small { width: auto; margin-right: 12px; } .native-content { padding: 18px 12px; } .native-topbar { padding: 16px; min-height: 50px; } .native-login { padding: 28px; } }
+
 :root {
   font-family:
     "Be Vietnam Pro",

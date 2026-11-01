@@ -1,0 +1,2 @@
+# Install CPU torch/torchvision first from the official PyTorch CPU index.
+ultralytics==8.3.221

@@ -38,6 +38,26 @@ export class ApiError extends Error {
     super(message);
   }
 }
+
+export function getApiUrl(path: string): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (!envUrl) {
+    return `/api/v1${cleanPath}`;
+  }
+
+  // Remove trailing slashes: e.g. "https://api.vercel.app/" -> "https://api.vercel.app"
+  let base = envUrl.trim().replace(/\/+$/, "");
+
+  // If the base URL does not end with /api/v1 and path doesn't start with /api/v1, append /api/v1
+  if (!base.endsWith("/api/v1") && !cleanPath.startsWith("/api/v1")) {
+    base = `${base}/api/v1`;
+  }
+
+  return `${base}${cleanPath}`;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {},
@@ -49,7 +69,7 @@ async function request<T>(
   let response: Response;
   try {
     response = await fetch(
-      `${import.meta.env.VITE_API_URL || "/api/v1"}${path}`,
+      getApiUrl(path),
       { ...options, headers },
     );
   } catch (error) {
@@ -105,7 +125,7 @@ export async function apiBlob(
   let response: Response;
   try {
     response = await fetch(
-      `${import.meta.env.VITE_API_URL || "/api/v1"}${path}`,
+      getApiUrl(path),
       {
         signal,
         headers: session?.token

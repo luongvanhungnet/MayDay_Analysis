@@ -39,12 +39,27 @@ expressApp.get('/', (_req, res) => {
   });
 });
 
-// Middleware to normalize req.url when rewritten by Vercel
+// Middleware to normalize req.url when rewritten by Vercel or containing duplicate slashes, and auto-prefix /api/v1
 expressApp.use((req, _res, next) => {
   const matchedPath = (req.headers['x-matched-path'] || req.headers['x-now-route-matches']) as string;
   if (matchedPath && req.url === '/api') {
     req.url = matchedPath;
   }
+  if (req.url && req.url.includes('//')) {
+    req.url = req.url.replace(/\/+/g, '/');
+  }
+
+  // Handle requests sent to /auth/login or /api/auth/login instead of /api/v1/auth/login
+  if (req.url && req.url !== '/' && !req.url.startsWith('/api/docs')) {
+    if (req.url.startsWith('/api/v1')) {
+      // already has /api/v1 prefix
+    } else if (req.url.startsWith('/api/')) {
+      req.url = req.url.replace(/^\/api\//, '/api/v1/');
+    } else {
+      req.url = `/api/v1${req.url.startsWith('/') ? req.url : `/${req.url}`}`;
+    }
+  }
+
   next();
 });
 
@@ -54,13 +69,34 @@ export async function createNestApp(server = expressApp) {
   app.use(express.json({ limit: '1mb' }));
   app.setGlobalPrefix('api/v1');
 
-  const originEnv = process.env.WEB_ORIGIN ?? 'http://localhost:5173';
-  const origins = originEnv.split(',').map((s) => s.trim()).filter(Boolean);
+  const originEnv = process.env.WEB_ORIGIN;
+  const configuredOrigins = originEnv
+    ? originEnv.split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean)
+    : [];
 
   app.enableCors({
-    origin: origins.includes('*') ? true : origins,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin) return callback(null, true);
+      if (!originEnv || originEnv === '*') return callback(null, true);
+
+      const cleanOrigin = origin.replace(/\/+$/, '');
+      if (
+        configuredOrigins.includes(cleanOrigin) ||
+        cleanOrigin.endsWith('.vercel.app') ||
+        cleanOrigin.includes('localhost') ||
+        cleanOrigin.includes('127.0.0.1')
+      ) {
+        return callback(null, true);
+      }
+
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    credentials: true,
   });
 
   app.useGlobalFilters(new ApiExceptionFilter());

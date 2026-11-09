@@ -11,6 +11,22 @@ import { ApiExceptionFilter, ApiResponseInterceptor } from './common/api-respons
 const expressApp = express();
 let isAppReady = false;
 
+function getSafeDbTarget(rawUrl?: string) {
+  if (!rawUrl) return { status: 'DATABASE_URL is not set' };
+  try {
+    const u = new URL(rawUrl.trim());
+    return {
+      protocol: u.protocol,
+      host: u.hostname,
+      port: u.port || '5432 (default)',
+      database: u.pathname.replace(/^\//, ''),
+      username: u.username || '(none)',
+    };
+  } catch {
+    return { status: 'Unable to parse URL format' };
+  }
+}
+
 // Root info endpoint for quick health and browser verification
 expressApp.get('/', (_req, res) => {
   res.status(200).json({
@@ -75,10 +91,16 @@ export default async function handler(req: any, res: any) {
       isAppReady = true;
     } catch (err) {
       console.error('[Vercel Bootstrap Error] Failed to bootstrap NestJS:', err);
+      const activeDb =
+        process.env.DATABASE_URL ||
+        process.env.CONNECTION_STRING ||
+        process.env.POSTGRES_URL;
+
       return res.status(500).json({
         statusCode: 500,
         error: 'Bootstrap Error',
         message: err instanceof Error ? err.message : String(err),
+        currentDatabaseTarget: getSafeDbTarget(activeDb),
       });
     }
   }

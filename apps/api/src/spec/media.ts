@@ -9,7 +9,12 @@ import { Upload } from './contract';
 import { body, id, input, key, output } from './resources';
 
 export class Media {
-  readonly directory=resolve(process.env.UPLOAD_DIR??resolve(__dirname,'../../../../.data/uploads'));
+  readonly directory = resolve(
+    process.env.UPLOAD_DIR ??
+      (process.env.VERCEL
+        ? '/tmp/uploads'
+        : resolve(__dirname, '../../../../.data/uploads'))
+  );
   constructor(private readonly native: NativeService,private readonly db: PrismaService) {}
   async upload(actor: Actor, raw: unknown, file?: Upload) {
     const b=file?.buffer;

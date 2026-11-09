@@ -42,9 +42,11 @@ const requireValue = (v: unknown, name: string, max = 200) => {
 
 @Injectable()
 export class NativeService {
-  private readonly sessionFile = resolve(
+    private readonly sessionFile = resolve(
     process.env.SESSION_FILE ||
-      resolve(__dirname, "../../../../.data/sessions.json"),
+      (process.env.VERCEL
+        ? "/tmp/sessions.json"
+        : resolve(__dirname, "../../../../.data/sessions.json")),
   );
   private sessions: Record<string, Session> = {};
   private attempts = new Map<string, { count: number; reset: number }>();
@@ -52,15 +54,19 @@ export class NativeService {
     if (existsSync(this.sessionFile))
       this.sessions = JSON.parse(readFileSync(this.sessionFile, "utf8"));
   }
-  private persist() {
-    this.sessions = Object.fromEntries(
-      Object.entries(this.sessions).filter(([, s]) => s.expires > Date.now()),
-    );
-    mkdirSync(dirname(this.sessionFile), { recursive: true });
-    writeFileSync(`${this.sessionFile}.tmp`, JSON.stringify(this.sessions), {
-      mode: 0o600,
-    });
-    renameSync(`${this.sessionFile}.tmp`, this.sessionFile);
+    private persist() {
+    try {
+      this.sessions = Object.fromEntries(
+        Object.entries(this.sessions).filter(([, s]) => s.expires > Date.now()),
+      );
+      mkdirSync(dirname(this.sessionFile), { recursive: true });
+      writeFileSync(`${this.sessionFile}.tmp`, JSON.stringify(this.sessions), {
+        mode: 0o600,
+      });
+      renameSync(`${this.sessionFile}.tmp`, this.sessionFile);
+    } catch (err) {
+      console.warn("[NativeService] Warning: Could not persist sessions:", err);
+    }
   }
   private async account(id: string) {
     const rows = await this.db.$queryRaw<Row[]>(

@@ -1,0 +1,42 @@
+MayDay - Technology Specification
+
+Purpose
+MayDay manages clinical records and urticaria monitoring, with an experimental
+AI feature for analyzing skin photographs.
+
+Application stack
+- Frontend: React 19, TypeScript, Vite 6 and React Router 7.
+- Backend: NestJS 11 and TypeScript on Node.js, providing REST APIs, authenticated
+  sessions, multipart image uploads and Swagger API documentation.
+- Database: PostgreSQL 17, accessed through Prisma 6.19.3. The application maps
+  the existing 44-table database restored from mayday_backup.sql.
+
+AI technologies and models
+- Python 3.11, PyTorch/torchvision and Ultralytics 8.3.221 power local inference.
+- Three task-specific YOLOv8n object-detection models use trained .pt checkpoints:
+  1. Lesions: detects Body, Multiple and Single regions.
+  2. Skin: detects regions labeled normal skin or urticaria.
+  3. Counting: detects wheals and returns an experimental approximate count.
+- Pillow validates image dimensions, corrects EXIF orientation and converts
+  images to RGB.
+
+AI processing flow
+1. React submits an authenticated POST /api/v1/ai/analyze request with multipart
+   field image. Accepted formats are JPEG, PNG and WebP, up to 8 MiB/16 megapixels.
+2. NestJS launches three Python subprocesses in parallel and sends image bytes
+   through stdin. Each worker runs on CPU with one PyTorch thread.
+3. YOLO predicts with imgsz=640 and confidence threshold 0.25. Workers return JSON
+   containing labels, confidence scores, bounding boxes and processing time.
+4. React displays each model's results. Counting excludes boxes near the
+   image edge or with a side shorter than five pixels. Lesion/skin outputs provide
+   an image-level concordant, conflicting or uncertain status; scores are not averaged.
+
+Runtime and research status
+- One AI request per API process; each worker has a 120-second timeout. Any worker
+  failure fails the whole request. Python is configurable through AI_PYTHON.
+- Checkpoints and the Python environment must be supplied locally. Analysis does
+  not automatically persist uploaded images or results in the database.
+- Training experiments use Google Colab with NVIDIA Tesla T4 GPUs. An additional
+  ResNet18 + FPN center-heatmap counting prototype remains outside the web pipeline.
+- Counting uses approximate training labels and remains experimental. Model
+  outputs do not establish clinically validated diagnoses or exact lesion counts.

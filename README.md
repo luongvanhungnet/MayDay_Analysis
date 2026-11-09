@@ -143,6 +143,26 @@ apps/api/prisma/schema.prisma là ánh xạ ORM của database, không phải mi
 
 Phiên bản này dùng biểu mẫu theo schema lâm sàng cố định. Các bảng phiếu động, thông báo/FCM, blacklist token, email và kết quả AI của schema UUID cũ không tồn tại trong backup, nên các module phụ thuộc chúng được thay thế bằng luồng dữ liệu native. Mục Tệp đính kèm hiện quản lý metadata/đường dẫn có sẵn; không tự di chuyển file ảnh, tải file lên MinIO hoặc gọi AI. Các file ảnh ngoài database phải được giữ tại kho gốc.
 
+## Test accounts (temporary preview)
+
+Start the disposable preview from PowerShell:
+
+```powershell
+$env:SPEC_WEB_PREVIEW = '1'
+npm run test:spec
+```
+
+After the tests pass, open http://127.0.0.1:5175. These accounts exist only in the temporary preview database:
+
+| Role | Login | Password |
+|---|---|---|
+| Admin | `0999999001` | `MaydayTestPassword2026!` |
+| Doctor | `0999999002` | `MaydayTestPassword2026!` |
+| Nurse | `0999999004` | `MaydayTestPassword2026!` |
+| Patient | `0999999011` | `MaydayTestPassword2026!` |
+
+These credentials are for preview port **5175** only, not the main app at **5173**, the imported database or normal `npm run dev`. Create the `stopFile` listed in `.data/web-preview.json` to stop the preview and delete its temporary database.
+
 ## Docker
 
 Để chạy API và web bằng Compose sau khi đã tạo `.env` và cấu hình `DOCKER_DATABASE_URL`:

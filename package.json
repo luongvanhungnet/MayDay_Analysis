@@ -20,6 +20,7 @@
     "db:generate": "npm run db:generate -w @mayday/api",
     "db:migrate": "node scripts/database-protected.mjs",
     "db:seed": "node scripts/database-protected.mjs",
+    "db:seed:fake": "node scripts/seed-fake-data.mjs",
     "db:studio": "npm run db:studio -w @mayday/api",
     "infra:up": "docker compose up -d postgres redis minio",
     "infra:down": "docker compose down",

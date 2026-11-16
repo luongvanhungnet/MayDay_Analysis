@@ -41,7 +41,7 @@ export function useResource<T>(path: string | null) {
     setLoading(true);
     setError("");
     api<T>(path, { signal: abort.signal })
-      .then(setData)
+      .then(value => { if (!abort.signal.aborted) setData(value); })
       .catch((e) => {
         if (!abort.signal.aborted) setError(e.message);
       })
@@ -71,6 +71,7 @@ export function usePagedResource<T>(path: string | null) {
     setError("");
     apiPage<T>(path, { signal: abort.signal })
       .then((page) => {
+        if (abort.signal.aborted) return;
         setData(page.items);
         setMeta(page.meta);
       })

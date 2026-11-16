@@ -1,5 +1,7 @@
 # Giao diện cho 67 API đã ánh xạ
 
+Luồng điều hướng mới, ma trận từng endpoint và cách chạy browser smoke được mô tả trong [NAVIGATION_AND_API_COVERAGE.vi.md](NAVIGATION_AND_API_COVERAGE.vi.md). Chạy `npm run audit:web-api` để kiểm tra ánh xạ tĩnh 67 API; đây không phải thước đo E2E thành công cho 92 chức năng.
+
 Giao diện giữ phong cách MayDay hiện có, thay các màn hình sửa bảng của luồng chính bằng màn hình nghiệp vụ. Các chức năng chưa hỗ trợ trong [bảng đối chiếu backend](API_SPEC_MAPPING.md) không có nút thực thi trên web. Quên mật khẩu hướng dẫn liên hệ quản trị viên; không tạo quy trình khôi phục giả.
 
 | Nhóm màn hình | Số API nghiệp vụ | Thao tác |
@@ -34,7 +36,7 @@ Giao diện giữ phong cách MayDay hiện có, thay các màn hình sửa bả
 - Unit tests: quyền thao tác bệnh án, payload không gửi trường thừa, bảo toàn bigint, giới hạn điểm, múi giờ và bookmark cũ.
 - Kiểm thử React DOM với request giả lập: nhận ca có xác nhận rồi mở kê đơn; Escape đóng biểu mẫu con và giữ hồ sơ; gửi UAS đúng dữ liệu; chặn trang quản trị cho bệnh nhân; upload FormData đúng hồ sơ. Đây không thay cho kiểm thử browser với server thật.
 - Kiểm thử backend HTTP: `npm run test:spec` chạy đủ 67 API trên database schema-only tạm và xác nhận 25 giới hạn schema; kết quả lưu riêng ở `spec-api-test-results.json`.
-- Đã quan sát trang đăng nhập, danh sách và chi tiết hồ sơ trên trình duyệt với dữ liệu fixture. Kiểm tra trình duyệt đầy đủ sau chỉnh sửa và kiểm tra thiết bị di động chưa hoàn tất: hộp confirm cũ làm phiên điều khiển trình duyệt bị kẹt. Không coi build hoặc kiểm thử DOM là bằng chứng đã kiểm tra đầy đủ responsive/browser.
+- Browser smoke bằng Playwright/Edge dùng API fixture kiểm tra landing theo vai trò, bookmark và tab hồ sơ, Back/Forward, tiếp nhận/kê đơn, ngữ cảnh bệnh nhân, upload–gắn ảnh, menu mobile 390px và đăng nhập lại khi hết phiên. Script: `npm run test:navigation`; kết quả ở `.data/navigation-check/results.json`. Đây là smoke test trên API giả lập, chưa phải E2E toàn bộ 67 API với server thật.
 - `SPEC_WEB_PREVIEW=1 node scripts/spec-smoke.mjs` tạo thêm server Vite cổng 5175 sau bộ kiểm thử backend, dùng database tạm. Tệp `.data/web-preview.json` chứa đường dẫn stopFile; tạo tệp đó để dừng server và xóa database kiểm thử. Không dùng tài khoản hoặc dữ liệu người dùng thật.
 
 Chạy lại `npm test`, `npm run typecheck`, `npm run build` trước khi tích hợp.

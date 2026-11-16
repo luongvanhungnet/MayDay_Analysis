@@ -260,6 +260,8 @@ Object.assign(names, {
   benhnhan: "Thông tin bệnh nhân",
 });
 export const menus = [
+  { id: "today", title: "Hôm nay", group: "CHĂM SÓC", patientOnly: true },
+  { id: "overview", title: "Tổng quan quản trị", group: "QUẢN TRỊ", admin: true },
   { id: "records", title: "Hồ sơ bệnh án", group: "CHĂM SÓC" },
   {
     id: "patients",
@@ -285,11 +287,11 @@ export const menus = [
     group: "QUẢN TRỊ",
     admin: true,
   },
-  { id: "branches", title: "Chi nhánh", group: "CƠ SỞ" },
-  { id: "departments", title: "Khoa phòng", group: "CƠ SỞ" },
-  { id: "rooms", title: "Phòng khám", group: "CƠ SỞ" },
+  { id: "branches", title: "Chi nhánh", group: "CƠ SỞ", staff: true },
+  { id: "departments", title: "Khoa phòng", group: "CƠ SỞ", staff: true },
+  { id: "rooms", title: "Phòng khám", group: "CƠ SỞ", staff: true },
 ];
 export const availableMenus = (role: string) =>
   menus.filter(
-    (m) => (!m.admin || role === "admin") && (!m.staff || role !== "benh_nhan"),
+    (m) => (!m.admin || role === "admin") && (!m.staff || role !== "benh_nhan") && (!m.patientOnly || role === "benh_nhan"),
   );

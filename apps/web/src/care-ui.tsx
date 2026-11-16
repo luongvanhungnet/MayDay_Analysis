@@ -1,4 +1,5 @@
 import { confirmAction } from "./confirmation";
+import { useUrlState, useUnsavedChanges } from "./navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { api, apiPage, patch, post, put, remove } from "./api";
 import {
@@ -24,9 +25,12 @@ import {
 } from "./care-model";
 import { display, label } from "./native-model";
 
-export function useSearch() {
-  const [search, setSearch] = useState(""),
-    [query, setQuery] = useState("");
+export function useSearch(persist = false) {
+  const [urlSearch, setUrlSearch] = useUrlState("search", "");
+  const [localSearch, setLocalSearch] = useState("");
+  const search = persist ? urlSearch : localSearch;
+  const setSearch = persist ? setUrlSearch : setLocalSearch;
+  const [query, setQuery] = useState(search);
   useEffect(() => {
     const t = setTimeout(() => setQuery(search), 300);
     return () => clearTimeout(t);
@@ -249,12 +253,20 @@ export function ActionForm({
     ),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const [initialValues] = useState(() => JSON.stringify(values));
+  const { allowLeave, markSaved } = useUnsavedChanges(
+    JSON.stringify(values) !== initialValues || busy,
+  );
+  async function cancel() {
+    if (!busy && (await allowLeave())) close();
+  }
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError("");
     setBusy(true);
     try {
       await onSubmit(buildPayload(fields, values, original));
+      markSaved();
       saved();
     } catch (e) {
       setError((e as Error).message);
@@ -263,13 +275,7 @@ export function ActionForm({
     }
   }
   return (
-    <Modal
-      title={title}
-      onClose={() => {
-        if (!busy) close();
-      }}
-      wide
-    >
+    <Modal title={title} onClose={() => void cancel()} wide>
       <form onSubmit={submit}>
         <div className="modal-body">
           {note && <p className="care-note">{note}</p>}
@@ -281,7 +287,7 @@ export function ActionForm({
             type="button"
             variant="secondary"
             disabled={busy}
-            onClick={close}
+            onClick={() => void cancel()}
           >
             Hủy
           </Button>
@@ -389,13 +395,12 @@ export function ResourcePage({
   config: Resource;
   userRole: string;
 }) {
-  const [page, setPage] = useState(1),
+  const [page, setPage] = useUrlState("page", 1),
     [editing, setEditing] = useState<Row | null | undefined>(),
     [detail, setDetail] = useState<Row | null>(null),
     [error, setError] = useState(""),
     [success, setSuccess] = useState("");
-  const { search, setSearch, query } = useSearch();
-  useEffect(() => setPage(1), [query]);
+  const { search, setSearch, query } = useSearch(true);
   const data = usePagedResource<Row>(
       `${config.path}?page=${page}&search=${encodeURIComponent(query)}`,
     ),
@@ -461,7 +466,10 @@ export function ResourcePage({
             aria-label={`Tìm ${config.title}`}
             placeholder="Tìm kiếm…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
         {data.loading ? (

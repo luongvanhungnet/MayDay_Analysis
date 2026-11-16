@@ -2799,3 +2799,20 @@ td small {
     width: 145px;
   }
 }
+ .journey-links { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; align-items: center; }
+ .journey-links a, .journey-links button { padding: 10px 14px; border-radius: 8px; border: 1px solid #d5e5df; color: #17634d; background: white; text-decoration: none; cursor: pointer; }
+ .journey-links [aria-current="page"] { background: #17634d; color: white; }
+ .journey-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; }
+ .journey-grid a { color: inherit; text-decoration: none; }
+ .journey-grid a:hover { box-shadow: 0 4px 16px #163f2920; }
+ .journey-record { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin: 12px 0; color: inherit; text-decoration: none; }
+ .journey-links a:focus-visible, .journey-grid a:focus-visible { outline: 3px solid #298c70; outline-offset: 3px; }
+ .management-links { padding: 0 28px; }
+ .care-nav-group > summary { cursor: pointer; padding: 14px 10px 8px; color: #719387; font-size: 12px; font-weight: 700; }
+ .native-sidebar .care-nav-group > button { display: block; width: 100%; }
+ .mobile-nav-toggle { display: none; }
+ @media(max-width:600px) {
+   .native-shell .native-sidebar { position: relative; }
+   .mobile-nav-toggle { display: block; position: absolute; right: 16px; top: 22px; padding: 8px 12px; background: #e7f4f3; color: #087e80; border: 0; border-radius: 8px; cursor: pointer; }
+   .native-sidebar[data-mobile-open="false"] > :is(nav, .search-box, .eyebrow, .native-account) { display: none; }
+ }

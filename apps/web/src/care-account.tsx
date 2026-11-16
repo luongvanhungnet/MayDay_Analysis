@@ -1,4 +1,5 @@
 import { confirmAction } from "./confirmation";
+import { useUrlState, useUnsavedChanges } from "./navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { api, post, put, remove, storeSession, type Session } from "./api";
 import {
@@ -151,15 +152,14 @@ export function ProfilePage({ session }: { session: Session }) {
   );
 }
 export function UsersPage({ session }: { session: Session }) {
-  const [page, setPage] = useState(1),
+  const [page, setPage] = useUrlState("page", 1),
     [edit, setEdit] = useState<Row | null>(null),
     [detail, setDetail] = useState<Row | null>(null),
     [create, setCreate] = useState(""),
     [assign, setAssign] = useState<Row | null>(null),
     [error, setError] = useState(""),
     [success, setSuccess] = useState("");
-  const { search, setSearch, query } = useSearch();
-  useEffect(() => setPage(1), [query]);
+  const { search, setSearch, query } = useSearch(true);
   const list = usePagedResource<Row>(
     `/admin/users?page=${page}&search=${encodeURIComponent(query)}`,
   );
@@ -247,7 +247,10 @@ export function UsersPage({ session }: { session: Session }) {
         <div className="native-toolbar">
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             placeholder="Tìm tên đăng nhập…"
             aria-label="Tìm tài khoản"
           />
@@ -380,8 +383,8 @@ export function UsersPage({ session }: { session: Session }) {
   );
 }
 export function GrantsPage() {
-  const [roleId, setRoleId] = useState(""),
-    [page, setPage] = useState(1),
+  const [roleId, setRoleId] = useUrlState("role", ""),
+    [page, setPage] = useUrlState("page", 1),
     [chosen, setChosen] = useState<Set<string>>(new Set()),
     [error, setError] = useState(""),
     [success, setSuccess] = useState(""),
@@ -395,6 +398,15 @@ export function GrantsPage() {
     grants.data?.role_id === roleId &&
     !grants.loading &&
     !grants.error;
+  const originalPermissions = new Set(
+    grants.data?.permissions.map((p) => String(p.id)) ?? [],
+  );
+  const { allowLeave, markSaved } = useUnsavedChanges(
+    busy ||
+      (ready &&
+        (chosen.size !== originalPermissions.size ||
+          [...chosen].some((id) => !originalPermissions.has(id)))),
+  );
   useEffect(() => {
     if (grants.data?.role_id === roleId)
       setChosen(new Set(grants.data.permissions.map((p) => String(p.id))));
@@ -416,6 +428,7 @@ export function GrantsPage() {
       for (const id of active)
         if (!chosen.has(id)) await remove(`/role_permissions/${roleId}/${id}`);
       setSuccess("Đã cập nhật các quyền cho vai trò.");
+      markSaved();
     } catch (e) {
       setError(
         `${(e as Error).message} Danh sách sẽ được tải lại để phản ánh các thay đổi đã lưu.`,
@@ -441,7 +454,8 @@ export function GrantsPage() {
           <ReferenceSelect
             reference="roles"
             value={roleId}
-            onChange={(v) => {
+            onChange={async (v) => {
+              if (!(await allowLeave())) return;
               setRoleId(v);
               setChosen(new Set());
               setError("");

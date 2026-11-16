@@ -15,6 +15,7 @@ import { ConfirmHost } from "./confirmation";
 
 afterEach(() => {
   cleanup();
+  history.replaceState(null, "", "/");
   vi.unstubAllGlobals();
 });
 
@@ -221,7 +222,7 @@ it("accepts a pending record through an in-app confirmation, then opens prescrib
       screen.queryByRole("dialog", { name: "Kê đơn · Hồ sơ #10" }),
     ).toBeNull(),
   );
-  expect(screen.getByRole("dialog", { name: "Hồ sơ #10" })).toBeTruthy();
+  expect(screen.getByRole("region", { name: "Hồ sơ #10" })).toBeTruthy();
   expect(
     requests.filter((r) => r.path === "/medical_records/10/accept"),
   ).toEqual([{ path: "/medical_records/10/accept", method: "POST" }]);

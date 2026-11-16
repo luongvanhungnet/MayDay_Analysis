@@ -117,7 +117,7 @@ Tiếp nhận bệnh nhân tạo nguoi và benhnhan trong cùng transaction. T�
 
 admin quản lý toàn bộ; bac_si đọc và cập nhật dữ liệu lâm sàng; dieu_duong đọc lâm sàng, cập nhật thông tin bệnh nhân và theo dõi; benh_nhan chỉ đọc dữ liệu của mình và ghi nhật ký/theo dõi của mình. Các danh mục cơ sở/thuốc/nghiệm pháp do admin quản lý. Vai trò lạ bị từ chối. Đây là chính sách trong code theo 4 vai trò của backup; bảng quyenhan/vaitroquyenhan hiện chưa có dữ liệu và không được tự seed hay chuyển thành quyền endpoint giả định.
 
-Phiên đăng nhập có thời hạn 2 giờ, token ngẫu nhiên chỉ lưu bản băm ở .data/sessions.json. Đăng xuất thu hồi token; đổi mật khẩu/vai trò hoặc khóa tài khoản làm phiên cũ mất hiệu lực. SESSION_FILE có thể trỏ tới thư mục dữ liệu riêng. Cơ chế lưu phiên này dành cho một tiến trình API local; khi chạy nhiều instance cần bổ sung kho phiên dùng chung. Không cần Redis hoặc JWT_SECRET để chạy bản local này.
+Phiên đăng nhập có thời hạn 2 giờ, token ngẫu nhiên chỉ lưu bản băm. Local mặc định lưu trong `.data/sessions.json`; `SESSION_FILE` có thể trỏ tới thư mục riêng. Trên Vercel, API dùng Redis chung cho mọi instance/cold start, qua `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (hoặc `KV_REST_API_URL` + `KV_REST_API_TOKEN`, hoặc `REDIS_URL`). Có thể đặt `SESSION_STORE=redis` khi chạy nhiều instance ngoài Vercel. Không dùng `/tmp` làm kho phiên trên Vercel; thiếu/lỗi kho phiên trả 503 và không phát token đăng nhập. Đăng xuất thu hồi token trên mọi instance; đổi mật khẩu/vai trò hoặc khóa tài khoản làm phiên cũ mất hiệu lực. Không cần Redis hoặc JWT_SECRET để chạy bản local một tiến trình. Xem [sửa lỗi phiên đăng nhập trên Vercel](docs/VERCEL_SESSION_FIX.vi.md) để cấu hình và redeploy.
 
 ## Kiểm tra
 

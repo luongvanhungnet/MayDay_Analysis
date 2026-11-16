@@ -10,6 +10,7 @@ import { ApiExceptionFilter, ApiResponseInterceptor } from './common/api-respons
 
 const expressApp = express();
 let isAppReady = false;
+let appBootstrap: Promise<unknown> | undefined;
 
 function getSafeDbTarget(rawUrl?: string) {
   if (!rawUrl) return { status: 'DATABASE_URL is not set' };
@@ -123,9 +124,10 @@ export async function createNestApp(server = expressApp) {
 export default async function handler(req: any, res: any) {
   if (!isAppReady) {
     try {
-      await createNestApp(expressApp);
+      await (appBootstrap ??= createNestApp(expressApp));
       isAppReady = true;
     } catch (err) {
+      appBootstrap = undefined;
       console.error('[Vercel Bootstrap Error] Failed to bootstrap NestJS:', err);
       const activeDb =
         process.env.DATABASE_URL ||

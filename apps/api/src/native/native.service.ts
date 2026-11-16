@@ -2,14 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { compare, hash } from "bcryptjs";
 import { createHash, randomBytes } from "node:crypto";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  renameSync,
-  writeFileSync,
-} from "node:fs";
-import { dirname, resolve } from "node:path";
+import { createSessionStore } from "./session-store";
 import { PrismaService } from "../common/prisma.service";
 import { DomainException } from "../common/domain.exception";
 import {
@@ -28,7 +21,6 @@ import {
 import { ownershipPath } from "./ownership";
 
 type Row = Record<string, unknown>;
-type Session = { accountId: string; fingerprint: string; expires: number };
 const digest = (s: string) => createHash("sha256").update(s).digest("hex");
 const identifier = (s: string) => Prisma.raw(`"${s.replace(/"/g, '""')}"`);
 const sqlTable = (t: Table) => Prisma.sql`public.${identifier(t.name)}`;
@@ -42,31 +34,11 @@ const requireValue = (v: unknown, name: string, max = 200) => {
 
 @Injectable()
 export class NativeService {
-    private readonly sessionFile = resolve(
-    process.env.SESSION_FILE ||
-      (process.env.VERCEL
-        ? "/tmp/sessions.json"
-        : resolve(__dirname, "../../../../.data/sessions.json")),
-  );
-  private sessions: Record<string, Session> = {};
+  private readonly sessions = createSessionStore();
   private attempts = new Map<string, { count: number; reset: number }>();
-  constructor(private readonly db: PrismaService) {
-    if (existsSync(this.sessionFile))
-      this.sessions = JSON.parse(readFileSync(this.sessionFile, "utf8"));
-  }
-    private persist() {
-    try {
-      this.sessions = Object.fromEntries(
-        Object.entries(this.sessions).filter(([, s]) => s.expires > Date.now()),
-      );
-      mkdirSync(dirname(this.sessionFile), { recursive: true });
-      writeFileSync(`${this.sessionFile}.tmp`, JSON.stringify(this.sessions), {
-        mode: 0o600,
-      });
-      renameSync(`${this.sessionFile}.tmp`, this.sessionFile);
-    } catch (err) {
-      console.warn("[NativeService] Warning: Could not persist sessions:", err);
-    }
+  constructor(private readonly db: PrismaService) {}
+  onModuleDestroy() {
+    this.sessions.close?.();
   }
   private async account(id: string) {
     const rows = await this.db.$queryRaw<Row[]>(
@@ -79,7 +51,7 @@ export class NativeService {
   }
   async authenticate(bearer?: string): Promise<Actor> {
     const token = bearer?.match(/^Bearer (\S+)$/i)?.[1];
-    const session = token ? this.sessions[digest(token)] : undefined;
+    const session = token ? await this.sessions.get(digest(token)) : undefined;
     if (!session || session.expires <= Date.now())
       throw new DomainException(3003, "Phiên đăng nhập đã hết hạn", 401);
     const row = await this.account(session.accountId);
@@ -140,12 +112,11 @@ export class NativeService {
       );
     const token = randomBytes(32).toString("base64url");
     const account = await this.account(String(row.ma_tai_khoan));
-    this.sessions[digest(token)] = {
+    await this.sessions.set(digest(token), {
       accountId: String(row.ma_tai_khoan),
       fingerprint: this.fingerprint(account),
       expires: now + 7200000,
-    };
-    this.persist();
+    });
     return {
       token,
       user: await this.profile({
@@ -155,10 +126,9 @@ export class NativeService {
       }),
     };
   }
-  logout(header: string) {
+  async logout(header: string) {
     const token = header.match(/^Bearer (\S+)$/i)?.[1];
-    if (token) delete this.sessions[digest(token)];
-    this.persist();
+    if (token) await this.sessions.delete(digest(token));
     return { logged_out: true };
   }
   async profile(actor: Actor) {

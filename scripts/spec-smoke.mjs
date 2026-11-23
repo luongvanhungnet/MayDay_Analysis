@@ -231,6 +231,8 @@ try{
     assert.deepEqual(missing.map(e=>e.source),[]);
   });
   if(process.env.SPEC_WEB_PREVIEW==='1'){
+    await employee('dieu_duong','0999999004');
+    await login('0999999004');
     await request('/medical_records',{method:'POST',token:adminToken,body:{patient_id:patient.person_id,record_type:'MAN',initial_diagnosis:'Hồ sơ kiểm thử giao diện'},status:201});
     web=spawn(process.execPath,[resolve('node_modules/vite/bin/vite.js'),'--host','127.0.0.1','--port','5175','--strictPort'],{cwd:resolve('apps/web'),env:{...process.env,API_PROXY_TARGET:`http://127.0.0.1:${port}`},windowsHide:true,stdio:['ignore','pipe','pipe']});
     web.stdout.on('data',b=>process.stdout.write(b));web.stderr.on('data',b=>process.stderr.write(b));

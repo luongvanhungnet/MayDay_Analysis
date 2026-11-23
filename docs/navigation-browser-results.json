@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-11-16T04:23:43.817Z",
+  "backend": "intercepted fixtures; no real patient data or database writes",
+  "results": [
+    {
+      "name": "landing benh_nhan",
+      "passed": true
+    },
+    {
+      "name": "landing bac_si",
+      "passed": true
+    },
+    {
+      "name": "landing dieu_duong",
+      "passed": true
+    },
+    {
+      "name": "landing admin",
+      "passed": true
+    },
+    {
+      "name": "record bookmark reload, browser back/forward and list filters",
+      "passed": true
+    },
+    {
+      "name": "accept then prescribe, Escape retains record",
+      "passed": true
+    },
+    {
+      "name": "browser Back cancellation and Escape protect unsaved prescription",
+      "passed": true
+    },
+    {
+      "name": "patient journey retains patient in UAS",
+      "passed": true
+    },
+    {
+      "name": "episode/location bookmark, upload retains record and attaches uploaded image",
+      "passed": true
+    },
+    {
+      "name": "patient home mobile 390px without horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "patient cannot open administration bookmark",
+      "passed": true
+    },
+    {
+      "name": "expired session returns to the requested page after login",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

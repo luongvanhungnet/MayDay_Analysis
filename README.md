@@ -117,7 +117,7 @@ Tiếp nhận bệnh nhân tạo nguoi và benhnhan trong cùng transaction. T�
 
 admin quản lý toàn bộ; bac_si đọc và cập nhật dữ liệu lâm sàng; dieu_duong đọc lâm sàng, cập nhật thông tin bệnh nhân và theo dõi; benh_nhan chỉ đọc dữ liệu của mình và ghi nhật ký/theo dõi của mình. Các danh mục cơ sở/thuốc/nghiệm pháp do admin quản lý. Vai trò lạ bị từ chối. Đây là chính sách trong code theo 4 vai trò của backup; bảng quyenhan/vaitroquyenhan hiện chưa có dữ liệu và không được tự seed hay chuyển thành quyền endpoint giả định.
 
-Phiên đăng nhập có thời hạn 2 giờ, token ngẫu nhiên chỉ lưu bản băm ở .data/sessions.json. Đăng xuất thu hồi token; đổi mật khẩu/vai trò hoặc khóa tài khoản làm phiên cũ mất hiệu lực. SESSION_FILE có thể trỏ tới thư mục dữ liệu riêng. Cơ chế lưu phiên này dành cho một tiến trình API local; khi chạy nhiều instance cần bổ sung kho phiên dùng chung. Không cần Redis hoặc JWT_SECRET để chạy bản local này.
+Phiên đăng nhập có thời hạn 2 giờ, token ngẫu nhiên chỉ lưu bản băm. Local mặc định lưu trong `.data/sessions.json`; `SESSION_FILE` có thể trỏ tới thư mục riêng. Trên Vercel, API dùng Redis chung cho mọi instance/cold start, qua `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (hoặc `KV_REST_API_URL` + `KV_REST_API_TOKEN`, hoặc `REDIS_URL`). Có thể đặt `SESSION_STORE=redis` khi chạy nhiều instance ngoài Vercel. Không dùng `/tmp` làm kho phiên trên Vercel; thiếu/lỗi kho phiên trả 503 và không phát token đăng nhập. Đăng xuất thu hồi token trên mọi instance; đổi mật khẩu/vai trò hoặc khóa tài khoản làm phiên cũ mất hiệu lực. Không cần Redis hoặc JWT_SECRET để chạy bản local một tiến trình. Xem [sửa lỗi phiên đăng nhập trên Vercel](docs/VERCEL_SESSION_FIX.vi.md) để cấu hình và redeploy.
 
 ## Kiểm tra
 
@@ -142,6 +142,26 @@ apps/api/prisma/schema.prisma là ánh xạ ORM của database, không phải mi
 ## Phạm vi
 
 Phiên bản này dùng biểu mẫu theo schema lâm sàng cố định. Các bảng phiếu động, thông báo/FCM, blacklist token, email và kết quả AI của schema UUID cũ không tồn tại trong backup, nên các module phụ thuộc chúng được thay thế bằng luồng dữ liệu native. Mục Tệp đính kèm hiện quản lý metadata/đường dẫn có sẵn; không tự di chuyển file ảnh, tải file lên MinIO hoặc gọi AI. Các file ảnh ngoài database phải được giữ tại kho gốc.
+
+## Test accounts (temporary preview)
+
+Start the disposable preview from PowerShell:
+
+```powershell
+$env:SPEC_WEB_PREVIEW = '1'
+npm run test:spec
+```
+
+After the tests pass, open http://127.0.0.1:5175. These accounts exist only in the temporary preview database:
+
+| Role | Login | Password |
+|---|---|---|
+| Admin | `0999999001` | `MaydayTestPassword2026!` |
+| Doctor | `0999999002` | `MaydayTestPassword2026!` |
+| Nurse | `0999999004` | `MaydayTestPassword2026!` |
+| Patient | `0999999011` | `MaydayTestPassword2026!` |
+
+These credentials are for preview port **5175** only, not the main app at **5173**, the imported database or normal `npm run dev`. Create the `stopFile` listed in `.data/web-preview.json` to stop the preview and delete its temporary database.
 
 ## Docker
 

@@ -1,0 +1,636 @@
+{
+  "timestamp": "2026-11-16T04:22:58.362Z",
+  "evidence": "Static catalog-to-UI wiring audit. This measures mapped workflow entry points, not successful browser execution of every endpoint.",
+  "registered": 92,
+  "supported": 67,
+  "uiMapped": 67,
+  "unsupported": 25,
+  "supportedUiMappingPercent": 100,
+  "implementedSpecPercent": 72.83,
+  "operations": [
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/signup",
+      "action": "signup",
+      "view": "Đăng nhập → Đăng ký bệnh nhân",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "action": "login",
+      "view": "Đăng nhập / menu tài khoản",
+      "sources": [
+        "NativeApp.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "action": "logout",
+      "view": "Đăng nhập / menu tài khoản",
+      "sources": [
+        "NativeApp.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/auth/change-password",
+      "action": "password",
+      "view": "Đăng nhập / menu tài khoản",
+      "sources": [
+        "NativeApp.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/admin/create-staff",
+      "action": "staff",
+      "view": "Tài khoản & nhân viên → Tạo nhân viên",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/profile",
+      "action": "profile",
+      "view": "Hồ sơ cá nhân → Xem / sửa",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/profile",
+      "action": "profileUpdate",
+      "view": "Hồ sơ cá nhân → Xem / sửa",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "action": "list",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users/:id",
+      "action": "detail",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users",
+      "action": "userCreate",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/admin/users/:id",
+      "action": "userUpdate",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/users/:id",
+      "action": "userDisable",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/admin/users/:id/assign",
+      "action": "assign",
+      "view": "Tài khoản & nhân viên → Danh sách / chi tiết / tạo / sửa / khóa / phân công",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/roles",
+      "action": "create",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/roles",
+      "action": "list",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/permissions",
+      "action": "create",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/permissions",
+      "action": "list",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/permissions/:id",
+      "action": "update",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/permissions/:id",
+      "action": "delete",
+      "view": "Quản trị → Vai trò / Quyền hạn",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/role_permissions",
+      "action": "grant",
+      "view": "Quản trị → Gán quyền cho vai trò",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/role_permissions/:role_id",
+      "action": "grants",
+      "view": "Quản trị → Gán quyền cho vai trò",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/role_permissions/:role_id/:permission_id",
+      "action": "revoke",
+      "view": "Quản trị → Gán quyền cho vai trò",
+      "sources": [
+        "care-account.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/branches",
+      "action": "create",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branches",
+      "action": "list",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/branches/:id",
+      "action": "detail",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/branches/:id",
+      "action": "update",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/branches/:id",
+      "action": "delete",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/departments",
+      "action": "create",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/departments",
+      "action": "list",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/departments/:id",
+      "action": "detail",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/departments/:id",
+      "action": "update",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/departments/:id",
+      "action": "delete",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rooms",
+      "action": "create",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rooms",
+      "action": "list",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rooms/:id",
+      "action": "detail",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/rooms/:id",
+      "action": "update",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/rooms/:id",
+      "action": "delete",
+      "view": "Cơ sở khám → Chi nhánh / Khoa phòng / Phòng khám",
+      "sources": [
+        "care-model.ts",
+        "care-ui.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/doctor/patients/search",
+      "action": "patients",
+      "view": "Bệnh nhân → Tìm / tiếp nhận",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/doctor/patients",
+      "action": "patientCreate",
+      "view": "Bệnh nhân → Tìm / tiếp nhận",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/medical_records",
+      "action": "recordCreate",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/medical_records/all",
+      "action": "list",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/medical_records/:id",
+      "action": "detail",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/medical_records/:id/summary",
+      "action": "summary",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/medical_records/patients/:id/history",
+      "action": "history",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/medical_records/:id/accept",
+      "action": "accept",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/medical_records/:id",
+      "action": "complete",
+      "view": "Hồ sơ khám → Tạo / chi tiết / lịch sử / tiếp nhận / chốt",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/uas7-scores/eligibility",
+      "action": "eligibility",
+      "view": "Hôm nay / Hành trình bệnh nhân → Nhật ký UAS",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/uas7-scores",
+      "action": "score",
+      "view": "Hôm nay / Hành trình bệnh nhân → Nhật ký UAS",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/uas7-scores/patient/:patient_id",
+      "action": "scores",
+      "view": "Hôm nay / Hành trình bệnh nhân → Nhật ký UAS",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/prescriptions",
+      "action": "prescribe",
+      "view": "Chi tiết hồ sơ → Kê đơn thuốc",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lab-results/:record_id",
+      "action": "labs",
+      "view": "Chi tiết hồ sơ → Kết quả",
+      "sources": [
+        "care-clinical.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/image-attachments/upload",
+      "action": "upload",
+      "view": "Kho ảnh / Ảnh tiến triển → Upload / xem danh sách / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/image-attachments/user/:user_id",
+      "action": "files",
+      "view": "Kho ảnh / Ảnh tiến triển → Upload / xem danh sách / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/image-attachments/:id",
+      "action": "fileDelete",
+      "view": "Kho ảnh / Ảnh tiến triển → Upload / xem danh sách / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lesion-episodes",
+      "action": "create",
+      "view": "Tổn thương & ảnh → Đợt tổn thương",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lesion-episodes/my",
+      "action": "myEpisodes",
+      "view": "Tổn thương & ảnh → Đợt tổn thương",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lesion-episodes/:id",
+      "action": "detail",
+      "view": "Tổn thương & ảnh → Đợt tổn thương",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/lesion-episodes/:id",
+      "action": "update",
+      "view": "Tổn thương & ảnh → Đợt tổn thương",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/lesion-episodes/:id",
+      "action": "delete",
+      "view": "Tổn thương & ảnh → Đợt tổn thương",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lesion-locations",
+      "action": "create",
+      "view": "Đợt tổn thương → Vị trí",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lesion-locations/episode/:episode_id",
+      "action": "locations",
+      "view": "Đợt tổn thương → Vị trí",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/lesion-locations/:id",
+      "action": "update",
+      "view": "Đợt tổn thương → Vị trí",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/lesion-locations/:id",
+      "action": "delete",
+      "view": "Đợt tổn thương → Vị trí",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/lesion-photos",
+      "action": "photoCreate",
+      "view": "Vị trí → Ảnh tiến triển → Tạo / xem / đổi mốc / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/lesion-photos/location/:location_id",
+      "action": "photos",
+      "view": "Vị trí → Ảnh tiến triển → Tạo / xem / đổi mốc / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/lesion-photos/:id/milestone",
+      "action": "milestone",
+      "view": "Vị trí → Ảnh tiến triển → Tạo / xem / đổi mốc / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/lesion-photos/:id",
+      "action": "delete",
+      "view": "Vị trí → Ảnh tiến triển → Tạo / xem / đổi mốc / xóa",
+      "sources": [
+        "care-media.tsx"
+      ]
+    }
+  ]
+}

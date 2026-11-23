@@ -1,9 +1,12 @@
 import { afterAll, expect, it } from "vitest";
+import { PrismaClient } from "@prisma/client";
 import { PrismaService } from "../common/prisma.service";
 import { NativeService } from "./native.service";
 
 const url = process.env.TEST_DATABASE_URL;
-const db = new PrismaService(
+if (url && !new URL(url).pathname.slice(1).startsWith("mayday_test_"))
+  throw new Error("Integration tests require a separate mayday_test_* database");
+const db = new PrismaClient(
   url ? { datasources: { db: { url } } } : undefined,
 );
 afterAll(async () => {

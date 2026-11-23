@@ -14,6 +14,7 @@ import { Observable, map } from "rxjs";
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
   catch(error: unknown, host: ArgumentsHost) {
+    host.switchToHttp().getResponse().setHeader("Cache-Control", "private, no-store");
     let status = 500;
     let code = 9000;
     let message = "Internal server error";
@@ -92,6 +93,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
 @Injectable()
 export class ApiResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    context.switchToHttp().getResponse().setHeader("Cache-Control", "private, no-store");
     return next.handle().pipe(
       map((raw) => {
         const data = JSON.parse(

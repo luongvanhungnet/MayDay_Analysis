@@ -4,14 +4,16 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "npm run build && concurrently -k \"tsc -p tsconfig.build.json --watch\" \"node --watch dist/main.js\"",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:generate": "prisma generate",
     "db:migrate": "node ../../scripts/database-protected.mjs",
     "db:seed": "node ../../scripts/database-protected.mjs",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "vercel-build": "prisma generate && tsc -p tsconfig.build.json",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.0",

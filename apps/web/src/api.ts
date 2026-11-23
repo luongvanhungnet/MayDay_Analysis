@@ -6,6 +6,11 @@ export interface Session {
 }
 const SESSION_KEY = "mayday.session";
 let session: Session | null = null;
+function expireSession(requestToken?: string) {
+  if (!requestToken || session?.token !== requestToken) return;
+  storeSession(null);
+  window.dispatchEvent(new Event("mayday:unauthorized"));
+}
 export function restoreSession(): Session | null {
   try {
     const parsed = JSON.parse(
@@ -38,20 +43,38 @@ export class ApiError extends Error {
     super(message);
   }
 }
+
+export function getApiUrl(path: string): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (!envUrl) {
+    return `/api/v1${cleanPath}`;
+  }
+
+  // Remove trailing slashes: e.g. "https://api.vercel.app/" -> "https://api.vercel.app"
+  let base = envUrl.trim().replace(/\/+$/, "");
+
+  // If the base URL does not end with /api/v1 and path doesn't start with /api/v1, append /api/v1
+  if (!base.endsWith("/api/v1") && !cleanPath.startsWith("/api/v1")) {
+    base = `${base}/api/v1`;
+  }
+
+  return `${base}${cleanPath}`;
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<{ data: T; meta?: PageMeta }> {
   const headers = new Headers(options.headers);
-  if (session?.token) headers.set("Authorization", `Bearer ${session.token}`);
+  const requestToken = session?.token;
+  if (requestToken) headers.set("Authorization", `Bearer ${requestToken}`);
   if (options.body && !(options.body instanceof FormData))
     headers.set("Content-Type", "application/json");
   let response: Response;
   try {
-    response = await fetch(
-      `${import.meta.env.VITE_API_URL || "/api/v1"}${path}`,
-      { ...options, headers },
-    );
+    response = await fetch(getApiUrl(path), { ...options, headers });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError")
       throw error;
@@ -71,8 +94,7 @@ async function request<T>(
     (envelope?.code && envelope.code !== 1000 && envelope.code !== 1001)
   ) {
     if (response.status === 401) {
-      storeSession(null);
-      window.dispatchEvent(new Event("mayday:unauthorized"));
+      expireSession(requestToken);
     }
     const message = Array.isArray(envelope?.message)
       ? envelope.message.join("; ")
@@ -102,25 +124,20 @@ export async function apiBlob(
   path: string,
   signal?: AbortSignal,
 ): Promise<Blob> {
+  const requestToken = session?.token;
   let response: Response;
   try {
-    response = await fetch(
-      `${import.meta.env.VITE_API_URL || "/api/v1"}${path}`,
-      {
-        signal,
-        headers: session?.token
-          ? { Authorization: `Bearer ${session.token}` }
-          : {},
-      },
-    );
+    response = await fetch(getApiUrl(path), {
+      signal,
+      headers: requestToken ? { Authorization: `Bearer ${requestToken}` } : {},
+    });
   } catch (error) {
     if (signal?.aborted) throw error;
     throw new ApiError("Không tải được ảnh. Vui lòng kiểm tra kết nối.", 0);
   }
   if (!response.ok) {
     if (response.status === 401) {
-      storeSession(null);
-      window.dispatchEvent(new Event("mayday:unauthorized"));
+      expireSession(requestToken);
     }
     const error = (await response.json().catch(() => null)) as {
       message?: string;

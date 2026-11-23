@@ -3,8 +3,8 @@ import { api } from './api';
 import { ErrorBox } from './ui';
 type Detection = { label: string; confidence: number; xyxy: number[] };
 type Result = { status: string; elapsed_ms: number; models: { id: string; count?: number; excluded_count?: number; width: number; height: number; detections: Detection[] }[] };
-export default function ParallelAI() {
-  const [file, setFile] = useState<File | null>(null);
+export default function ParallelAI({ initialFile = null }: { initialFile?: File | null }) {
+  const [file, setFile] = useState<File | null>(initialFile);
   const [url, setUrl] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState('');

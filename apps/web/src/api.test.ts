@@ -54,3 +54,51 @@ test("preserves server pagination totals alongside decoded record rows", async (
     meta: { page: 1, limit: 25, total: 120, total_pages: 5 },
   });
 });
+
+test.each(["json", "image"])(
+  "a delayed %s 401 from an old token cannot clear a new login",
+  async (kind) => {
+    const memory = new Map<string, string>();
+    vi.stubGlobal("sessionStorage", {
+      setItem: (key: string, value: string) => memory.set(key, value),
+      getItem: (key: string) => memory.get(key) ?? null,
+      removeItem: (key: string) => memory.delete(key),
+    });
+    let respond!: (value: Response) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            respond = resolve;
+          }),
+      ),
+    );
+    const user = {
+      id: "1",
+      full_name: "Fixture",
+      phone: "0999999999",
+      role: "benh_nhan",
+    };
+    storeSession({ token: "old-token", user });
+    const pending = (
+      kind === "json"
+        ? apiPage("/data/schema")
+        : apiBlob("/image-attachments/1/content")
+    ).catch((error) => error);
+    storeSession({ token: "new-token", user });
+    respond(
+      new Response(
+        JSON.stringify({
+          code: 3003,
+          message: "Phiên đăng nhập đã hết hạn",
+          data: null,
+        }),
+        { status: 401 },
+      ),
+    );
+    expect(await pending).toMatchObject({ status: 401 });
+    expect(restoreSession()?.token).toBe("new-token");
+    storeSession(null);
+  },
+);

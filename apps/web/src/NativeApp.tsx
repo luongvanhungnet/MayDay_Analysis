@@ -1,4 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
+import {
+  canLeave,
+  careLink,
+  follow,
+  go,
+  useLocationSearch,
+  useUrlState,
+  useUnsavedChanges,
+} from "./navigation";
 import ParallelAI from "./ParallelAI";
 import CarePage from "./CarePage";
 import { Signup } from "./care-account";
@@ -6,12 +15,15 @@ import { availableMenus, initialPage } from "./care-model";
 import { ConfirmHost, confirmAction } from "./confirmation";
 import {
   Activity,
+  CalendarDays,
   FileHeart,
   LogOut,
+  Menu,
   Plus,
   Search,
   ShieldCheck,
   Stethoscope,
+  X,
 } from "lucide-react";
 import {
   api,
@@ -193,23 +205,30 @@ function Workspace({
   logout: () => void;
 }) {
   const schema = useResource<NativeTable[]>("/data/schema");
-  const [name, setName] = useState(() => initialPage(location.search));
+  const search = useLocationSearch();
+  const defaultView =
+    session.user.role === "benh_nhan"
+      ? "today"
+      : session.user.role === "admin"
+        ? "overview"
+        : session.user.role === "dieu_duong"
+          ? "patients"
+          : "records";
+  const name = search ? initialPage(search) : `care:${defaultView}`;
   const [navSearch, setNavSearch] = useState(""),
+    [mobileNav, setMobileNav] = useState(false),
     [password, setPassword] = useState(false),
     [error, setError] = useState("");
-  const selected =
-    schema.data?.find((t) => t.name === name) ?? schema.data?.[0];
+  const selected = schema.data?.find((t) => t.name === name);
   function navigate(next: string) {
-    setName(next);
-    history.replaceState(
-      null,
-      "",
+    void go(
       next.startsWith("care:")
-        ? `?view=${encodeURIComponent(next.slice(5))}`
+        ? careLink(next.slice(5))
         : `?table=${encodeURIComponent(next)}`,
-    );
+    ).then(() => setMobileNav(false));
   }
   async function signout() {
+    if (!(await canLeave())) return;
     try {
       await post("/auth/logout", {});
       logout();
@@ -219,11 +238,19 @@ function Workspace({
   }
   return (
     <div className="native-shell">
-      <aside className="native-sidebar">
-        <div className="native-brand">
-          <FileHeart /> MayDay
-        </div>
-        <span className="eyebrow">QUẢN LÝ CHĂM SÓC</span>
+      <aside className="native-sidebar" data-mobile-open={mobileNav}>
+        <a className="native-brand workspace-brand" href={careLink(defaultView)} onClick={follow}>
+          <span><FileHeart size={22} aria-hidden="true" /></span> MayDay
+        </a>
+        <button
+          className="mobile-nav-toggle"
+          aria-expanded={mobileNav}
+          aria-controls="workspace-navigation"
+          onClick={() => setMobileNav((v) => !v)}
+        >
+          {mobileNav ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+          {mobileNav ? "Đóng menu" : "Menu"}
+        </button>
         <div className="search-box">
           <Search size={16} />
           <input
@@ -233,76 +260,103 @@ function Workspace({
             onChange={(e) => setNavSearch(e.target.value)}
           />
         </div>
-        <nav>
+        <nav id="workspace-navigation" aria-label="Chức năng MayDay">
           {availableMenus(session.user.role)
             .filter((m) =>
               m.title
                 .toLocaleLowerCase("vi")
                 .includes(navSearch.toLocaleLowerCase("vi")),
             )
-            .map((m, i, items) => (
-              <div key={m.id}>
-                {(i === 0 || items[i - 1].group !== m.group) && (
-                  <span className="care-nav-heading">{m.group}</span>
-                )}
-                <button
-                  className={name === `care:${m.id}` ? "active" : ""}
-                  onClick={() => navigate(`care:${m.id}`)}
-                >
-                  {m.title}
-                </button>
-              </div>
+            .reduce<
+              { group: string; items: ReturnType<typeof availableMenus> }[]
+            >((groups, item) => {
+              const group = groups.find((g) => g.group === item.group);
+              if (group) group.items.push(item);
+              else groups.push({ group: item.group, items: [item] });
+              return groups;
+            }, [])
+            .map(({ group, items }) => (
+              <details
+                key={group}
+                open={
+                  !!navSearch ||
+                  items.some((m) => name === `care:${m.id}`) ||
+                  !["QUẢN TRỊ", "CƠ SỞ"].includes(group)
+                }
+                className="care-nav-group"
+              >
+                <summary>
+                  {group === "CƠ SỞ"
+                    ? "Cơ sở khám"
+                    : group === "QUẢN TRỊ"
+                      ? "Quản trị"
+                      : group}
+                </summary>
+                {items.map((m) => (
+                  <button
+                    key={m.id}
+                    aria-current={name === `care:${m.id}` ? "page" : undefined}
+                    className={name === `care:${m.id}` ? "active" : ""}
+                    onClick={() => navigate(`care:${m.id}`)}
+                  >
+                    {m.title}
+                  </button>
+                ))}
+              </details>
             ))}
           <button
             className={name === "ai" ? "active" : ""}
+            aria-current={name === "ai" ? "page" : undefined}
             onClick={() => navigate("ai")}
           >
             Phân tích ảnh AI
           </button>
-          <details className="care-advanced">
-            <summary>Hồ sơ chuyên sâu</summary>
-            {schema.data
-              ?.filter(
-                (t) =>
-                  ![
-                    "nguoi",
-                    "benhnhan",
-                    "hosobenhan",
-                    "dottonthuongda",
-                    "vitritonthuong",
-                    "anhchuptonthuong",
-                    "nhatkyuashangngay",
-                    "tepdinhkem",
-                    "chinhanh",
-                    "khoaphong",
-                    "phongkham",
-                    "taikhoan",
-                    "vaitro",
-                    "quyenhan",
-                    "vaitroquyenhan",
-                  ].includes(t.name),
-              )
-              ?.filter((t) =>
-                titles[t.name]
-                  ?.toLocaleLowerCase("vi")
-                  .includes(navSearch.toLocaleLowerCase("vi")),
-              )
-              .map((t) => (
-                <button
-                  className={
-                    !name.startsWith("care:") &&
-                    name !== "ai" &&
-                    selected?.name === t.name
-                      ? "active"
-                      : ""
-                  }
-                  key={t.name}
-                  onClick={() => navigate(t.name)}
-                >
-                  {titles[t.name] || t.name}
-                </button>
-              ))}
-          </details>
+          {session.user.role !== "benh_nhan" && (
+            <details className="care-advanced">
+              <summary>Hồ sơ chuyên sâu</summary>
+              {schema.data
+                ?.filter(
+                  (t) =>
+                    ![
+                      "nguoi",
+                      "benhnhan",
+                      "hosobenhan",
+                      "dottonthuongda",
+                      "vitritonthuong",
+                      "anhchuptonthuong",
+                      "nhatkyuashangngay",
+                      "tepdinhkem",
+                      "chinhanh",
+                      "khoaphong",
+                      "phongkham",
+                      "taikhoan",
+                      "vaitro",
+                      "quyenhan",
+                      "vaitroquyenhan",
+                    ].includes(t.name),
+                )
+                ?.filter((t) =>
+                  titles[t.name]
+                    ?.toLocaleLowerCase("vi")
+                    .includes(navSearch.toLocaleLowerCase("vi")),
+                )
+                .map((t) => (
+                  <button
+                    className={
+                      !name.startsWith("care:") &&
+                      name !== "ai" &&
+                      selected?.name === t.name
+                        ? "active"
+                        : ""
+                    }
+                    key={t.name}
+                    onClick={() => navigate(t.name)}
+                  >
+                    {titles[t.name] || t.name}
+                  </button>
+                ))}
+            </details>
+          )}
         </nav>
         <div className="native-account">
           <strong>{session.user.full_name}</strong>
@@ -323,8 +377,21 @@ function Workspace({
       </aside>
       <main className="native-main">
         <header className="native-topbar">
-          <span>MayDay / Chăm sóc mề đay</span>
-          <span>{new Date().toLocaleDateString("vi-VN")}</span>
+          <span>
+            <a href={careLink(defaultView)} onClick={follow}>
+              MayDay
+            </a>{" "}
+            /{" "}
+            {availableMenus(session.user.role).find(
+              (m) => `care:${m.id}` === name,
+            )?.title ??
+              titles[name] ??
+              (name === "ai" ? "Phân tích ảnh AI" : "Chăm sóc mề đay")}
+          </span>
+          <span className="workspace-date">
+            <CalendarDays size={16} aria-hidden="true" />
+            {new Date().toLocaleDateString("vi-VN")}
+          </span>
         </header>
         {name.startsWith("care:") ? (
           <CarePage key={name} page={name.slice(5)} session={session} />
@@ -341,7 +408,7 @@ function Workspace({
             allTables={schema.data!}
           />
         ) : (
-          <Empty />
+          <Empty title="Không tìm thấy trang hoặc bạn không có quyền truy cập" />
         )}
       </main>
       {password && (
@@ -357,18 +424,30 @@ function DataPage({
   table: NativeTable;
   allTables: NativeTable[];
 }) {
-  const [page, setPage] = useState(1),
-    [search, setSearch] = useState(""),
-    [query, setQuery] = useState(""),
+  const [page, setPage] = useUrlState("page", 1),
+    [search, setSearch] = useUrlState("search", ""),
+    [query, setQuery] = useState(search),
     [editing, setEditing] = useState<NativeRow | null | undefined>(),
     [patient, setPatient] = useState(false),
     [success, setSuccess] = useState(""),
     [error, setError] = useState(""),
-    [filter, setFilter] = useState<Record<string, string>>({});
+    [filterJson, setFilterJson] = useUrlState("filter", "{}");
+  let filter: Record<string, string> = {};
+  try {
+    const parsed: unknown = JSON.parse(filterJson);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed))
+      filter = Object.fromEntries(
+        Object.entries(parsed).filter(([, v]) => typeof v === "string"),
+      );
+  } catch {
+    /* Invalid bookmark filters are ignored. */
+  }
+  const returnRecord = new URLSearchParams(useLocationSearch()).get(
+    "return_record",
+  );
   useEffect(() => {
     const timer = setTimeout(() => {
       setQuery(search);
-      setPage(1);
     }, 250);
     return () => clearTimeout(timer);
   }, [search]);
@@ -420,6 +499,14 @@ function DataPage({
         </div>
       </div>
       <Success message={success} />
+      {returnRecord && (
+        <a
+          href={careLink("records", { record: returnRecord })}
+          onClick={follow}
+        >
+          ← Trở về hồ sơ #{returnRecord}
+        </a>
+      )}
       <ErrorBox message={error} />
       <div className="card">
         <div className="native-toolbar">
@@ -429,7 +516,10 @@ function DataPage({
               placeholder="Tìm kiếm…"
               aria-label="Tìm kiếm dữ liệu"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
           <details>
@@ -445,12 +535,12 @@ function DataPage({
                     <input
                       value={filter[c.name] ?? ""}
                       onChange={(e) => {
-                        setFilter((current) => {
-                          const next = { ...current };
+                        {
+                          const next = { ...filter };
                           if (e.target.value) next[c.name] = e.target.value;
                           else delete next[c.name];
-                          return next;
-                        });
+                          setFilterJson(JSON.stringify(next));
+                        }
                         setPage(1);
                       }}
                     />
@@ -559,6 +649,15 @@ function Editor({
     [busy, setBusy] = useState(false);
   const change = (name: string, value: string) =>
     setDraft((d) => ({ ...d, [name]: value }));
+  const { allowLeave, markSaved } = useUnsavedChanges(
+    busy ||
+      Object.entries(draft).some(
+        ([name, value]) => value !== String(row?.[name] ?? ""),
+      ),
+  );
+  const cancel = async () => {
+    if (!busy && (await allowLeave())) close();
+  };
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -568,6 +667,7 @@ function Editor({
       if (row)
         await patch(`/data/${t.name}/${encodeURIComponent(row._key)}`, input);
       else await post(`/data/${t.name}`, input);
+      markSaved();
       saved();
     } catch (e) {
       setError((e as Error).message);
@@ -579,7 +679,7 @@ function Editor({
   return (
     <Modal
       title={`${row ? "Chi tiết" : "Thêm mới"} · ${titles[t.name]}`}
-      onClose={close}
+      onClose={() => void cancel()}
       wide
     >
       <form onSubmit={submit}>
@@ -626,7 +726,12 @@ function Editor({
           <ErrorBox message={error} />
         </div>
         <div className="modal-footer">
-          <Button type="button" variant="secondary" onClick={close}>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={busy}
+            onClick={() => void cancel()}
+          >
             Đóng
           </Button>
           {t.can_write && (
@@ -877,6 +982,12 @@ function PasswordModal({
     [confirmPassword, setConfirm] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const { allowLeave, markSaved } = useUnsavedChanges(
+    busy || !!oldPassword || !!password || !!confirmPassword,
+  );
+  const cancel = async () => {
+    if (!busy && (await allowLeave())) close();
+  };
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -889,6 +1000,7 @@ function PasswordModal({
         old_password: oldPassword,
         new_password: password,
       });
+      markSaved();
       saved();
     } catch (e) {
       setError((e as Error).message);
@@ -897,7 +1009,7 @@ function PasswordModal({
     }
   }
   return (
-    <Modal title="Đổi mật khẩu" onClose={close}>
+    <Modal title="Đổi mật khẩu" onClose={() => void cancel()}>
       <form onSubmit={submit}>
         <div className="modal-body">
           <Field label="Mật khẩu hiện tại">

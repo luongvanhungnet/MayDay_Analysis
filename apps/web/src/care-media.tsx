@@ -1,6 +1,13 @@
 import { confirmAction } from "./confirmation";
+import {
+  go,
+  JourneyLinks,
+  useUrlState,
+  useUnsavedChanges,
+} from "./navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { FileImage } from "lucide-react";
+import ParallelAI from "./ParallelAI";
 import { api, apiBlob, patch, post, remove, type Session } from "./api";
 import {
   Button,
@@ -28,6 +35,8 @@ export function ImagePreview({
   close: () => void;
 }) {
   const [url, setUrl] = useState(""),
+    [imageFile, setImageFile] = useState<File | null>(null),
+    [analyze, setAnalyze] = useState(false),
     [error, setError] = useState("");
   useEffect(() => {
     const abort = new AbortController();
@@ -37,6 +46,7 @@ export function ImagePreview({
         if (!abort.signal.aborted) {
           objectUrl = URL.createObjectURL(blob);
           setUrl(objectUrl);
+          setImageFile(new File([blob], name, { type: blob.type }));
         }
       })
       .catch((e) => {
@@ -57,26 +67,42 @@ export function ImagePreview({
             <a className="button secondary" href={url} download={name}>
               Tải ảnh xuống
             </a>
+            {imageFile && (
+              <Button onClick={() => setAnalyze(true)}>Phân tích ảnh AI</Button>
+            )}
           </>
         ) : (
           !error && <Loading />
         )}
       </div>
+      {analyze && (
+        <Modal title="Phân tích ảnh AI" onClose={() => setAnalyze(false)} wide>
+          <ParallelAI initialFile={imageFile} />
+        </Modal>
+      )}
     </Modal>
   );
 }
 export function UploadImage({
   close,
   saved,
+  recordId = "",
 }: {
   close: () => void;
-  saved: () => void;
+  saved: (file?: Row) => void;
+  recordId?: string;
 }) {
-  const [record, setRecord] = useState(""),
+  const [record, setRecord] = useState(recordId),
     [file, setFile] = useState<File | null>(null),
     [description, setDescription] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  const { allowLeave, markSaved } = useUnsavedChanges(
+    busy || !!file || !!description || record !== recordId,
+  );
+  const cancel = async () => {
+    if (!busy && (await allowLeave())) close();
+  };
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (!file || !record) return;
@@ -94,8 +120,12 @@ export function UploadImage({
       data.append("image", file);
       data.append("medical_record_id", record);
       if (description) data.append("description", description);
-      await api("/image-attachments/upload", { method: "POST", body: data });
-      saved();
+      const uploaded = await api<Row>("/image-attachments/upload", {
+        method: "POST",
+        body: data,
+      });
+      markSaved();
+      saved(uploaded);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -103,12 +133,7 @@ export function UploadImage({
     }
   }
   return (
-    <Modal
-      title="Tải ảnh tổn thương"
-      onClose={() => {
-        if (!busy) close();
-      }}
-    >
+    <Modal title="Tải ảnh tổn thương" onClose={() => void cancel()}>
       <form onSubmit={submit}>
         <div className="modal-body">
           <Field label="Hồ sơ bệnh án" required>
@@ -141,7 +166,7 @@ export function UploadImage({
             type="button"
             variant="secondary"
             disabled={busy}
-            onClick={close}
+            onClick={() => void cancel()}
           >
             Hủy
           </Button>
@@ -154,8 +179,8 @@ export function UploadImage({
   );
 }
 export function MediaPage({ session }: { session: Session }) {
-  const [userId, setUserId] = useState(session.user.id),
-    [page, setPage] = useState(1),
+  const [userId, setUserId] = useUrlState("user", session.user.id),
+    [page, setPage] = useUrlState("page", 1),
     [upload, setUpload] = useState(false),
     [preview, setPreview] = useState<Row | null>(null),
     [error, setError] = useState(""),
@@ -274,15 +299,21 @@ export function MediaPage({ session }: { session: Session }) {
 }
 export function LesionsPage({ session }: { session: Session }) {
   const patient = session.user.role === "benh_nhan",
-    [patientId, setPatientId] = useState(
+    [urlPatientId, setPatientId] = useUrlState(
+      "patient",
       patient ? (session.user.person_id ?? "") : "",
     ),
-    [page, setPage] = useState(1),
+    [page, setPage] = useUrlState("page", 1),
+    [episodeId] = useUrlState("episode", ""),
+    [recordId] = useUrlState("medical_record", ""),
     [creating, setCreating] = useState(false),
-    [selected, setSelected] = useState<Row | null>(null),
     [edit, setEdit] = useState<Row | null>(null),
     [error, setError] = useState(""),
     [success, setSuccess] = useState("");
+  const patientId = patient ? (session.user.person_id ?? "") : urlPatientId;
+  const episode = useResource<Row>(
+    episodeId ? `/lesion-episodes/${encodeURIComponent(episodeId)}` : null,
+  );
   const path = patient
     ? `/lesion-episodes/my?page=${page}`
     : patientId
@@ -302,19 +333,22 @@ export function LesionsPage({ session }: { session: Session }) {
   const canWrite = ["admin", "bac_si", "benh_nhan"].includes(session.user.role);
   const inputs = [
     f("name", "Tên đợt tổn thương", { required: true }),
-    f("medical_record_id", "Hồ sơ mạn liên quan", {
-      reference: `records:${patientId}`,
-    }),
+    ...(!recordId
+      ? [
+          f("medical_record_id", "Hồ sơ mạn liên quan", {
+            reference: `records:${patientId}`,
+          }),
+        ]
+      : []),
     f("onset_at", "Thời điểm xuất hiện", { type: "datetime-local" }),
     f("description", "Diễn biến", { type: "textarea" }),
   ];
   async function open(row: Row) {
-    setError("");
-    try {
-      setSelected(await api<Row>(`/lesion-episodes/${row.id}`));
-    } catch (e) {
-      setError((e as Error).message);
-    }
+    const params = new URLSearchParams(window.location.search);
+    params.set("view", "lesions");
+    params.set("episode", String(row.id));
+    params.delete("location");
+    await go(`?${params}`);
   }
   async function erase(row: Row) {
     if (
@@ -406,7 +440,11 @@ export function LesionsPage({ session }: { session: Session }) {
           fields={inputs}
           close={() => setCreating(false)}
           onSubmit={(d) =>
-            post("/lesion-episodes", { ...d, patient_id: patientId })
+            post("/lesion-episodes", {
+              ...d,
+              patient_id: patientId,
+              ...(recordId ? { medical_record_id: recordId } : {}),
+            })
           }
           saved={() => {
             setCreating(false);
@@ -429,14 +467,27 @@ export function LesionsPage({ session }: { session: Session }) {
           }}
         />
       )}
-      {selected && (
-        <EpisodeDetail
-          episode={selected}
-          session={session}
-          canWrite={canWrite}
-          close={() => setSelected(null)}
-        />
-      )}
+      <JourneyLinks patientId={patientId} recordId={recordId} />
+      <ErrorBox message={episode.error} />
+      {episodeId && episode.loading && <Loading />}
+      {episodeId &&
+        !episode.loading &&
+        episode.data &&
+        String(episode.data.id) === episodeId && (
+          <EpisodeDetail
+            key={episodeId}
+            episode={episode.data}
+            session={session}
+            canWrite={canWrite}
+            close={() => {
+              const params = new URLSearchParams(window.location.search);
+              params.delete("episode");
+              params.delete("location");
+              params.delete("location_page");
+              void go(`?${params}`);
+            }}
+          />
+        )}
     </section>
   );
 }
@@ -451,14 +502,15 @@ function EpisodeDetail({
   canWrite: boolean;
   close: () => void;
 }) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useUrlState("location_page", 1);
   const list = usePagedResource<Row>(
       `/lesion-locations/episode/${episode.id}?page=${page}`,
     ),
     [editing, setEditing] = useState<Row | null | undefined>(),
-    [location, setLocation] = useState<Row | null>(null),
+    [locationId, setLocationId] = useUrlState("location", ""),
     [error, setError] = useState(""),
     [success, setSuccess] = useState("");
+  const location = list.data?.find((row) => String(row.id) === locationId);
   async function erase(row: Row) {
     if (
       !(await confirmAction(
@@ -470,7 +522,7 @@ function EpisodeDetail({
     try {
       await remove(`/lesion-locations/${row.id}`);
       list.reload();
-      if (location?.id === row.id) setLocation(null);
+      if (location?.id === row.id) setLocationId("");
       setSuccess("Đã xóa vị trí.");
     } catch (e) {
       setError((e as Error).message);
@@ -505,7 +557,10 @@ function EpisodeDetail({
               columns={["body_location", "onset_at"]}
               actions={(r) => (
                 <>
-                  <button className="text-link" onClick={() => setLocation(r)}>
+                  <button
+                    className="text-link"
+                    onClick={() => setLocationId(String(r.id))}
+                  >
                     Ảnh tiến triển
                   </button>
                   {canWrite && (
@@ -574,7 +629,7 @@ function PhotoPanel({
   session: Session;
   canWrite: boolean;
 }) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useUrlState("photo_page", 1);
   const list = usePagedResource<Row>(
       `/lesion-photos/location/${location.id}?page=${page}`,
     ),
@@ -583,6 +638,8 @@ function PhotoPanel({
     [preview, setPreview] = useState<Row | null>(null),
     [error, setError] = useState(""),
     [success, setSuccess] = useState("");
+  const [upload, setUpload] = useState(false);
+  const [uploaded, setUploaded] = useState<Row | undefined>();
   async function erase(row: Row) {
     if (
       !(await confirmAction(
@@ -605,12 +662,17 @@ function PhotoPanel({
       <div className="care-section-heading">
         <h3>Ảnh · {String(location.body_location)}</h3>
         {canWrite && (
-          <Button onClick={() => setCreate(true)}>Ghi ảnh tiến triển</Button>
+          <div className="native-actions">
+            <Button onClick={() => setUpload(true)}>Tải ảnh mới</Button>
+            <Button variant="secondary" onClick={() => setCreate(true)}>
+              Chọn ảnh trong kho
+            </Button>
+          </div>
         )}
       </div>
       <p className="muted">
         Mốc: start (bắt đầu), peak (đỉnh), normal (trở về bình thường). Ảnh cần
-        được tải lên kho ảnh của bạn trước.
+        gắn với cùng hồ sơ của đợt tổn thương.
       </p>
       <Success message={success} />
       <ErrorBox message={error || list.error} />
@@ -653,6 +715,8 @@ function PhotoPanel({
       <Pagination meta={list.meta} page={page} onChange={setPage} />
       {create && (
         <ActionForm
+          key={String(uploaded?.id ?? "existing")}
+          original={uploaded ? { attachment_id: uploaded.id } : undefined}
           title="Ghi ảnh tiến triển"
           fields={[
             f("attachment_id", "Ảnh trong kho của bạn", {
@@ -683,6 +747,7 @@ function PhotoPanel({
           onSubmit={(d) =>
             post("/lesion-photos", {
               ...d,
+              attachment_id: d.attachment_id ?? uploaded?.id,
               episode_id: episode.id,
               location_id: location.id,
             })
@@ -693,6 +758,20 @@ function PhotoPanel({
             list.reload();
           }}
           note="Chọn ảnh gắn cùng bệnh án của đợt tổn thương này."
+        />
+      )}
+      {upload && (
+        <UploadImage
+          recordId={String(episode.medical_record_id ?? "")}
+          close={() => setUpload(false)}
+          saved={(file) => {
+            setUpload(false);
+            setUploaded(file);
+            setSuccess(
+              "Đã tải ảnh lên kho. Điền thông tin và lưu để gắn ảnh vào vị trí này.",
+            );
+            setCreate(true);
+          }}
         />
       )}
       {milestone && (

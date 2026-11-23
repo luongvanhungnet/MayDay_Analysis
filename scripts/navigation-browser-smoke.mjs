@@ -342,9 +342,12 @@ try {
   await mobile
     .getByLabel("Tên đăng nhập hoặc số điện thoại", { exact: false })
     .fill("0999999999");
-  await mobile
-    .getByLabel("Mật khẩu", { exact: false })
-    .fill("FixturePassword2026!");
+  const loginPassword = mobile.locator('input[autocomplete="current-password"]');
+  await loginPassword.fill("FixturePassword2026!");
+  await mobile.getByRole("button", { name: "Hiện mật khẩu" }).click();
+  assert.equal(await loginPassword.getAttribute("type"), "text");
+  await mobile.getByRole("button", { name: "Ẩn mật khẩu" }).click();
+  assert.equal(await loginPassword.getAttribute("type"), "password");
   await mobile.getByRole("button", { name: "Đăng nhập", exact: true }).click();
   await mobile
     .getByRole("heading", { name: "Hồ sơ cá nhân", exact: true })

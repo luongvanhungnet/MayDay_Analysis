@@ -71,7 +71,7 @@ export default function CareHome({ session }: { session: Session }) {
         </div>
         <HeartPulse className="home-heading-icon" size={124} aria-hidden="true" />
       </div>
-      <div className="journey-grid">
+      <div className="journey-grid home-actions">
         {links.map(([view, title, description]) => {
           const Icon = homeIcons[view];
           return (
@@ -92,7 +92,11 @@ export default function CareHome({ session }: { session: Session }) {
         })}
       </div>
       {patient && (
-        <>
+        <section className="card home-records" aria-labelledby="recent-records">
+          <div className="home-records-heading">
+            <h2 id="recent-records">Hồ sơ gần đây</h2>
+            <a href={careLink("records")} onClick={follow}>Xem hồ sơ</a>
+          </div>
           <ErrorBox message={records.error || eligibility.error} />
           {eligibility.data && !eligibility.data.eligible && (
             <p className="care-note">
@@ -100,31 +104,30 @@ export default function CareHome({ session }: { session: Session }) {
               liên hệ cơ sở khám.
             </p>
           )}
-          <h2>Hồ sơ gần đây</h2>
           {records.loading ? (
             <Loading />
           ) : records.data?.length ? (
             records.data.map((r) => (
               <a
-                className="card care-panel journey-record"
+                className="journey-record"
                 key={String(r.id)}
                 href={careLink("records", { record: String(r.id) })}
                 onClick={follow}
               >
-                Hồ sơ #{String(r.id)} ·{" "}
-                {r.record_type === "MAN" ? "Mề đay mạn" : "Mề đay cấp"}{" "}
+                <span className="home-record-label">
+                  <ClipboardList size={19} aria-hidden="true" />
+                  <span>
+                    <strong>{r.record_type === "MAN" ? "Mề đay mạn" : "Mề đay cấp"}</strong>
+                    <small>Hồ sơ #{String(r.id)}</small>
+                  </span>
+                </span>
                 <Badge status={String(r.status)} />
               </a>
             ))
-          ) : (
-            <p>
-              Chưa có hồ sơ khám.{" "}
-              <a href={careLink("records")} onClick={follow}>
-                Mở hồ sơ của tôi
-              </a>
-            </p>
+          ) : records.error ? null : (
+            <p className="home-empty">Chưa có hồ sơ khám.</p>
           )}
-        </>
+        </section>
       )}
     </section>
   );

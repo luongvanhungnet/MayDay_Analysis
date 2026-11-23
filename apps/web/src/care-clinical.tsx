@@ -79,7 +79,7 @@ export function RecordsPage({ session }: { session: Session }) {
         </div>
         <Button onClick={() => setCreating(true)}>Tạo bệnh án</Button>
       </div>
-      <JourneyLinks patientId={patientFilter || undefined} />
+      {!recordId && <JourneyLinks patientId={patientFilter || undefined} />}
       <ErrorBox message={selectedRecord.error} />
       {recordId && selectedRecord.loading && <Loading />}
       <Success message={success} />

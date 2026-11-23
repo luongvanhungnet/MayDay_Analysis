@@ -16,13 +16,23 @@ import { ConfirmHost, confirmAction } from "./confirmation";
 import {
   Activity,
   CalendarDays,
+  Camera,
+  ClipboardList,
+  Eye,
+  EyeOff,
   FileHeart,
+  FlaskConical,
+  FolderOpen,
+  Hospital,
+  LayoutDashboard,
   LogOut,
   Menu,
   Plus,
   Search,
   ShieldCheck,
   Stethoscope,
+  UserRound,
+  Users,
   X,
 } from "lucide-react";
 import {
@@ -58,6 +68,24 @@ import {
   type NativeTable,
 } from "./native-model";
 
+const workspaceIcons: Partial<Record<string, typeof FileHeart>> = {
+  today: LayoutDashboard,
+  overview: LayoutDashboard,
+  records: ClipboardList,
+  patients: Users,
+  uas: Activity,
+  lesions: Camera,
+  media: FolderOpen,
+  profile: UserRound,
+  users: Users,
+  roles: ShieldCheck,
+  permissions: ShieldCheck,
+  grants: ShieldCheck,
+  branches: Hospital,
+  departments: Hospital,
+  rooms: Stethoscope,
+};
+
 export default function NativeApp() {
   const [session, setSession] = useState<Session | null>(() =>
     restoreSession(),
@@ -90,6 +118,7 @@ export default function NativeApp() {
 function Login({ saved }: { saved: (s: Session) => void }) {
   const [signup, setSignup] = useState(false),
     [registered, setRegistered] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState(""),
     [password, setPassword] = useState(""),
     [error, setError] = useState(""),
@@ -107,21 +136,16 @@ function Login({ saved }: { saved: (s: Session) => void }) {
     }
   }
   return (
-    <div className="login-page">
+    <div className="login-page mayday-login">
       <div className="login-story">
         <div className="native-brand">
-          <FileHeart /> MayDay
+          <span className="brand-symbol"><FileHeart size={24} aria-hidden="true" /></span>
+          MayDay
         </div>
         <div className="login-copy">
-          <span className="eyebrow light">KHÔNG GIAN CHĂM SÓC CHUYÊN SÂU</span>
-          <h1>
-            Chăm sóc tốt hơn.
-            <br />
-            <span>Mỗi ngày.</span>
-          </h1>
+          <h2>Quản lý và theo dõi mề đay</h2>
           <p>
-            Kết nối hành trình khám bệnh, điều trị và theo dõi mề đay trong một
-            không gian thống nhất.
+            Tra cứu hồ sơ khám, ghi nhật ký triệu chứng và theo dõi ảnh tổn thương.
           </p>
           <div className="login-features">
             <div>
@@ -132,36 +156,40 @@ function Login({ saved }: { saved: (s: Session) => void }) {
               <Activity />
               <span>Theo dõi UAS7 và tổn thương da</span>
             </div>
-            <div>
-              <ShieldCheck />
-              <span>Truy cập theo vai trò tài khoản</span>
-            </div>
           </div>
         </div>
       </div>
-      <div className="native-login">
+      <main className="native-login">
         <form onSubmit={submit}>
-          <span className="eyebrow">CHÀO MỪNG TRỞ LẠI</span>
           <h1>Đăng nhập MayDay</h1>
-          <p className="muted">Sử dụng tài khoản đã được cấp để tiếp tục.</p>
           <Field label="Tên đăng nhập hoặc số điện thoại" required>
             <input
               autoComplete="username"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
-              autoFocus
             />
           </Field>
-          <Field label="Mật khẩu" required>
-            <input
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </Field>
+          <div className="field">
+            <label htmlFor="login-password">Mật khẩu <em>*</em></label>
+            <span className="password-entry">
+              <input
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                onClick={() => setShowPassword((visible) => !visible)}
+              >
+                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+              </button>
+            </span>
+          </div>
           <ErrorBox message={error} />
           <Success
             message={
@@ -184,7 +212,7 @@ function Login({ saved }: { saved: (s: Session) => void }) {
             Quên mật khẩu? Vui lòng liên hệ quản trị viên cơ sở khám.
           </small>
         </form>
-      </div>
+      </main>
       {signup && (
         <Signup
           close={() => setSignup(false)}
@@ -239,9 +267,13 @@ function Workspace({
   return (
     <div className="native-shell">
       <aside className="native-sidebar" data-mobile-open={mobileNav}>
-        <a className="native-brand workspace-brand" href={careLink(defaultView)} onClick={follow}>
-          <span><FileHeart size={22} aria-hidden="true" /></span> MayDay
-        </a>
+        <button
+          type="button"
+          className="native-brand workspace-brand"
+          onClick={() => navigate(`care:${defaultView}`)}
+        >
+          <span className="brand-symbol"><FileHeart size={22} aria-hidden="true" /></span> MayDay
+        </button>
         <button
           className="mobile-nav-toggle"
           aria-expanded={mobileNav}
@@ -292,16 +324,20 @@ function Workspace({
                       ? "Quản trị"
                       : group}
                 </summary>
-                {items.map((m) => (
-                  <button
-                    key={m.id}
-                    aria-current={name === `care:${m.id}` ? "page" : undefined}
-                    className={name === `care:${m.id}` ? "active" : ""}
-                    onClick={() => navigate(`care:${m.id}`)}
-                  >
-                    {m.title}
-                  </button>
-                ))}
+                {items.map((m) => {
+                  const Icon = workspaceIcons[m.id] ?? FolderOpen;
+                  return (
+                    <button
+                      key={m.id}
+                      aria-current={name === `care:${m.id}` ? "page" : undefined}
+                      className={name === `care:${m.id}` ? "active" : ""}
+                      onClick={() => navigate(`care:${m.id}`)}
+                    >
+                      <Icon size={17} aria-hidden="true" />
+                      <span>{m.title}</span>
+                    </button>
+                  );
+                })}
               </details>
             ))}
           <button
@@ -309,6 +345,7 @@ function Workspace({
             aria-current={name === "ai" ? "page" : undefined}
             onClick={() => navigate("ai")}
           >
+            <FlaskConical size={17} aria-hidden="true" />
             Phân tích ảnh AI
           </button>
           {session.user.role !== "benh_nhan" && (
@@ -359,15 +396,22 @@ function Workspace({
           )}
         </nav>
         <div className="native-account">
-          <strong>{session.user.full_name}</strong>
-          <small>
-            {{
-              admin: "Quản trị viên",
-              bac_si: "Bác sĩ",
-              dieu_duong: "Điều dưỡng",
-              benh_nhan: "Bệnh nhân",
-            }[session.user.role] ?? session.user.role}
-          </small>
+          <div className="account-identity">
+            <span className="account-avatar">
+              <UserRound size={19} aria-hidden="true" />
+            </span>
+            <div>
+              <strong>{session.user.full_name}</strong>
+              <small>
+                {{
+                  admin: "Quản trị viên",
+                  bac_si: "Bác sĩ",
+                  dieu_duong: "Điều dưỡng",
+                  benh_nhan: "Bệnh nhân",
+                }[session.user.role] ?? session.user.role}
+              </small>
+            </div>
+          </div>
           <button onClick={() => setPassword(true)}>Đổi mật khẩu</button>
           <button onClick={() => void signout()}>
             <LogOut size={15} /> Đăng xuất

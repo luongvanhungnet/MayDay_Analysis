@@ -2810,9 +2810,77 @@ td small {
  .management-links { padding: 0 28px; }
  .care-nav-group > summary { cursor: pointer; padding: 14px 10px 8px; color: #719387; font-size: 12px; font-weight: 700; }
  .native-sidebar .care-nav-group > button { display: block; width: 100%; }
- .mobile-nav-toggle { display: none; }
- @media(max-width:600px) {
-   .native-shell .native-sidebar { position: relative; }
-   .mobile-nav-toggle { display: block; position: absolute; right: 16px; top: 22px; padding: 8px 12px; background: #e7f4f3; color: #087e80; border: 0; border-radius: 8px; cursor: pointer; }
-   .native-sidebar[data-mobile-open="false"] > :is(nav, .search-box, .eyebrow, .native-account) { display: none; }
- }
+.native-shell { background: #f2f7f7; }
+.native-sidebar { gap: 18px; }
+.workspace-brand { padding: 0; font-size: 25px; text-decoration: none; color: #123f42; }
+.workspace-brand span, .home-action-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #dcf1ed;
+  color: #096962;
+}
+.native-sidebar nav button { min-height: 40px; font-size: 13px; }
+.native-sidebar nav button.active { box-shadow: inset 3px 0 #087e80; }
+.care-nav-group > summary { color: #526c68; }
+.native-account { padding: 14px 10px 6px; }
+.native-account strong { overflow-wrap: anywhere; }
+.native-account button { min-height: 34px; align-items: center; }
+.native-topbar { color: #49646b; gap: 16px; }
+.native-topbar a { color: #096962; font-weight: 700; }
+.workspace-date { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.native-shell :is(a, button, summary, input, select, textarea):focus-visible {
+  outline: 2px solid #087e80;
+  outline-offset: 2px;
+}
+.native-content .page-title.home-heading {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 32px clamp(20px, 4vw, 44px);
+  background: linear-gradient(115deg, #103f42, #0b6965);
+  border-radius: 18px;
+  color: white;
+}
+.home-heading > div { position: relative; z-index: 1; }
+.native-content .home-heading h1 { font-size: clamp(25px, 3vw, 38px); }
+.home-heading .muted { color: #d5eeeb; margin: 10px 0 0; }
+.home-heading-icon { position: absolute; right: 4%; bottom: -14px; color: #ffffff24; }
+.journey-grid .home-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid #dce9e7;
+  border-radius: 14px;
+}
+.journey-grid .home-action:hover { border-color: #73aca5; }
+.home-action h2 { margin: 0; font-size: 16px; }
+.home-action p { margin: 0; color: #506770; line-height: 1.55; }
+.home-action-arrow { margin-top: auto; color: #096962; }
+.mobile-nav-toggle { display: none; }
+@media (max-width: 600px) {
+  .native-shell .native-sidebar { position: relative; gap: 12px; }
+  .native-sidebar nav { display: flex; max-height: 42vh; }
+  .mobile-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    min-height: 44px;
+    padding: 8px 12px;
+    color: #096962;
+    background: #dcf1ed;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .native-sidebar[data-mobile-open="false"] > :is(nav, .search-box, .native-account) { display: none; }
+  .native-topbar { flex-wrap: wrap; row-gap: 6px; }
+  .journey-grid { gap: 12px; }
+}

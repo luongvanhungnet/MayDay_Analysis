@@ -1,7 +1,26 @@
 import type { Session } from "./api";
+import {
+  Activity,
+  ArrowRight,
+  Camera,
+  ClipboardList,
+  HeartPulse,
+  Hospital,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import type { Row } from "./care-model";
 import { careLink, follow } from "./navigation";
 import { Badge, ErrorBox, Loading, usePagedResource, useResource } from "./ui";
+
+const homeIcons = {
+  uas: Activity,
+  lesions: Camera,
+  records: ClipboardList,
+  users: Users,
+  roles: ShieldCheck,
+  branches: Hospital,
+};
 
 export default function CareHome({ session }: { session: Session }) {
   const patient = session.user.role === "benh_nhan";
@@ -11,7 +30,7 @@ export default function CareHome({ session }: { session: Session }) {
   const eligibility = useResource<{ eligible: boolean }>(
     patient ? "/uas7-scores/eligibility" : null,
   );
-  const links = patient
+  const links: [keyof typeof homeIcons, string, string][] = patient
     ? [
         [
           "uas",
@@ -45,25 +64,32 @@ export default function CareHome({ session }: { session: Session }) {
       ];
   return (
     <section className="native-content">
-      <div className="page-title">
+      <div className="page-title home-heading">
         <div>
-          <span className="eyebrow">MAYDAY</span>
           <h1>{patient ? "Hôm nay" : "Tổng quan quản trị"}</h1>
           <p className="muted">Xin chào, {session.user.full_name}.</p>
         </div>
+        <HeartPulse className="home-heading-icon" size={124} aria-hidden="true" />
       </div>
       <div className="journey-grid">
-        {links.map(([view, title, description]) => (
-          <a
-            className="card care-panel"
-            href={careLink(view)}
-            onClick={follow}
-            key={view}
-          >
-            <h2>{title}</h2>
-            <p>{description}</p>
-          </a>
-        ))}
+        {links.map(([view, title, description]) => {
+          const Icon = homeIcons[view];
+          return (
+            <a
+              className="card home-action"
+              href={careLink(view)}
+              onClick={follow}
+              key={view}
+            >
+              <span className="home-action-icon">
+                <Icon size={21} aria-hidden="true" />
+              </span>
+              <h2>{title}</h2>
+              <p>{description}</p>
+              <ArrowRight className="home-action-arrow" size={18} aria-hidden="true" />
+            </a>
+          );
+        })}
       </div>
       {patient && (
         <>

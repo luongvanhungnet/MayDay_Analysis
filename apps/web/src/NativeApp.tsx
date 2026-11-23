@@ -15,12 +15,15 @@ import { availableMenus, initialPage } from "./care-model";
 import { ConfirmHost, confirmAction } from "./confirmation";
 import {
   Activity,
+  CalendarDays,
   FileHeart,
   LogOut,
+  Menu,
   Plus,
   Search,
   ShieldCheck,
   Stethoscope,
+  X,
 } from "lucide-react";
 import {
   api,
@@ -236,18 +239,18 @@ function Workspace({
   return (
     <div className="native-shell">
       <aside className="native-sidebar" data-mobile-open={mobileNav}>
-        <div className="native-brand">
-          <FileHeart /> MayDay
-        </div>
+        <a className="native-brand workspace-brand" href={careLink(defaultView)} onClick={follow}>
+          <span><FileHeart size={22} aria-hidden="true" /></span> MayDay
+        </a>
         <button
           className="mobile-nav-toggle"
           aria-expanded={mobileNav}
           aria-controls="workspace-navigation"
           onClick={() => setMobileNav((v) => !v)}
         >
+          {mobileNav ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
           {mobileNav ? "Đóng menu" : "Menu"}
         </button>
-        <span className="eyebrow">QUẢN LÝ CHĂM SÓC</span>
         <div className="search-box">
           <Search size={16} />
           <input
@@ -257,7 +260,7 @@ function Workspace({
             onChange={(e) => setNavSearch(e.target.value)}
           />
         </div>
-        <nav id="workspace-navigation">
+        <nav id="workspace-navigation" aria-label="Chức năng MayDay">
           {availableMenus(session.user.role)
             .filter((m) =>
               m.title
@@ -303,6 +306,7 @@ function Workspace({
             ))}
           <button
             className={name === "ai" ? "active" : ""}
+            aria-current={name === "ai" ? "page" : undefined}
             onClick={() => navigate("ai")}
           >
             Phân tích ảnh AI
@@ -384,7 +388,10 @@ function Workspace({
               titles[name] ??
               (name === "ai" ? "Phân tích ảnh AI" : "Chăm sóc mề đay")}
           </span>
-          <span>{new Date().toLocaleDateString("vi-VN")}</span>
+          <span className="workspace-date">
+            <CalendarDays size={16} aria-hidden="true" />
+            {new Date().toLocaleDateString("vi-VN")}
+          </span>
         </header>
         {name.startsWith("care:") ? (
           <CarePage key={name} page={name.slice(5)} session={session} />
